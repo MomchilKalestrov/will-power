@@ -24,19 +24,17 @@ const useNodeTree = (initialTree?: PageNode) => {
         return null;
     }, []);
 
-    const updateNode = React.useCallback((id: string, data: Partial<Omit<PageNode, 'children' | 'id'>>) => {
+    const updateNode = React.useCallback((id: string, data: Partial<Omit<PageNode, 'children'>>) => {
         const update = (node: PageNode): PageNode => {
             if (node.id === id) {
-                // Make sure props and style are not undefined
                 const newProps = { ...(node.props || {}), ...(data.props || {}) };
                 const newStyle = { ...(node.style || {}), ...(data.style || {}) };
                 
                 return { ...node, ...data, props: newProps, style: newStyle };
             }
 
-            if (Array.isArray(node.children)) {
+            if (Array.isArray(node.children))
                 return { ...node, children: node.children.map(child => update(child)) };
-            }
 
             return node;
         };

@@ -115,10 +115,7 @@ const Editor: React.FC<Props> = ({ page: pageName }) => {
                             <PropertiesPanel
                                 node={ selectedNode }
                                 metadata={ selectedNodeMetadata }
-                                onNodeUpdate={ (id, data) => {
-                                    console.log(id, data);
-                                    updateNode(id, data);
-                                } }
+                                onNodeUpdate={ updateNode }
                             />
                         ) }
                     </div>

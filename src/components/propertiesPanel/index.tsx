@@ -37,6 +37,17 @@ const isVisible = (
 };
 
 const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNodeUpdate }) => {
+    const [ editableId, setEditableId ] = React.useState<string>(node.id);
+
+    React.useEffect(() => {
+        setEditableId(node.id);
+    }, [node.id]);
+
+    const handleIdUpdate = () => {
+        if (editableId && editableId !== node.id)
+            onNodeUpdate(node.id, { id: editableId });
+    };
+
     const groupedStyles = React.useMemo<groupedProps<style>> (() => {
         let buckets: groupedProps<style> = {};
 
@@ -53,7 +64,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
     }, [ node.type ]);
 
     const handleStyleChange = (key: string, value: string) => {
-        console.log(key, value);
         onNodeUpdate(node.id, {
             style: {
                 ...(node.style || {}),
@@ -75,7 +85,20 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
         <div className='space-y-4'>
             <div>
                 <h3 className='font-semibold text-lg'>{ node.type } Properties</h3>
-                <p className='text-sm text-muted-foreground'>ID: { node.id }</p>
+                <div className='grid gap-2'>
+                    <Label htmlFor={ `input-id` } className='capitalize'>Id</Label>
+                    <Input
+                        id='input-id'
+                        type='text'
+                        value={ editableId }
+                        onChange={ (e) => setEditableId(e.target.value) }
+                        onBlur={ handleIdUpdate }
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter')
+                                handleIdUpdate();
+                        }}
+                    />
+                </div>
             </div>
             <Separator />
             { Object.keys(groupedStyles).length > 0 && (
