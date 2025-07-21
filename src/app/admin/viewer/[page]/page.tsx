@@ -3,12 +3,14 @@ import React, { useState } from 'react';
 import { NextPage } from 'next';
 import useNodeTree from '@/lib/useNodeTree';
 import RenderNode from '@/components/renderNode';
+import { useRouter } from 'next/navigation';
 
 type Props = {
     params: Promise<{ page: string }>
 };
 
 const Page: NextPage<Props> = ({ params }) => {
+    const router = useRouter();
     const { tree, setTree } = useNodeTree();
     const [ pageName, setPageName ] = useState<string | undefined>();
 
@@ -22,7 +24,11 @@ const Page: NextPage<Props> = ({ params }) => {
     }, [ pageName ]);
 
     React.useEffect(() => {
-        params.then(({ page }) => setPageName(page));
+        params.then(({ page }) => {
+            if (window.top === window.self)
+                router.replace(`/admin/editor/${ page }`);
+            setPageName(page)
+        });
     }, []);
     
     React.useEffect(() => {

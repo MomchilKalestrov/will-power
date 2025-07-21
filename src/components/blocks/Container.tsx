@@ -1,4 +1,5 @@
 import React from 'react';
+import defaults from './defaults.module.css';
 
 const metadata: NodeMetadata = {
     props: {},
@@ -180,7 +181,7 @@ const metadata: NodeMetadata = {
             icon: true
         },
         boxSizing: {
-            values: [ 'bordex-box', 'content-box' ],
+            values: [ 'border-box', 'content-box' ],
             icon: false
         },
         position: {
@@ -191,7 +192,7 @@ const metadata: NodeMetadata = {
 };
 
 const Container: React.FC<React.PropsWithChildren> = ({ children, ...props }) =>
-    <div { ...props }>{ children }</div>;
+    <div className={ defaults.Container } { ...props }>{ children }</div>;
 
 export default Container;
 export { metadata };
