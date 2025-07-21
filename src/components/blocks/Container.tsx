@@ -181,7 +181,7 @@ const metadata: NodeMetadata = {
             icon: true
         },
         boxSizing: {
-            values: [ 'bordex-box', 'content-box' ],
+            values: [ 'border-box', 'content-box' ],
             icon: false
         },
         position: {
