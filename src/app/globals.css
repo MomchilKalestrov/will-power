@@ -3,10 +3,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-* {
-    position: relative;
-}
-
 body {
     margin: 0px;
     padding: 0px;
