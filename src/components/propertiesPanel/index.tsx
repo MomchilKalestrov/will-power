@@ -5,8 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import CssKeywordInput from './cssKeywordInput';
-import { Accordion, AccordionContent } from '../ui/accordion';
-import { AccordionItem, AccordionTrigger } from '@radix-ui/react-accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 type PropertiesPanelProps = {
     node: PageNode;
@@ -27,6 +26,8 @@ const isVisible = (
 
     const value = node[ nodeAccessor ][ condition.key ] ?? metadata[ key ][ condition.key ].default;
     let result = value == condition.value;
+    if (condition.comparison === 'different')
+        result = !result;
 
     if ('or' in condition)
         result = result || isVisible(node, metadata, condition.or, key);
@@ -63,19 +64,10 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
         return buckets;
     }, [ node.type ]);
 
-    const handleStyleChange = (key: string, value: string) => {
+    const handleChange = (key: string, value: string, property: 'style' | 'props' | 'attributes') => {
         onNodeUpdate(node.id, {
-            style: {
+            [ property ]: {
                 ...(node.style || {}),
-                [ key ]: value,
-            },
-        });
-    };
-
-    const handlePropChange = (key: string, value: any) => {
-        onNodeUpdate(node.id, {
-            props: {
-                ...(node.props || {}),
                 [ key ]: value,
             },
         });
@@ -83,10 +75,10 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
 
     return (
         <div className='space-y-4'>
-            <div>
-                <h3 className='font-semibold text-lg'>{ node.type } Properties</h3>
-                <div className='grid gap-2'>
-                    <Label htmlFor={ `input-id` } className='capitalize'>Id</Label>
+            <h3 className='text-lg font-bold mb-2'>{ node.type } Properties</h3>
+            <div className='flex items-center flex-wrap justify-between gap-2'>
+                <Label htmlFor='input-id' className='capitalize w-8'>Id</Label>
+                <div className='flex-grow'>
                     <Input
                         id='input-id'
                         type='text'
@@ -103,12 +95,12 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
             <Separator />
             { Object.keys(groupedStyles).length > 0 && (
                  <div>
-                    <h4 className='font-medium text-base mb-2'>Styles</h4>
+                    <h3 className='text-lg font-bold mb-2'>Styles</h3>
                     <div className='space-y-4'>
                         <Accordion type='single' collapsible>
                             { Object.entries(groupedStyles).map((([ key, styles ]) => (
                                 <AccordionItem value={ key } key={ key } className='w-full'>
-                                    <AccordionTrigger className='mb-2 pb-2 border-b-1 w-full text-left'>{ key }</AccordionTrigger>
+                                    <AccordionTrigger>{ key }</AccordionTrigger>
                                     <AccordionContent className='flex flex-col gap-2'>
                                         { styles.map((style) => {
                                             const currentValue = node.style?.[ style.key ] ?? style.default;
@@ -124,7 +116,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                                 id={ `input-${ style.key }` }
                                                                 type='text'
                                                                 value={ currentValue }
-                                                                onChange={ (e) => handleStyleChange(style.key, e.target.value) }
+                                                                onChange={ (e) => handleChange(style.key, e.target.value, 'style') }
                                                             />
                                                         </div>
                                                     );
@@ -136,7 +128,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                                 value={ currentValue }
                                                                 units={ (style as typeof style & { units: string[] }).units }
                                                                 count={ style.count || 1 }
-                                                                onChange={ (newValue) => handleStyleChange(style.key, newValue) }
+                                                                onChange={ (newValue) => handleChange(style.key, newValue, 'style') }
                                                             />
                                                         </div>
                                                     );
@@ -151,8 +143,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                                     value={ currentValue }
                                                                     options={ options }
                                                                     id={ style.key }
-                                                                    placeholder={ style.name }
-                                                                    onChange={ (newValue) => handleStyleChange(style.key, newValue) }
+                                                                    onChange={ (newValue) => handleChange(style.key, newValue, 'style') }
                                                                 />
                                                             </div>
                                                         </div>
