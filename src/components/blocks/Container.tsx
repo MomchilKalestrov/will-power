@@ -41,19 +41,8 @@ const metadata: NodeMetadata = {
             in: 'Positioning',
             condition: {
                 key: 'position',
-                value: 'fixed',
-                or: {
-                    key: 'position',
-                    value: 'relative',
-                    or: {
-                        key: 'position',
-                        value: 'sticky',
-                        or: {
-                            key: 'position',
-                            value: 'absolute'
-                        }
-                    }
-                }
+                value: 'static',
+                comparison: 'different'
             }
         },
         left: {
@@ -63,19 +52,8 @@ const metadata: NodeMetadata = {
             in: 'Positioning',
             condition: {
                 key: 'position',
-                value: 'fixed',
-                or: {
-                    key: 'position',
-                    value: 'relative',
-                    or: {
-                        key: 'position',
-                        value: 'sticky',
-                        or: {
-                            key: 'position',
-                            value: 'absolute'
-                        }
-                    }
-                }
+                value: 'static',
+                comparison: 'different'
             }
         },
         padding: {
