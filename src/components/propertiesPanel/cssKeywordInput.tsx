@@ -14,19 +14,17 @@ interface CssKeywordInputProps {
     onChange: (newValue: string) => void;
     options: string[];
     id: string;
-    placeholder?: string;
-}
+};
 
 const CssKeywordInput: React.FC<CssKeywordInputProps> = ({
     value,
     onChange,
     options,
-    id,
-    placeholder,
+    id
 }) => (
     <Select onValueChange={ onChange } value={ value }>
         <SelectTrigger id={ id } className='w-[100%]'>
-            <SelectValue placeholder={ placeholder } />
+            <SelectValue />
         </SelectTrigger>
         <SelectContent>
             {
