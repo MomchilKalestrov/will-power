@@ -40,7 +40,7 @@ declare global {
     };
 
     type style = {
-        type: 'string' | 'keyword' | 'box-shadow' | 'background';
+        type: 'string';
         default: string;
         count?: number;
         condition?: condition;
@@ -52,7 +52,12 @@ declare global {
         units: string[];
         condition?: condition;
         in: string;
-    };
+    } | {
+        type: 'box-shadow' | 'background' | 'keyword';
+        default: string;
+        condition?: condition;
+        in: string;
+    }
 
     type attribute = {
         type: 'string' | 'enum';

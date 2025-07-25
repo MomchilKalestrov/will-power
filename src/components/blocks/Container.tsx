@@ -5,6 +5,16 @@ const metadata: NodeMetadata = {
     props: {},
     attributes: {},
     styles: {
+        background: {
+            type: 'background',
+            default: '#ffffff',
+            in: 'Styling'
+        },
+        boxShadow: {
+            type: 'box-shadow',
+            default: 'none',
+            in: 'Styling'
+        },
         width: {
             type: 'css-units',
             default: '100%',

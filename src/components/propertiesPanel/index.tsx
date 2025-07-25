@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import CssKeywordInput from './cssKeywordInput';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import ColorPicker from './colorPicker';
+import BackgroundPicker from './backgroundPicker';
 
 type PropertiesPanelProps = {
     node: PageNode;
@@ -127,7 +129,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                             <CssUnitInput
                                                                 value={ currentValue }
                                                                 units={ (style as typeof style & { units: string[] }).units }
-                                                                count={ style.count || 1 }
+                                                                count={ (style as typeof style & { count?: number }).count || 1 }
                                                                 onChange={ (newValue) => handleChange(style.key, newValue, 'style') }
                                                             />
                                                         </div>
@@ -145,6 +147,27 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                                     id={ style.key }
                                                                     onChange={ (newValue) => handleChange(style.key, newValue, 'style') }
                                                                 />
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                case 'background':
+                                                    let selected: 'image' | 'gradient' | 'color';                                                    
+                                                    if (currentValue.includes('url'))
+                                                        selected = 'image';
+                                                    else if (currentValue.includes('gradient'))
+                                                        selected = 'gradient';
+                                                    else
+                                                        selected = 'color';
+
+                                                    const onChange = (newValue: string) => handleChange(style.key, newValue, 'style');
+                                                    const params = { onChange, value: currentValue };
+
+                                                    return (
+                                                        <div key={ style.key } className='flex items-center flex-wrap justify-between gap-2'>
+                                                            <Label htmlFor={ style.key } className='capitalize w-32'>{ style.name }</Label>
+                                                            <div className='flex-grow'>
+                                                                <ColorPicker selected={ selected === 'color' } { ...params } />
+                                                                <BackgroundPicker selected={ selected === 'image' } { ...params } />
                                                             </div>
                                                         </div>
                                                     );
