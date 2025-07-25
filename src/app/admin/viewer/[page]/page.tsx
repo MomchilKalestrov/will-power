@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { NextPage } from 'next';
-import useNodeTree from '@/lib/useNodeTree';
+import useNodeTree from '@/hooks/useNodeTree';
 import RenderNode from '@/components/renderNode';
 import { useRouter } from 'next/navigation';
 

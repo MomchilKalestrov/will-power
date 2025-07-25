@@ -3,7 +3,7 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import useNodeTree from '@/lib/useNodeTree';
+import useNodeTree from '@/hooks/useNodeTree';
 import { getPageByName, savePage } from '@/lib/db/actions';
 import PropertiesPanel from '@/components/propertiesPanel';
 import TreePanel from '@/components/treePanel';
