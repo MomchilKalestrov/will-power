@@ -27,17 +27,20 @@ declare global {
         key: string;
         value: string;
         and: condition;
+        comparison?: 'equal' | 'different';
     } | {
         key: string;
         value: string;
         or: condition;
+        comparison?: 'equal' | 'different';
     } | {
         key: string;
         value: string;
+        comparison?: 'equal' | 'different';
     };
 
     type style = {
-        type: 'string' | 'keyword';
+        type: 'string' | 'keyword' | 'box-shadow' | 'background';
         default: string;
         count?: number;
         condition?: condition;
@@ -48,7 +51,7 @@ declare global {
         count?: number;
         units: string[];
         condition?: condition;
-        in: string
+        in: string;
     };
 
     type attribute = {
@@ -65,6 +68,8 @@ declare global {
         condition?: condition;
         in: string;
     };
+    
+    type BlobInformation = ListBlobResultBlob;
 
     interface NodeMetadata {
         props: Record<string, prop>;
