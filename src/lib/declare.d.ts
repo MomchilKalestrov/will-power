@@ -53,7 +53,7 @@ declare global {
         condition?: condition;
         in: string;
     } | {
-        type: 'box-shadow' | 'background' | 'keyword';
+        type: 'shadow' | 'background' | 'keyword';
         default: string;
         condition?: condition;
         in: string;

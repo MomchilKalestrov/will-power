@@ -11,7 +11,7 @@ const metadata: NodeMetadata = {
             in: 'Styling'
         },
         boxShadow: {
-            type: 'box-shadow',
+            type: 'shadow',
             default: 'none',
             in: 'Styling'
         },

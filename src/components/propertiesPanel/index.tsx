@@ -11,6 +11,7 @@ import BackgroundPicker from './backgroundPicker';
 import { Button } from '../ui/button';
 import { Ban } from 'lucide-react';
 import GradientPicker from './gradientPicker';
+import ShadowPicker from './ShadowPicker';
 
 type PropertiesPanelProps = {
     node: PageNode;
@@ -170,7 +171,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                     return (
                                                         <div key={ style.key } className='flex items-center flex-wrap justify-between gap-2'>
                                                             <Label htmlFor={ style.key } className='capitalize w-32'>{ style.name }</Label>
-                                                            <div className='flex-grow flex justify-end'>
+                                                            <div className='flex-grow flex justify-end gap-2'>
                                                                 <ColorPicker selected={ selected === 'color' } { ...params } />
                                                                 <BackgroundPicker selected={ selected === 'image' } { ...params } />
                                                                 <GradientPicker selected={ selected === 'gradient' } { ...params } />
@@ -183,6 +184,25 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                             </div>
                                                         </div>
                                                     );
+                                                case 'shadow':
+                                                    return (
+                                                        <div key={ style.key } className='flex items-center flex-wrap justify-between gap-2'>
+                                                            <Label htmlFor={ style.key } className='capitalize w-32'>{ style.name }</Label>
+                                                            <div className='flex-grow flex justify-end gap-2'>
+                                                                <ShadowPicker
+                                                                    value={ currentValue }
+                                                                    selected={ currentValue !== 'unset' }
+                                                                    onChange={ (newValue) => handleChange(style.key, newValue, 'style') }
+                                                                />
+                                                                <Button
+                                                                    size='icon'
+                                                                    className='size-8 p-2'
+                                                                    variant={ currentValue === 'unset' ? 'outline' : 'ghost' }
+                                                                    onClick={ () => handleChange(style.key, 'unset', 'style') }
+                                                                ><Ban /></Button>
+                                                            </div>
+                                                        </div>
+                                                    )
                                             };
                                         })}         
                                     </AccordionContent>
