@@ -55,12 +55,12 @@ const BackgroundPicker: React.FC<Props> = ({
     ]);
 
     React.useEffect(() => {
-        if (initialBackground && initialBackground.includes('url')) {
-            let backgroundParts = initialBackground.split(' ').filter(part => part !== '/');
-            backgroundParts[ 3 ] = backgroundParts[ 3 ] + ' ' + backgroundParts[ 4 ];
-            backgroundParts.splice(4, 1);
-            setBackground(backgroundParts as backgroundType);
-        }
+        if (!initialBackground.includes('url')) return;
+        
+        let backgroundParts = initialBackground.split(' ').filter(part => part !== '/');
+        backgroundParts[ 3 ] = backgroundParts[ 3 ] + ' ' + backgroundParts[ 4 ];
+        backgroundParts.splice(4, 1);
+        setBackground(backgroundParts as backgroundType);
     }, []);
 
     const onChange = React.useCallback((newValue: string, index: number) => {
@@ -110,19 +110,21 @@ const BackgroundPicker: React.FC<Props> = ({
                             </div>
                     }
                 </button>
-                { Object.entries(propertiesValues).map(([ key, value ], index) => (
-                    <div key={ key } className='grid grid-cols-2 gap-2'>
-                        <Label htmlFor={ 'input-' + key } className='capitalize w-32'>{ key }</Label>
-                        <div className='flex-grow'>
-                            <CssKeywordInput
-                                value={ properties[ index ]! }
-                                options={ value }
-                                id={ 'input-' + key }
-                                onChange={ (newValue: string) => onChange(newValue, index + 1) }
-                            />
-                        </div>
-                    </div>
-                )) }
+                <div className='grid grid-cols-2 gap-2'>
+                    { Object.entries(propertiesValues).map(([ key, value ], index) => (
+                        <React.Fragment key={ key }>
+                            <Label htmlFor={ 'input-bg-' + key } className='capitalize w-32'>{ key }</Label>
+                            <div className='flex-grow'>
+                                <CssKeywordInput
+                                    value={ properties[ index ]! }
+                                    options={ value }
+                                    id={ 'input-bg-' + key }
+                                    onChange={ (newValue: string) => onChange(newValue, index + 1) }
+                                />
+                            </div>
+                        </React.Fragment>
+                    )) }
+                </div>
             </PopoverContent>
         </Popover>
     );

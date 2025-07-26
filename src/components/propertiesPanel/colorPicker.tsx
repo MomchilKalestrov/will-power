@@ -19,10 +19,10 @@ const ColorPicker: React.FC<Props> = ({ value: initialColor, selected = true, on
         setColor(initialColor.startsWith('#') ? initialColor : '#ffffff');
     }, []);
 
-    const onChange = React.useCallback((newColor: string) => {
+    const onChange = (newColor: string) => {
         setColor(newColor);
         onChangeCallback(newColor);
-    }, []);
+    };
 
     return (
         <Popover>

@@ -83,7 +83,7 @@ const CssUnitInput: React.FC<{
                                 key={index}
                                 type='number'
                                 value={ currentValues[index] || '0' }
-                                onChange={(e) => handleValueChange(e, index)}
+                                onChange={(e) => handleValueChange(e, index) }
                                 className='[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
                             />
                         ))
