@@ -76,7 +76,7 @@ const BackgroundPicker: React.FC<Props> = ({
                 </Button>
             </PopoverTrigger>
             <PopoverContent
-                className='flex flex-col gap-2'
+                className='grid gap-2'
                 onInteractOutside={ (e) => e.preventDefault() }
             >
                 <button
