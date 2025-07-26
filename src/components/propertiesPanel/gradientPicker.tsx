@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Image as ImageIcon, Minus, Plus } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -30,7 +30,23 @@ const GradientPicker: React.FC<Props> = ({
     const [ gradientRotation, setGradientRotation ] = React.useState<string>('0');
     const [ gradientColors, setColors ] = React.useState<string[]>([ '#ffffffff', '#000000ff' ]);
 
-    React.useEffect(() => {        
+    React.useEffect(() => {
+        if (!initialGradient.includes('-gradient(')) return;
+
+        const type: 'linear' | 'radial' = initialGradient.split('-')[ 0 ] as 'linear' | 'radial';
+        const [ posOrRot, ...colors ]: string[] =
+            initialGradient
+                .substring(
+                    initialGradient.indexOf('(') + 1,
+                    initialGradient.length - 1
+                )
+                .split(', ');
+        setGradientType(type);
+        setColors(colors);
+        if (type === 'linear')
+            setGradientRotation(posOrRot.substring(0, posOrRot.length - 3));
+        else
+            setGradientPosition(posOrRot.split(' ').slice(1).join(' '));
     }, []);
     
     type GradientChangeParams = {
@@ -59,7 +75,15 @@ const GradientPicker: React.FC<Props> = ({
         <Popover>
             <PopoverTrigger asChild>
                 <Button variant={ selected ? 'outline' : 'ghost' } size='icon' className='size-8 p-2'>
-                    <ImageIcon />
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="16" height="16" rx="2" fill="url(#paint0_linear_335_2)"/>
+                        <defs>
+                            <linearGradient id="paint0_linear_335_2" x1="8" y1="0" x2="8" y2="16" gradientUnits="userSpaceOnUse">
+                                <stop stopOpacity="0"/>
+                                <stop offset="1" stopColor="#09090B"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
                 </Button>
             </PopoverTrigger>
             <PopoverContent
@@ -109,10 +133,11 @@ const GradientPicker: React.FC<Props> = ({
                     }
                     { gradientColors.map((value, index) => (
                         <React.Fragment key={ index }>
-                            <Label>Color { index + 1 }</Label>
+                            <Label>Color { gradientColors.length - index }</Label>
                             <ColorPicker
                                 value={ value }
                                 onChange={ (newValue) => updateColors(newValue, index) }
+                                preview={ true }
                             />
                         </React.Fragment>
                     )) }

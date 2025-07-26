@@ -10,6 +10,7 @@ import ColorPicker from './colorPicker';
 import BackgroundPicker from './backgroundPicker';
 import { Button } from '../ui/button';
 import { Ban } from 'lucide-react';
+import GradientPicker from './gradientPicker';
 
 type PropertiesPanelProps = {
     node: PageNode;
@@ -172,6 +173,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                             <div className='flex-grow flex justify-end'>
                                                                 <ColorPicker selected={ selected === 'color' } { ...params } />
                                                                 <BackgroundPicker selected={ selected === 'image' } { ...params } />
+                                                                <GradientPicker selected={ selected === 'gradient' } { ...params } />
                                                                 <Button
                                                                     size='icon'
                                                                     className='size-8 p-2'

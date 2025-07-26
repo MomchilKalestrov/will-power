@@ -10,13 +10,15 @@ type Props = {
     value: string;
     selected?: boolean;
     onChange: (newValue: string) => void;
+    preview?: boolean;
 };
 
-const ColorPicker: React.FC<Props> = ({ value: initialColor, selected = true, onChange: onChangeCallback }) => {
-    const [ color, setColor ] = React.useState<string>('');
+const ColorPicker: React.FC<Props> = ({ value: initialColor, selected = true, onChange: onChangeCallback, preview = false }) => {
+    const [ color, setColor ] = React.useState<string>('#ffffff');
 
     React.useEffect(() => {
-        setColor(initialColor.startsWith('#') ? initialColor : '#ffffff');
+        if (!initialColor.startsWith('#')) return;
+        setColor(initialColor);
     }, []);
 
     const onChange = (newColor: string) => {
@@ -27,9 +29,20 @@ const ColorPicker: React.FC<Props> = ({ value: initialColor, selected = true, on
     return (
         <Popover>
             <PopoverTrigger asChild>
-                <Button variant={ selected ? 'outline' : 'ghost' } size='icon' className='size-8 p-2'>
-                    <PaintbrushVertical />
-                </Button>
+                {
+                    preview
+                    ?   <div className='flex gap-2 items-stretch'>
+                            <div className='flex-grow bg-card text-card-foreground rounded-md border shadow-sm p-1'>
+                                <div className='size-full' style={ { borderRadius: 4, backgroundColor: color } } />
+                            </div>
+                            <Button variant={ selected ? 'outline' : 'ghost' } size='icon' className='size-8 p-2'>
+                                <PaintbrushVertical />
+                            </Button>
+                        </div>
+                    :   <Button variant={ selected ? 'outline' : 'ghost' } size='icon' className='size-8 p-2'>
+                            <PaintbrushVertical />
+                        </Button>
+                }
             </PopoverTrigger>
             <PopoverContent className='flex flex-col gap-2'>
                 <HexAlphaColorPicker
