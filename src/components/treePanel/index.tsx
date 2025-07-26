@@ -23,7 +23,7 @@ const TreePanel: React.FC<Props> = ({ node, selectedNodeId }) => {
     };
 
     return (
-        <div className='text-sm text-muted-foreground font-sans'>
+        <div className='text-sm'>
             <div
                 onClick={ () => window.postMessage({ type: 'select', payload: node.id }) }
                 className={ cn(
