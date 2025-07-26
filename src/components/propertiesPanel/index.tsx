@@ -169,9 +169,9 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                     const params = { onChange, value: currentValue };
 
                                                     return (
-                                                        <div key={ style.key } className='flex items-center flex-wrap justify-between gap-2'>
+                                                        <div key={ style.key } className='flex items-center justify-between flex-wrap gap-2'>
                                                             <Label htmlFor={ style.key } className='capitalize w-32'>{ style.name }</Label>
-                                                            <div className='flex-grow flex justify-end gap-2'>
+                                                            <div className='flex gap-2'>
                                                                 <ColorPicker selected={ selected === 'color' } { ...params } />
                                                                 <BackgroundPicker selected={ selected === 'image' } { ...params } />
                                                                 <GradientPicker selected={ selected === 'gradient' } { ...params } />
