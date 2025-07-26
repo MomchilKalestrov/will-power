@@ -15,6 +15,13 @@ const metadata: NodeMetadata = {
             default: 'none',
             in: 'Styling'
         },
+        borderRadius: {
+            type: 'css-units',
+            default: '0px 0px 0px 0px',
+            units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+            count: 4,
+            in: 'Styling'
+        },
         width: {
             type: 'css-units',
             default: '100%',
