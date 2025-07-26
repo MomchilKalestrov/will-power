@@ -44,7 +44,10 @@ const ColorPicker: React.FC<Props> = ({ value: initialColor, selected = true, on
                         </Button>
                 }
             </PopoverTrigger>
-            <PopoverContent className='flex flex-col gap-2'>
+            <PopoverContent
+                className='flex flex-col gap-2'
+                onInteractOutside={ (e) => e.preventDefault() }
+            >
                 <HexAlphaColorPicker
                     color={ color }
                     onChange={ onChange }

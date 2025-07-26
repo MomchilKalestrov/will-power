@@ -4,10 +4,9 @@ import { Image as ImageIcon, CirclePlus } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Input } from '@/components/ui/input';
+import { useFileSelector } from '@/components/fileSelector';
 import { Label } from '../ui/label';
 import CssKeywordInput from './cssKeywordInput';
-import { useFileSelector } from '@/components/fileSelector';
 
 const attachment = [ 'scroll', 'fixed', 'local' ];
 const position = [
@@ -45,7 +44,6 @@ const BackgroundPicker: React.FC<Props> = ({
     onChange: onChangeCallback
 }) => {
     const { selectFile } = useFileSelector();
-    const [ freeze, setFreeze ] = React.useState<boolean>(true);
     const [ [ url, ...properties ], setBackground ] = React.useState<backgroundType>([
         undefined,
         repeat[ 0 ],
@@ -79,20 +77,13 @@ const BackgroundPicker: React.FC<Props> = ({
             </PopoverTrigger>
             <PopoverContent
                 className='flex flex-col gap-2'
-                onInteractOutside={ (e) => {
-                    if (freeze)
-                        e.preventDefault();
-                } }
+                onInteractOutside={ (e) => e.preventDefault() }
             >
                 <button
                     className='rounded-sm overflow-hidden'
                     onClick={ () => {
-                        setFreeze(true);
                         selectFile('single', 'image')
-                            .then(([ value ]) => {
-                                setFreeze(false);
-                                onChange(`url("${ value.url }")`, 0);
-                            })
+                            .then(([ value ]) => onChange(`url("${ value.url }")`, 0))
                             .catch(() => null);
                     } }
                 >
