@@ -8,6 +8,8 @@ import CssKeywordInput from './cssKeywordInput';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import ColorPicker from './colorPicker';
 import BackgroundPicker from './backgroundPicker';
+import { Button } from '../ui/button';
+import { Ban } from 'lucide-react';
 
 type PropertiesPanelProps = {
     node: PageNode;
@@ -151,11 +153,13 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                         </div>
                                                     );
                                                 case 'background':
-                                                    let selected: 'image' | 'gradient' | 'color';                                                    
+                                                    let selected: 'image' | 'gradient' | 'color' | 'none';                                                    
                                                     if (currentValue.includes('url'))
                                                         selected = 'image';
                                                     else if (currentValue.includes('gradient'))
                                                         selected = 'gradient';
+                                                    else if (currentValue === 'unset')
+                                                        selected = 'none';
                                                     else
                                                         selected = 'color';
 
@@ -165,9 +169,15 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                     return (
                                                         <div key={ style.key } className='flex items-center flex-wrap justify-between gap-2'>
                                                             <Label htmlFor={ style.key } className='capitalize w-32'>{ style.name }</Label>
-                                                            <div className='flex-grow'>
+                                                            <div className='flex-grow flex justify-end'>
                                                                 <ColorPicker selected={ selected === 'color' } { ...params } />
                                                                 <BackgroundPicker selected={ selected === 'image' } { ...params } />
+                                                                <Button
+                                                                    size='icon'
+                                                                    className='size-8 p-2'
+                                                                    variant={ selected === 'none' ? 'outline' : 'ghost' }
+                                                                    onClick={ () => handleChange(style.key, 'unset', 'style') }
+                                                                ><Ban /></Button>
                                                             </div>
                                                         </div>
                                                     );

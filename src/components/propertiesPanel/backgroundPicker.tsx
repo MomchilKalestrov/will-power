@@ -19,10 +19,10 @@ const size = [ 'contain', 'cover', 'auto' ];
 const repeat = [ 'repeat', 'repeat-x', 'repeat-y', 'no repeat' ];
 
 const propertiesValues: { [ key: string ]: string[] } = {
+    repeat,
     attachment,
     position,
-    size,
-    repeat
+    size
 };
 
 type backgroundType = [
@@ -48,25 +48,26 @@ const BackgroundPicker: React.FC<Props> = ({
     const [ freeze, setFreeze ] = React.useState<boolean>(true);
     const [ [ url, ...properties ], setBackground ] = React.useState<backgroundType>([
         undefined,
+        repeat[ 0 ],
         attachment[ 0 ],
         position[ 0 ],
         size[ 0 ],
-        repeat[ 0 ],
     ]);
 
     React.useEffect(() => {
-        if (initialBackground.includes('url')) {
-            const [ attachment, position, size, repeat, ...urlFragments ] = initialBackground.split(' ');
-            const url = urlFragments.join(' ');
-            setBackground([ attachment, position, size, repeat, url ]);
-        };
+        if (initialBackground && initialBackground.includes('url')) {
+            let backgroundParts = initialBackground.split(' ').filter(part => part !== '/');
+            backgroundParts[ 3 ] = backgroundParts[ 3 ] + ' ' + backgroundParts[ 4 ];
+            backgroundParts.splice(4, 1);
+            setBackground(backgroundParts as backgroundType);
+        }
     }, []);
 
     const onChange = React.useCallback((newValue: string, index: number) => {
         let newState: backgroundType = [ url, ...properties ];
         newState[ index ] = newValue;
         setBackground(newState);
-        onChangeCallback(newState.join(' '));
+        onChangeCallback(newState.slice(undefined, -1).join(' ') + ' / ' + newState[ newState.length - 1 ]);
     }, [ properties ]);
 
     return (

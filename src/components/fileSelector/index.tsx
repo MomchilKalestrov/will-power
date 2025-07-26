@@ -8,13 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 type fileTypes = 'image' | 'video' | 'font';
-type selectFileFunctionType =
-    ((fileCount: 'single' | 'multiple', fileType?: fileTypes) => Promise<BlobInformation[]>);
+type selectFileFunctionType = ((fileCount: 'single' | 'multiple', fileType?: fileTypes) => Promise<BlobInformation[]>);
 
 const fileSelectorCTX = React.createContext<{
     selectFile: selectFileFunctionType
 }>({
-    selectFile: async () => [ '' ]
+    selectFile: async () => []
 });
 
 const useFileSelector = () => React.useContext(fileSelectorCTX);
@@ -146,14 +145,14 @@ const FileSelectorProvider: React.FC<React.PropsWithChildren> = ({ children }) =
     });
     
 
-    const selectFile = React.useCallback(((fileCount: 'single' | 'multiple', fileType: fileTypes) =>
+    const selectFile = React.useCallback((fileCount: 'single' | 'multiple', fileType: fileTypes = 'image') =>
         new Promise<BlobInformation[]>((resolve, reject) => {
             setVisibility(true);
             setFileCount(fileCount);
             setFileType(fileType);
             setPromise({ resolve, reject });
         })
-    ) as selectFileFunctionType, []);
+    , []);
 
     const onSelected = React.useCallback((blobInformation: BlobInformation[] | null) => {
         setVisibility(false);
