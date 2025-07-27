@@ -69,10 +69,8 @@ declare global {
 
     type prop = {
         type: 'string' | 'number' | 'object' | 'enum';
-        optional?: boolean;
         default: any;
         condition?: condition;
-        in: string;
     };
     
     type BlobInformation = ListBlobResultBlob;

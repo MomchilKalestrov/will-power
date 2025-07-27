@@ -36,8 +36,6 @@ const RenderNode: React.FC<Props> = ({
         console.warn("Unknown node type: " + type);
         return null;
     };
-    
-        console.log(children, id)
 
     if (Component === undefined) return null;
 

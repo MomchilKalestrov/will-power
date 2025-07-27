@@ -8,10 +8,11 @@ import CssKeywordInput from './cssKeywordInput';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import ColorPicker from './colorPicker';
 import BackgroundPicker from './backgroundPicker';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import { Ban } from 'lucide-react';
 import GradientPicker from './gradientPicker';
 import ShadowPicker from './ShadowPicker';
+import { Textarea } from '@/components/ui/textarea';
 
 type PropertiesPanelProps = {
     node: PageNode;
@@ -98,6 +99,43 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                     />
                 </div>
             </div>
+            { Object.entries(metadata.props).map(([ key, prop ]) => {
+                const currentValue = node.props?.[ key ] ?? prop.default;
+                const name = key.replace(/([A-Z])/g, ' $1');
+
+                switch (prop.type) {
+                    case 'string':
+                        return (
+                            <div key={ key } className='grid gap-2'>
+                                <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
+                                <Textarea
+                                    id={ `input-${ key }` }
+                                    value={ currentValue }
+                                    onChange={ (e) => handleChange(key, e.target.value, 'props') }
+                                />
+                            </div>
+                        );
+                    case 'enum':
+                        const options = metadata.enumerators[ key ]?.values;
+                        if (!options || options.length === 0) return;
+
+                        return (
+                            <div key={ key } className='flex items-center flex-wrap justify-between gap-2'>
+                                <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
+                                <div className='flex-grow'>
+                                    <CssKeywordInput
+                                        value={ currentValue }
+                                        options={ options }
+                                        id={ 'input-' + key }
+                                        onChange={ (newValue) => handleChange(key, newValue, 'props') }
+                                    />
+                                </div>
+                            </div>
+                        );
+                }
+
+                return null;
+            }) }
             <Separator />
             { Object.keys(groupedStyles).length > 0 && (
                  <div>
@@ -143,12 +181,12 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                     if (!options || options.length === 0) return;
                                                     return (
                                                         <div key={ style.key } className='flex items-center flex-wrap justify-between gap-2'>
-                                                            <Label htmlFor={ style.key } className='capitalize w-32'>{ style.name }</Label>
+                                                            <Label htmlFor={ `input-${ style.key }` } className='capitalize w-32'>{ style.name }</Label>
                                                             <div className='flex-grow'>
                                                                 <CssKeywordInput
                                                                     value={ currentValue }
                                                                     options={ options }
-                                                                    id={ style.key }
+                                                                    id={ `input-${ style.key }` }
                                                                     onChange={ (newValue) => handleChange(style.key, newValue, 'style') }
                                                                 />
                                                             </div>

@@ -1,18 +1,32 @@
 import React from 'react';
 
 const metadata: NodeMetadata = {
-    props: {},
+    props: {
+        contents: {
+            type: 'string',
+            default: 'Hello world!'
+        },
+        type: {
+            type: 'enum',
+            default: 'h1'
+        }
+    },
     attributes: {},
     styles: {},
-    enumerators: {}
+    enumerators: {
+        type: {
+            values: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ]
+        }
+    }
 };
 
 type Props = {
-    type?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+    contents: string;
+    type?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 };
 
-const Header: React.FC<React.PropsWithChildren<Props>> = ({ children, type = 'h1', ...props }) =>
-    React.createElement(type, props, children);
+const Header: React.FC<Props> = ({ type = 'h1', contents, ...props }) =>
+    React.createElement(type, props, contents);
 
 export default Header;
 export { metadata };
