@@ -1,12 +1,11 @@
 'use client';
 import { NextPage } from 'next';
-import style from './page.module.css';
-import GradientPicker from '@/components/propertiesPanel/gradientPicker';
+import ShadowPicker from '@/components/propertiesPanel/ShadowPicker';
 
 const Page: NextPage = () => {
     return (
         <div>
-            <GradientPicker value='radial-gradient(to center center, #ffffff, #000000)' onChange={ console.log } />
+            <ShadowPicker value='inset 0px 0px 0px 0px #ffffff' onChange={ console.log } />
         </div>
     );
 };

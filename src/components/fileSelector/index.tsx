@@ -64,7 +64,7 @@ const FileSelector: React.FC<{
                     </Button>
                 </CardHeader>
                 <Separator className='my-4' />
-                <CardContent className='flex flex-grow w-full flex items-stretch px-4'>
+                <CardContent className='flex flex-grow w-full items-stretch px-4'>
                     {
                         !files
                         ?   <div className='w-full flex items-center justify-center'>Loading...</div>

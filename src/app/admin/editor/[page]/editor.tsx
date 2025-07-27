@@ -8,10 +8,23 @@ import PropertiesPanel from '@/components/propertiesPanel';
 import TreePanel from '@/components/treePanel';
 import { getPageByName, savePage } from '@/lib/db/actions';
 import useNodeTree from '@/hooks/useNodeTree';
+import BlockPanel from '@/components/blocksPanel';
 
 type Props = {
     page: string
 };
+
+const randomId = (): string => Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+
+const newNode = (type: string): PageNode => ({
+    id: type + '-' + randomId(),
+    type,
+    style: {},
+    attributes: {},
+    children: [],
+    props: {},
+    acceptChildren: false
+});
 
 const metadataCache = new Map<string, NodeMetadata>();
 const getMetadata = (type: string): NodeMetadata | null => {
@@ -26,7 +39,7 @@ const getMetadata = (type: string): NodeMetadata | null => {
 };
 
 const Editor: React.FC<Props> = ({ page: pageName }) => {
-    const { tree, setTree, findNode, updateNode, reparentNode } = useNodeTree();
+    const { tree, setTree, findNode, updateNode, reparentNode, addNode } = useNodeTree();
     const [ selectedNode, setSelectedNode ] = React.useState<PageNode | undefined>();
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
@@ -97,9 +110,9 @@ const Editor: React.FC<Props> = ({ page: pageName }) => {
     const selectedNodeMetadata = selectedNode ? getMetadata(selectedNode.type) : null;
 
     return (
-        <main className='w-screen h-screen flex flex-col overflow-hidden bg-background'>
+        <>
             <header className='h-16 w-full px-4 border-b bg-background flex justify-between items-center gap-4 shrink-0'>
-                <Button className='w-[36px] h-[36px] p-0' variant='outline' onClick={ () => setSelectedNode(undefined) }>
+                <Button className='size-9 p-0' variant='outline' onClick={ () => setSelectedNode(undefined) }>
                     <Plus />
                 </Button>
                 <section className='flex gap-2'>
@@ -111,38 +124,39 @@ const Editor: React.FC<Props> = ({ page: pageName }) => {
                     </Button>
                 </section>
             </header>
-            
-            <div className='flex flex-1 overflow-hidden'>
-                <Card className='min-w-32 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-r border-l-0 border-t-0 border-b-0 bg-muted/20 p-4'>
-                    { 
-                        (selectedNode && selectedNodeMetadata)
-                        ?   <PropertiesPanel
-                                node={ selectedNode }
-                                metadata={ selectedNodeMetadata }
-                                onNodeUpdate={ updateNode }
-                            />
-                        :   <>
-                            </>
-                    }
-                </Card>
-                
-                <iframe 
-                    ref={ iframeRef } 
-                    src={ `/admin/viewer/${ pageName }` }
-                    className='flex-grow h-full border-0'
-                    title='Page Editor'
-                />
-                
-                <Card
-                    className='min-w-48 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-l border-r-0 border-t-0 border-b-0 bg-muted/20 p-4 shadow-none'    
-                    style={ { direction: 'rtl' } }
-                >
-                    <div style={ { direction: 'ltr' } }>
-                        <TreePanel node={ tree } onParentChange={ reparentNode } />
-                    </div>
-                </Card>
-            </div>
-        </main>
+            <main className='w-screen h-[calc(100dvh_-_var(--spacing)_*_16)] flex flex-col overflow-hidden bg-background'>
+
+                <div className='flex flex-1 overflow-hidden'>
+                    <Card className='min-w-32 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-r border-l-0 border-t-0 border-b-0 bg-muted/20 p-4'>
+                        { 
+                            (selectedNode && selectedNodeMetadata)
+                            ?   <PropertiesPanel
+                                    node={ selectedNode }
+                                    metadata={ selectedNodeMetadata }
+                                    onNodeUpdate={ updateNode }
+                                />
+                            :   <BlockPanel onNodeAdd={ (type) => addNode(tree.id, newNode(type)) } />
+                        }
+                    </Card>
+                    
+                    <iframe 
+                        ref={ iframeRef } 
+                        src={ `/admin/viewer/${ pageName }` }
+                        className='flex-grow h-full border-0'
+                        title='Page Editor'
+                    />
+
+                    <Card
+                        className='min-w-48 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-l border-r-0 border-t-0 border-b-0 bg-muted/20 p-4 shadow-none'    
+                        style={ { direction: 'rtl' } }
+                    >
+                        <div style={ { direction: 'ltr' } }>
+                            <TreePanel node={ tree } onParentChange={ reparentNode } />
+                        </div>
+                    </Card>
+                </div>
+            </main>
+        </>
     );
 };
 

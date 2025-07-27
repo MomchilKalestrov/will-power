@@ -9,8 +9,10 @@ type componentData = {
 
 const ComponentDbCTX = React.createContext<{
     getComponent: (type: string) => Promise<componentData | null>;
+    components: string[]
 }>({
-    getComponent: async (type: string) => null
+    getComponent: async (type: string) => null,
+    components: []
 });
 
 const useComponentDb = () => React.useContext(ComponentDbCTX);
@@ -34,8 +36,14 @@ const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
         return data;
     };
 
+    const componentNames = React.useMemo(() => [
+        'Container',
+        'Header',
+        'Paragraph'
+    ], []);
+
     return (
-        <ComponentDbCTX.Provider value={ { getComponent } }>
+        <ComponentDbCTX.Provider value={ { getComponent, components: componentNames } }>
             { children }
         </ComponentDbCTX.Provider>
     );

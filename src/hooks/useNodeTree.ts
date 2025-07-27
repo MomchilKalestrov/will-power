@@ -26,6 +26,13 @@ const useNodeTree = (initialTree?: PageNode) => {
         // Prevent a node from becoming its own parent
         if (childId === newParentId) return;
 
+        // Check if the new parent accepts children
+        const newParentNode = findNode(newParentId);
+        if (newParentNode && !newParentNode.acceptChildren) {
+            console.error("The new parent node does not accept children.");
+            return;
+        }
+
         // Prevent a node from being moved into one of its own children
         const nodeToMoveInitial = findNode(childId);
         if (nodeToMoveInitial && findNode(newParentId, nodeToMoveInitial)) {
@@ -106,9 +113,15 @@ const useNodeTree = (initialTree?: PageNode) => {
     }, []);
 
     const addNode = React.useCallback((parentId: string, newNode: PageNode) => {
+        const parentNode = findNode(parentId);
+        if (parentNode && !parentNode.acceptChildren) {
+            console.error("The parent node does not accept children.");
+            return;
+        }
+
         const add = (node: PageNode): PageNode => {
             if (node.id === parentId) {
-                const children = Array.isArray(node.children) ? [...node.children, { ...newNode, id: crypto.randomUUID() }] : [{ ...newNode, id: crypto.randomUUID() }];
+                const children = Array.isArray(node.children) ? [...node.children, { ...newNode }] : [{ ...newNode }];
                 return { ...node, children };
             }
 
@@ -137,6 +150,12 @@ const useNodeTree = (initialTree?: PageNode) => {
     }, []);
 
     const moveNode = React.useCallback((nodeId: string, newParentId: string, index: number) => {
+        const newParentNode = findNode(newParentId);
+        if (newParentNode && !newParentNode.acceptChildren) {
+            console.error("The new parent node does not accept children.");
+            return;
+        }
+
         let nodeToMove: PageNode | null = null;
 
         // First, remove the node from its current position

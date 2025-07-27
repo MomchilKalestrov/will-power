@@ -6,8 +6,9 @@ declare global {
         type: string;
         style?: Record<string, string>;
         attributes?: Record<string, string>;
-        children?: PageNode[] | string;
+        children?: PageNode[];
         props?: any; // react component props
+        acceptChildren: boolean;
         [ key: string ]: any;
     };
 

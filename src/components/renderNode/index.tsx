@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import dynamic from 'next/dynamic';
 import Overlay from './overlay';
 import { useComponentDb } from '../componentDb';
 
@@ -14,7 +13,7 @@ type Props = {
 const RenderNode: React.FC<Props> = ({
     node: {
         id,
-        children,
+        children = [],
         type,
         attributes = {},
         style = {},
@@ -37,16 +36,21 @@ const RenderNode: React.FC<Props> = ({
         console.warn("Unknown node type: " + type);
         return null;
     };
+    
+        console.log(children, id)
 
     if (Component === undefined) return null;
 
     return (
         <Component { ...{ ...attributes, ...props, style, id } }>
-            {
-                Array.isArray(children)
-                ?   children.map((child) => <RenderNode depth={ depth + 1 } key={ id + '-' + child.id } node={ child } { ...{ editor } } />)
-                :   (children || '')
-            }
+            { children.map((child) => (
+                <RenderNode
+                    depth={ depth + 1 }
+                    key={ id + '-' + child.id }
+                    node={ child }
+                    { ...{ editor } }
+                />
+            )) }
             { (editor && !root) && <Overlay { ...{ id, zIndex: depth + 1 } } /> }
         </Component>
     );

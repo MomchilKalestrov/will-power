@@ -59,7 +59,7 @@ const TreePanel: React.FC<Props> = ({ node, selectedNodeId, onParentChange: onPa
     };
 
     const child = (
-        <div className='text-sm'>
+        <div className='text-sm text-muted-foreground'>
             <div
                 ref={ reference }
                 draggable={ true }
