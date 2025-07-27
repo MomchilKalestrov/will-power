@@ -1,6 +1,6 @@
 'use server';
 import connect from '.';
-import Page from './page';
+import Page from '@/models/page';
 
 const getPageByName = async (name: string): Promise<Page | null> => {
     await connect();

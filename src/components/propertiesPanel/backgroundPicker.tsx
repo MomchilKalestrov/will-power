@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useFileSelector } from '@/components/fileSelector';
-import { Label } from '../ui/label';
+import { Label } from '@/components/ui/label';
 import CssKeywordInput from './cssKeywordInput';
 
 const attachment = [ 'scroll', 'fixed', 'local' ];
