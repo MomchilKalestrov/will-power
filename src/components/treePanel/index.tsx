@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
-import { ChevronRight, Type, Box, Text } from 'lucide-react';
+import { ChevronRight, Type } from 'lucide-react';
+import { useComponentDb } from '@/components/componentDb';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -12,13 +13,17 @@ type Props = {
 const DragCTX = React.createContext<(childId: string, newParentId: string) => void>(() => null);
 
 const TreePanel: React.FC<Props> = ({ node, selectedNodeId, onParentChange: onParentChangeCallback }) => {
+    const { getComponent } = useComponentDb();
     const reference = React.useRef<HTMLDivElement>(null);
     const onParentChange = React.useContext(DragCTX);
     const [ isExpanded, setIsExpanded ] = React.useState<boolean>(true);
-    const icons = React.useMemo<{ [ key: string ]: React.ElementType }>(() => ({
-        'Container': Box,
-        'Paragraph': Text,
-    }), []);
+    const [ Icon, setIcon ] = React.useState<React.ComponentType<any>>(Type);
+
+    React.useEffect(() => {
+        getComponent(node.type)
+            .then((value) => value?.Icon ? setIcon(value.Icon) : null)
+            .catch(() => null);
+    }, [ node.type ]);
 
     const onDragStart = (e: DragEvent) => {
         e.dataTransfer?.setData('text/plain', node.id);
@@ -73,7 +78,7 @@ const TreePanel: React.FC<Props> = ({ node, selectedNodeId, onParentChange: onPa
                             />
                         :   <div className='w-4' />
                     }
-                    { React.createElement(icons[ node.type ] || Type, { className: 'w-4 h-4' }) }
+                    <Icon />
                     <span className='ml-2 truncate'>{ node.id }</span>
                 </div>
             </div>

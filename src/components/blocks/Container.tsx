@@ -191,3 +191,4 @@ const Container: React.FC<React.PropsWithChildren> = ({ children, ...props }) =>
 
 export default Container;
 export { metadata };
+export { Box as Icon } from 'lucide-react';

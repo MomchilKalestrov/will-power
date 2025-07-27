@@ -12,3 +12,4 @@ const Paragraph: React.FC<React.PropsWithChildren> = ({ children, ...props }) =>
 
 export default Paragraph;
 export { metadata };
+export { Text as Icon } from 'lucide-react';

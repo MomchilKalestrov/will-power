@@ -16,3 +16,4 @@ const Header: React.FC<React.PropsWithChildren<Props>> = ({ children, type = 'h1
 
 export default Header;
 export { metadata };
+export { Heading as Icon } from 'lucide-react';
