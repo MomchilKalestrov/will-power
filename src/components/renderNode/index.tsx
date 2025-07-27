@@ -2,30 +2,13 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import Overlay from './overlay';
+import { useComponentDb } from '../componentDb';
 
 type Props = {
     node: PageNode;
     editor?: true;
     root?: true;
     depth?: number;
-};
-
-const componentCache = new Map<string, React.ComponentType<any>>();
-
-const getNodeType = (type: string): React.ComponentType<any> | null => {
-    if (!type.match(/^[a-zA-Z]+$/)) return null; // check if it's a valid path
-
-    if (componentCache.has(type))
-        return componentCache.get(type)!;
-
-    const Component = dynamic(() =>
-        import(`@/components/blocks/${ type }`)
-            .then((module) => module.default)
-            .catch(() => (() => null)), // fallback to a null component
-        { ssr: true }
-    );
-    componentCache.set(type, Component);
-    return Component;
 };
 
 const RenderNode: React.FC<Props> = ({
@@ -41,12 +24,21 @@ const RenderNode: React.FC<Props> = ({
     root,
     depth = 0
 }) => {
-    const Component = React.useMemo(() => getNodeType(type), [ type ]);
+    const { getComponent } = useComponentDb();
+    const [ Component, setComponent ] = React.useState<React.ComponentType<any> | null | undefined>();
+    
+    React.useEffect(() => {
+        getComponent(type)
+            .then((value) => setComponent(() => (value ? value.Component : null)))
+            .catch(() => setComponent(null));
+    }, [ type ]);
 
-    if (!Component) {
+    if (Component === null) {
         console.warn("Unknown node type: " + type);
         return null;
     };
+
+    if (Component === undefined) return null;
 
     return (
         <Component { ...{ ...attributes, ...props, style, id } }>
