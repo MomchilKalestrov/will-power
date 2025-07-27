@@ -3,6 +3,10 @@ import './globals.css';
 
 const RootLayout: React.FC<React.PropsWithChildren> = async ({ children }) => (
     <html lang='en'>
+        <head>
+            <link rel="stylesheet" href="/api/css/theme" />
+            <link rel="stylesheet" href="/api/css/custom" />
+        </head>
         <body>
             <ComponentDbProvider>
                 { children }

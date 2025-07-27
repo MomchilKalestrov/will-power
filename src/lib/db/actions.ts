@@ -4,7 +4,7 @@ import Page from './page';
 
 const getPageByName = async (name: string): Promise<Page | null> => {
     await connect();
-    let page = await Page.findOne({ name });
+    let page = await Page.findOne({ name }).lean();
     if (!page) return null;
     return JSON.parse(JSON.stringify(page)); // hackey solution
 };

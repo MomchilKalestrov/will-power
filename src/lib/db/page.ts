@@ -24,7 +24,7 @@ const pageNodeSchema = new mongoose.Schema({
     props: { type: mongoose.Schema.Types.Mixed },
 });
 
-const pageSchema = new mongoose.Schema({
+const pageSchema = new mongoose.Schema<PageNode>({
     name: { type: String, required: true },
     lastEdited: { type: Number, required: true },
     rootNode: { type: pageNodeSchema, required: true }

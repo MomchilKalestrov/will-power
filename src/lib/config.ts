@@ -1,39 +1,58 @@
 'use server';
-import { put, list } from '@vercel/blob';
+import connect from './db';
+import Config from './db/config';
 
-type configType = {
+declare global {
+    var config: config | undefined;
+};
+
+type variable = {
+    id: string;
+    name: string;
+} & ({
+    type: 'font';
+    family: string;
+    style: 'normal' | 'italic';
+    size: string;
+    weight: 'normal' | 'bold' | 'lighter' | 'bolder'
+} | {
+    type: 'color';
+    color: `#${string}`
+});
+
+type config = {
     theme: string;
+    fonts: ({ family: string, url: string })[];
+    variables: variable[];
 };
 
-let _config: configType | null = null;
-const getConfig = async (): Promise<configType> => {
-    if (!!_config) return _config;
-    
-    const configUrl =
-        (await list())
-            .blobs
-                .find((b) => b.pathname.includes('config.json'))
-                    ?.downloadUrl;
-    
-    if (!!!configUrl) {
-        _config = {
-            theme: 'default'
-        };
-        await setConfig(_config);
-        return _config;
-    }
+const defaultConfig: config = {
+    theme: 'default',
+    fonts: [],
+    variables: []
+}; 
 
-    _config = await (await fetch(configUrl)).json() as configType;
-    return _config;
+const getConfig = async (): Promise<config> => {
+    if (!!global.config) return global.config;
+    
+    await connect();
+    global.config = await Config.findOne().lean() as unknown as config;
+    
+    if (!global.config) {
+        global.config = defaultConfig;
+        const document = new Config(global.config);
+        document.save();
+    };
+
+    return global.config;
 };
 
-const setConfig = async (config: configType): Promise<void> => {
-    _config = config;
-    await put('/config.json', JSON.stringify(_config), {
-        addRandomSuffix: false,
-        allowOverwrite: true,
-        access: 'public'
-    });
+const setConfig = async (config: Partial<config>): Promise<void> => {
+    const currentConfig: config = global.config || await getConfig();
+    const newConfig: config = { ...currentConfig, ...config };
+    global.config = newConfig;
+    await Config.findOneAndUpdate({}, newConfig, { upsert: true, new: true });
 };
 
 export { getConfig, setConfig };
+export type { config };
