@@ -6,14 +6,45 @@ import { cn } from '@/lib/utils';
 type Props = {
     node: PageNode;
     selectedNodeId?: string;
+    onParentChange?: (childId: string, newParentId: string) => void;
 };
 
-const TreePanel: React.FC<Props> = ({ node, selectedNodeId }) => {
+const DragCTX = React.createContext<(childId: string, newParentId: string) => void>(() => null);
+
+const TreePanel: React.FC<Props> = ({ node, selectedNodeId, onParentChange: onParentChangeCallback }) => {
+    const reference = React.useRef<HTMLDivElement>(null);
+    const onParentChange = React.useContext(DragCTX);
     const [ isExpanded, setIsExpanded ] = React.useState<boolean>(true);
     const icons = React.useMemo<{ [ key: string ]: React.ElementType }>(() => ({
         'Container': Box,
         'Paragraph': Text,
-    }), [])
+    }), []);
+
+    const onDragStart = (e: DragEvent) => {
+        e.dataTransfer?.setData('text/plain', node.id);
+        if (e.dataTransfer)
+            e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const onDragOver = (e: DragEvent) => e.preventDefault();
+
+    const onDrop = (e: DragEvent) =>
+        onParentChange(e.dataTransfer?.getData('text/plain')!, node.id);
+    
+    React.useEffect(() => {
+        const currentRef = reference.current;
+        if (!currentRef) return;
+
+        currentRef.addEventListener('dragstart', onDragStart);
+        currentRef.addEventListener('dragover', onDragOver);
+        currentRef.addEventListener('drop', onDrop);
+
+        return () => {
+            currentRef.removeEventListener('dragstart', onDragStart);
+            currentRef.removeEventListener('dragover', onDragOver);
+            currentRef.removeEventListener('drop', onDrop);
+        };
+    }, [ reference, node.id ]);
 
     const hasChildren = Array.isArray(node.children) && node.children.length > 0;
 
@@ -22,9 +53,11 @@ const TreePanel: React.FC<Props> = ({ node, selectedNodeId }) => {
         setIsExpanded(!isExpanded);
     };
 
-    return (
+    const child = (
         <div className='text-sm'>
             <div
+                ref={ reference }
+                draggable={ true }
                 onClick={ () => window.postMessage({ type: 'select', payload: node.id }) }
                 className={ cn(
                     'flex items-center py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted/50 transition-colors',
@@ -61,6 +94,10 @@ const TreePanel: React.FC<Props> = ({ node, selectedNodeId }) => {
             }
         </div>
     );
+
+    return onParentChangeCallback
+    ?   <DragCTX value={ onParentChangeCallback }>{ child }</DragCTX>
+    :   child;
 };
 
 export default TreePanel;
