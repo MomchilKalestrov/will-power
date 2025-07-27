@@ -1,13 +1,13 @@
 'use client';
 import React from 'react';
 import { notFound } from 'next/navigation';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import useNodeTree from '@/hooks/useNodeTree';
-import { getPageByName, savePage } from '@/lib/db/actions';
 import PropertiesPanel from '@/components/propertiesPanel';
 import TreePanel from '@/components/treePanel';
-import { ChevronRightIcon } from 'lucide-react';
+import { getPageByName, savePage } from '@/lib/db/actions';
+import useNodeTree from '@/hooks/useNodeTree';
 
 type Props = {
     page: string
@@ -26,9 +26,8 @@ const getMetadata = (type: string): NodeMetadata | null => {
 };
 
 const Editor: React.FC<Props> = ({ page: pageName }) => {
-    const { tree, setTree, findNode, updateNode } = useNodeTree();
+    const { tree, setTree, findNode, updateNode, reparentNode } = useNodeTree();
     const [ selectedNode, setSelectedNode ] = React.useState<PageNode | undefined>();
-    const [ visibleRightPanel, setRightPanelVisibility ] = React.useState<boolean>(true);
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
     React.useEffect(() => {
@@ -99,62 +98,47 @@ const Editor: React.FC<Props> = ({ page: pageName }) => {
 
     return (
         <main className='w-screen h-screen flex flex-col overflow-hidden bg-background'>
-            <header className='h-16 w-full px-4 border-b bg-background flex justify-end items-center gap-4 shrink-0'>
-                <Button variant='outline' onClick={ onReset }>
-                    Reset
+            <header className='h-16 w-full px-4 border-b bg-background flex justify-between items-center gap-4 shrink-0'>
+                <Button className='w-[36px] h-[36px] p-0' variant='outline' onClick={ () => setSelectedNode(undefined) }>
+                    <Plus />
                 </Button>
-                <Button onClick={ () => savePage({ name: pageName, rootNode: tree, lastEdited: Date.now() }) }>
-                    Save
-                </Button>
+                <section className='flex gap-2'>
+                    <Button variant='outline' onClick={ onReset }>
+                        Reset
+                    </Button>
+                    <Button onClick={ () => savePage({ name: pageName, rootNode: tree, lastEdited: Date.now() }) }>
+                        Save
+                    </Button>
+                </section>
             </header>
             
             <div className='flex flex-1 overflow-hidden'>
-                <Card className='min-w-32 max-w-[33%] resize-x overflow-auto h-full rounded-none border-r border-l-0 border-t-0 border-b-0 bg-muted/20'>
-                    <div className='p-4'>
-                        { selectedNode && selectedNodeMetadata && (
-                            <PropertiesPanel
+                <Card className='min-w-32 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-r border-l-0 border-t-0 border-b-0 bg-muted/20 p-4'>
+                    { 
+                        (selectedNode && selectedNodeMetadata)
+                        ?   <PropertiesPanel
                                 node={ selectedNode }
                                 metadata={ selectedNodeMetadata }
                                 onNodeUpdate={ updateNode }
                             />
-                        ) }
-                    </div>
+                        :   <>
+                            </>
+                    }
                 </Card>
                 
-                <div className='flex-1 h-full bg-muted/10 z-1'>
-                    <iframe 
-                        ref={ iframeRef } 
-                        src={ `/admin/viewer/${ pageName }` }
-                        className='w-full h-full border-0 bg-white'
-                        title='Page Editor'
-                    />
-                </div>
+                <iframe 
+                    ref={ iframeRef } 
+                    src={ `/admin/viewer/${ pageName }` }
+                    className='flex-grow h-full border-0'
+                    title='Page Editor'
+                />
                 
                 <Card
-                    className='min-w-48 overflow-visible resize-x h-full rounded-none border-l border-r-0 border-t-0 border-b-0 bg-muted/20'    
-                    style={ {
-                        direction: 'rtl',
-                        padding: 0,
-                        ...(
-                            visibleRightPanel
-                            ?   {}
-                            :   {
-                                    minWidth: 0,
-                                    maxWidth: 0,
-                                }
-                        )
-                    } }
+                    className='min-w-48 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-l border-r-0 border-t-0 border-b-0 bg-muted/20 p-4 shadow-none'    
+                    style={ { direction: 'rtl' } }
                 >
-                    <Button
-                        variant='outline'
-                        style={ { position: 'absolute', transform: 'translate(-100%)' } }
-                        className='z-20 -left-2 top-2 w-10 h-10'
-                        onClick={ () => setRightPanelVisibility((v) => !v) }
-                    >
-                        <ChevronRightIcon style={ !visibleRightPanel ? { transform: 'rotate(180deg)' } : undefined } />
-                    </Button>
-                    <div className='p-2' style={ { direction: 'ltr' } }>
-                        <TreePanel node={ tree } />
+                    <div style={ { direction: 'ltr' } }>
+                        <TreePanel node={ tree } onParentChange={ reparentNode } />
                     </div>
                 </Card>
             </div>
