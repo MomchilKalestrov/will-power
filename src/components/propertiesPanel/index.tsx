@@ -1,18 +1,20 @@
 'use client';
 import React from 'react';
-import CssUnitInput from './cssUnitInput';
+import { Ban } from 'lucide-react';
+
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import CssKeywordInput from './cssKeywordInput';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import ColorPicker from './colorPicker';
-import BackgroundPicker from './backgroundPicker';
 import { Button } from '@/components/ui/button';
-import { Ban } from 'lucide-react';
-import GradientPicker from './gradientPicker';
-import ShadowPicker from './ShadowPicker';
 import { Textarea } from '@/components/ui/textarea';
+import { Separator } from '@/components/ui/separator';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
+import ColorPicker from '@/components/inputs/colorPicker';
+import ShadowPicker from '@/components/inputs/ShadowPicker';
+import CssUnitInput from '@/components/inputs/cssUnitInput';
+import GradientPicker from '@/components/inputs/gradientPicker';
+import CssKeywordInput from '@/components/inputs/cssKeywordInput';
+import BackgroundPicker from '@/components/inputs/backgroundPicker';
 
 type PropertiesPanelProps = {
     node: PageNode;

@@ -42,24 +42,17 @@ declare global {
     };
 
     type style = {
-        type: 'string';
+        type: 'string' | 'css-units' | 'shadow' | 'background' | 'keyword';
         default: string;
-        count?: number;
         condition?: condition;
         in: string;
-    } | {
+    } & ({
         type: 'css-units';
-        default: string;
         count?: number;
         units: string[];
-        condition?: condition;
-        in: string;
     } | {
-        type: 'shadow' | 'background' | 'keyword';
-        default: string;
-        condition?: condition;
-        in: string;
-    }
+        type: 'string' | 'shadow' | 'background' | 'keyword';
+    });
 
     type attribute = {
         type: 'string' | 'enum';
@@ -68,11 +61,29 @@ declare global {
         in: string;
     };
 
+    type propStructure = {
+        type: 'string' | 'enum' | 'number' | 'object' | 'array';
+        key: string;
+    } & ({
+        type: 'number' | 'string' | 'enum';
+    } | {
+        type: 'object';
+        structure: propStructure[];
+    } | {
+        type: 'array';
+        structure: Omit<propStructure, 'key'>[];
+    });
+
     type prop = {
-        type: 'string' | 'number' | 'object' | 'enum';
+        type: 'string' | 'number' | 'custom' | 'enum';
         default: any;
         condition?: condition;
-    };
+    } & ({
+        type: 'string' | 'number' | 'enum';
+    } | {
+        type: 'custom';
+        structure: propStructure;
+    });
     
     type BlobInformation = ListBlobResultBlob;
 
