@@ -1,6 +1,7 @@
-type timestamp = number;
 
 declare global {
+    type timestamp = number;
+    
     interface PageNode {
         id: string;
         type: string;

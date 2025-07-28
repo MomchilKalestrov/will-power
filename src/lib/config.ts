@@ -7,6 +7,7 @@ declare global {
 };
 
 type variable = {
+    type: 'font' | 'color';
     id: string;
     name: string;
 } & ({
@@ -24,16 +25,18 @@ type config = {
     theme: string;
     fonts: ({ family: string, url: string })[];
     variables: variable[];
+    lastEdited: timestamp;
 };
 
 const defaultConfig: config = {
     theme: 'default',
     fonts: [],
-    variables: []
+    variables: [],
+    lastEdited: Date.now()
 }; 
 
 const getConfig = async (): Promise<config> => {
-    if (!!global.config) return global.config;
+    if (!!global.config) return JSON.parse(JSON.stringify(global.config));
     
     await connect();
     global.config = await Config.findOne().lean() as unknown as config;
@@ -44,7 +47,7 @@ const getConfig = async (): Promise<config> => {
         document.save();
     };
 
-    return global.config;
+    return JSON.parse(JSON.stringify(global.config));
 };
 
 const setConfig = async (config: Partial<config>): Promise<void> => {
