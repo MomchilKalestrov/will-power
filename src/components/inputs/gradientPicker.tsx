@@ -74,7 +74,7 @@ const GradientPicker: React.FC<Props> = ({
     return (
         <Popover>
             <PopoverTrigger asChild>
-                <Button variant={ selected ? 'outline' : 'ghost' } size='icon' className='size-8 p-2'>
+                <Button variant={ selected ? 'outline' : 'ghost' } size='icon'>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="16" height="16" rx="2" fill="url(#paint0_linear_335_2)"/>
                         <defs>

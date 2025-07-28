@@ -61,7 +61,7 @@ const ShadowPicker: React.FC<Props> = ({
     return (
         <Popover>
             <PopoverTrigger asChild>
-                <Button variant={ selected ? 'outline' : 'ghost' } size='icon' className='size-8 p-2'>
+                <Button variant={ selected ? 'outline' : 'ghost' } size='icon'>
                     <SquircleDashed />
                 </Button>
             </PopoverTrigger>

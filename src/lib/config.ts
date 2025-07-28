@@ -1,6 +1,6 @@
 'use server';
 import connect from './db';
-import Config from './db/config';
+import Config from '@/models/config';
 
 declare global {
     var config: config | undefined;
@@ -36,6 +36,7 @@ const defaultConfig: config = {
 }; 
 
 const getConfig = async (): Promise<config> => {
+    console.log(JSON.stringify(global.config, null, '\t'));
     if (!!global.config) return JSON.parse(JSON.stringify(global.config));
     
     await connect();
@@ -54,6 +55,7 @@ const setConfig = async (config: Partial<config>): Promise<void> => {
     const currentConfig: config = global.config || await getConfig();
     const newConfig: config = { ...currentConfig, ...config };
     global.config = newConfig;
+    console.log(newConfig);
     await Config.findOneAndUpdate({}, newConfig, { upsert: true, new: true });
 };
 
