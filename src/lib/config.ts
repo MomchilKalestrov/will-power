@@ -6,20 +6,28 @@ declare global {
     var config: config | undefined;
 };
 
-type variable = {
-    type: 'font' | 'color';
-    id: string;
-    name: string;
-} & ({
-    type: 'font';
+type font = {
     family: string;
     style: 'normal' | 'italic';
     size: string;
-    weight: 'normal' | 'bold' | 'lighter' | 'bolder'
-} | {
+    weight: 'normal' | 'bold' | 'lighter' | 'bolder';
+    fallback: 'serif' | 'sans-serif' | 'monospace' | 'cursive';
+};
+
+type fontVariable = {
+    type: 'font';
+    id: string;
+    name: string;
+} & font;
+
+type colorVariable = {
     type: 'color';
-    color: `#${string}`
-});
+    id: string;
+    name: string;
+    color: `#${string}`;
+};
+
+type variable = fontVariable | colorVariable;
 
 type config = {
     theme: string;
@@ -55,9 +63,8 @@ const setConfig = async (config: Partial<config>): Promise<void> => {
     const currentConfig: config = global.config || await getConfig();
     const newConfig: config = { ...currentConfig, ...config };
     global.config = newConfig;
-    console.log(newConfig);
     await Config.findOneAndUpdate({}, newConfig, { upsert: true, new: true });
 };
 
 export { getConfig, setConfig };
-export type { config };
+export type { config, fontVariable, colorVariable, variable, font };

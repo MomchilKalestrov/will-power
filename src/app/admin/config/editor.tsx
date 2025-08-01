@@ -1,27 +1,53 @@
 'use client';
 import React from 'react';
-import type { config } from '@/lib/config';
+import { font, fontVariable, type config } from '@/lib/config';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Trash2 } from 'lucide-react';
 import ColorPicker from '@/components/inputs/colorPicker';
 import { useConfig } from '@/components/configProvider';
+import { Select } from '@radix-ui/react-select';
+import { SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import CssKeywordInput from '@/components/inputs/cssKeywordInput';
+import CssUnitInput from '@/components/inputs/cssUnitInput';
+import FontInput from '@/components/inputs/fontInput';
+import { cssToFont, fontToCss, hexToHsl, hslToHex } from '@/lib/utils';
 
 type Props = {
     initialConfig: config;
 };
 
+type EditorProps = {
+    config: config;
+    setConfig: React.Dispatch<React.SetStateAction<config>>;
+};
+
 const Editor: React.FC<Props> = ({ initialConfig }) => {
     const { updateConfig } = useConfig();
     const [ config, setConfig ] = React.useState<config>(initialConfig);
+    const [ saveState, setSaveState ] = React.useState<boolean>(true);
 
-    const editorParams = { config, setConfig: (i: any) => {
-        console.log(i);
-        setConfig(i);
-    } };
+    const onWindowChange = React.useCallback((e: Event) => {
+        if (saveState)
+            return;
+        return 'Any unsaved changes will be lost.';
+    }, [ saveState ]);
+
+    React.useEffect(() => {
+        window.addEventListener('beforeunload', onWindowChange);
+        return () => window.removeEventListener('beforeunload', onWindowChange);
+    }, []);
+
+    const editorParams = {
+        config,
+        setConfig: (e: React.SetStateAction<config>) => {
+            setSaveState(false);
+            setConfig(e);
+        }
+    };
 
     return (
         <>
@@ -31,15 +57,21 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
                     <Button variant='outline' onClick={ () => setConfig(initialConfig) }>
                         Reset
                     </Button>
-                    <Button onClick={ () => updateConfig?.(config) }>
-                        Save
-                    </Button>
+                    <Button
+                        disabled={ saveState }
+                        onClick={ () => {
+                            setSaveState(true);
+                            updateConfig?.(config);
+                        } }
+                    >Save</Button>
                 </section>
             </header>
             <main className='flex h-[calc(100dvh_-_var(--spacing)_*_16)]'>
-                <Card className='min-w-32 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-0 border-r p-4'>
+                <Card className='min-w-32 max-w-[33%] overflow-x-hidden overflow-y-scroll resize-x h-full rounded-none border-0 border-r p-4'>
                     <div className='space-y-4'>
                         <ColorEditor { ...editorParams } />
+                        <Separator />
+                        <FontfaceEditor { ...editorParams } />
                         <Separator />
                         <FontEditor { ...editorParams } />
                     </div>
@@ -47,12 +79,12 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
 
                 {/* Right Panel: Visualization */}
                 <section className='flex-1 p-8 overflow-y-auto'>
-                    <div className='max-w-4xl mx-auto'>
-                        <h2 className='text-3xl font-bold mb-6'>Preview</h2>
+                    <div className='mx-auto overflow-x-hidden overflow-y-scroll'>
+                        <h2 className='text-3xl font-bold'>Preview</h2>
                         <Separator className='my-8' />
-                        <ColorPreview config={config} />
+                        <ColorPreview config={ config } />
                         <Separator className='my-8' />
-                        <FontPreview config={config} />
+                        <FontPreview config={ config } />
                     </div>
                 </section>
             </main>
@@ -60,7 +92,7 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
     );
 };
 
-const ColorEditor: React.FC<{ config: config, setConfig: React.Dispatch<React.SetStateAction<config>> }> = ({ config, setConfig }) => {
+const ColorEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
     const [ newColor, setNewColor ] = React.useState({ name: '', color: '#000000' });
 
     const handleAddColor = () => {
@@ -91,7 +123,7 @@ const ColorEditor: React.FC<{ config: config, setConfig: React.Dispatch<React.Se
         setConfig(prev => ({
             ...prev,
             variables: prev.variables.map(v =>
-                v.id === id && v.type === 'color' ? { ...v, [field]: value } : v
+                v.id === id && v.type === 'color' ? { ...v, [ field ]: value } : v
             )
         }));
     };
@@ -99,9 +131,8 @@ const ColorEditor: React.FC<{ config: config, setConfig: React.Dispatch<React.Se
     const colorVariables = config.variables.filter(v => v.type === 'color');
 
     return (
-        <div className='space-y-4'>
+        <section className='space-y-4'>
             <h3 className='text-lg font-bold'>Colors</h3>
-            <Separator />
             { colorVariables.map(({ id, name, color }) => (
                 <div key={ id } className='flex items-center gap-2 rounded-md'>
                     <Input
@@ -119,7 +150,7 @@ const ColorEditor: React.FC<{ config: config, setConfig: React.Dispatch<React.Se
                         size='icon'
                         onClick={ () => handleRemoveColor(id) }
                     >
-                        <Trash2 className='size-4' />
+                        <Trash2 />
                     </Button>
                 </div>
             )) }
@@ -134,89 +165,243 @@ const ColorEditor: React.FC<{ config: config, setConfig: React.Dispatch<React.Se
                     selected={ true }
                     onChange={ (color) => setNewColor({ ...newColor, color }) }
                 />
-                <Button variant='outline' className='col-span-full' onClick={handleAddColor}>Add</Button>
+                <Button
+                    variant='outline'
+                    className='col-span-full'
+                    onClick={ handleAddColor }
+                >Add</Button>
             </div>
-        </div>
+        </section>
     );
 };
 
-const FontEditor: React.FC<{ config: config, setConfig: React.Dispatch<React.SetStateAction<config>> }> = ({ config, setConfig }) => {
-    const [newFont, setNewFont] = React.useState({ family: '', url: '' });
+const FontfaceEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
+    const [ newFont, setNewFont ] = React.useState({ family: '', url: '' });
 
     const handleAddFont = () => {
         if (!newFont.family || !newFont.url) return;
-        setConfig(prev => ({ ...prev, fonts: [...prev.fonts, newFont] }));
+        setConfig(prev => ({ ...prev, fonts: [ ...prev.fonts, newFont ] }));
         setNewFont({ family: '', url: '' });
     };
 
-    const handleRemoveFont = (index: number) => {
+    const handleRemoveFont = (index: number) =>
         setConfig(prev => ({ ...prev, fonts: prev.fonts.filter((_, i) => i !== index) }));
-    };
 
     return (
-        <Card className='border-none shadow-none'>
-            <CardHeader>
-                <CardTitle>Fonts</CardTitle>
-                <CardDescription>Manage fonts from valid URLs (e.g., .woff2).</CardDescription>
-            </CardHeader>
-            <CardContent className='space-y-4'>
-                {config.fonts.map((font, index) => (
-                    <div key={index} className='flex items-center gap-2 p-2 border rounded-md'>
-                        <div className='flex-1 space-y-1'>
-                            <p className='text-sm font-medium'>{font.family}</p>
-                            <p className='text-xs text-muted-foreground truncate'>{font.url}</p>
-                        </div>
-                        <Button variant='ghost' size='icon' onClick={() => handleRemoveFont(index)}>
-                            <Trash2 className='size-4' />
-                        </Button>
+        <section className='space-y-4'>
+            <h3 className='text-lg font-bold'>Font Families</h3>
+            { config.fonts.map((font, index) => (
+                <div key={ font.family } className='flex items-center'>
+                    <div className='flex-1 space-y-1'>
+                        <p className='text-sm font-medium'>{ font.family }</p>
+                        <p className='text-xs text-muted-foreground truncate'>{ font.url }</p>
                     </div>
-                ))}
-                <div className='flex items-end gap-2 p-2 border rounded-md border-dashed'>
-                    <div className='flex-1'>
-                        <Label>Font Family</Label>
-                        <Input placeholder='e.g., Inter' value={newFont.family} onChange={e => setNewFont({ ...newFont, family: e.target.value })} />
-                    </div>
-                    <div className='flex-1'>
-                        <Label>Font URL</Label>
-                        <Input placeholder='/fonts/inter.woff2' value={newFont.url} onChange={e => setNewFont({ ...newFont, url: e.target.value })} />
-                    </div>
-                    <Button onClick={handleAddFont}>Add</Button>
+                    <Button variant='outline' size='icon' onClick={() => handleRemoveFont(index)}>
+                        <Trash2 />
+                    </Button>
                 </div>
-            </CardContent>
-        </Card>
+            )) }
+            <div className='grid grid-cols-[auto_1fr] gap-2 gap-x-4 p-4 border rounded-md border-dashed'>
+                <Label htmlFor='input-fontface-family'>Family</Label>
+                <Input
+                    id='input-fontface-family'
+                    placeholder='e.g., Inter'
+                    defaultValue={ newFont.family }
+                    onChange={ ({ target: { value: family } }) => setNewFont({ ...newFont, family }) }
+                />
+                <Label htmlFor='input-fontface-url'>URL</Label>
+                <Input
+                    id='input-fontface-url'
+                    placeholder='/fonts/inter.woff2'
+                    defaultValue={ newFont.url }
+                    onChange={ ({ target: { value: url } }) => setNewFont({ ...newFont, url }) }
+                />
+                <Button
+                    variant='outline'
+                    className='col-span-full'
+                    onClick={ handleAddFont }
+                >Add</Button>
+            </div>
+        </section>
+    );
+};
+
+const FontEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
+    const [ name, setName ] = React.useState<string>('');
+    const [ newFont, setNewFont ] = React.useState<font>({
+        family: 'Times New Roman',
+        style: 'normal',
+        size: '1rem',
+        weight: 'normal',
+        fallback: 'sans-serif'
+    });
+    const typefaces = React.useMemo(() => 
+        config
+        .fonts
+            .map(({ family }) => family)
+            .concat([
+                'Arial',
+                'Verdana',
+                'Tahoma',
+                'Trebuchet MS',
+                'Times New Roman',
+                'Georgia',
+                'Garamond',
+                'Courier New',
+                'Brush Script MT'
+            ])
+    , [ config.fonts ]);
+    const fontVariables: fontVariable[] = config.variables.filter(({ type }) => type === 'font') as fontVariable[];
+
+    const handleFontChange = (id: string, changes: Partial<fontVariable>) =>
+        setConfig(prev => ({
+            ...prev,
+            variables: prev.variables.map(v => 
+                v.id === id ? { ...v, ...changes as any } : v
+            )
+        }));
+
+    const handleRemoveFont = (index: number) =>
+        setConfig((prev) => ({
+            ...prev,
+            variables: prev.variables.filter((_, i) => i !== index)
+        }));
+
+    const handleAddFont = () =>
+        name.length > 3 &&
+        setConfig((prev) => ({
+            ...prev,
+            variables: [
+                ...prev.variables,
+                {
+                    type: 'font',
+                    name,
+                    id: crypto.randomUUID(),
+                    ...newFont
+                }
+            ]
+        }));
+
+    return (
+        <section className='space-y-4'>
+            <h3 className='text-lg font-bold'>Font Styles</h3>
+            { fontVariables.map((font, index) => (
+                <div key={ font.id } className='flex items-center gap-2'>
+                    <Input
+                        defaultValue={ font.name }
+                        className='text-sm font-medium flex-grow'
+                        onChange={ ({ target: { value: name } }) => handleFontChange(font.id, { name }) }
+                    />
+                    <FontInput
+                        value={ font }
+                        noVars={ true }
+                        onChange={ (changes) => handleFontChange(font.id, cssToFont(changes)) }
+                    />
+                    <Button variant='outline' size='icon' onClick={() => handleRemoveFont(index)}>
+                        <Trash2 />
+                    </Button>
+                </div>
+            )) }
+            
+            <div className='grid grid-cols-[auto_1fr] gap-2 gap-x-4 p-4 border rounded-md border-dashed'>
+                <Label htmlFor='input-font-name'>Name</Label>
+                <Input
+                    defaultValue={ name }
+                    onChange={ ({ target: { value } }) => setName(value) }
+                />
+                <Label htmlFor='input-font-family'>Family</Label>
+                <Select onValueChange={ (family) => setNewFont({ ...newFont, family }) }>
+                    <SelectTrigger id='input-font-family' className='w-full' value={ newFont.family }>
+                        { newFont.family }
+                    </SelectTrigger>
+                    <SelectContent>
+                        { typefaces.map((typeface) => (
+                            <SelectItem style={ { fontFamily: typeface } } key={ typeface } value={ typeface }>
+                                { typeface }
+                            </SelectItem>
+                        )) }
+                    </SelectContent>
+                </Select>
+                <Label htmlFor='input-font-style'>Style</Label>
+                <CssKeywordInput
+                    id='input-font-style'
+                    value={ newFont.style }
+                    options={ [ 'normal', 'italic' ] }
+                    onChange={ (style) => setNewFont({ ...newFont, style: style as 'normal' | 'italic' }) }
+                />
+                <Label>Size</Label>
+                <CssUnitInput
+                    value={ newFont.size }
+                    units={ [ 'rem', 'em', 'px' ] }
+                    onChange={ (size) => setNewFont({ ...newFont, size }) }
+                    allowCustom={ false }
+                />
+                <Label htmlFor='input-font-weight'>Weight</Label>
+                <CssKeywordInput
+                    id='input-font-weight'
+                    value={ newFont.weight }
+                    options={ [ 'normal', 'bold', 'lighter', 'bolder' ] }
+                    onChange={ (weight) => setNewFont({ ...newFont, weight: weight as 'normal' | 'bold' | 'lighter' | 'bolder' }) }
+                />
+                <Label htmlFor='input-font-fallback'>Fallback</Label>
+                <CssKeywordInput
+                    id='input-font-fallback'
+                    value={ newFont.fallback }
+                    options={ [ 'serif', 'sans-serif', 'monospace', 'cursive' ] }
+                    onChange={ (fallback) => setNewFont({ ...newFont, fallback: fallback as 'serif' | 'sans-serif' | 'monospace' | 'cursive' }) }
+                />
+                <Button
+                    variant='outline'
+                    className='col-span-full'
+                    onClick={ handleAddFont }
+                >Add</Button>
+            </div>
+        </section>
     );
 };
 
 const ColorPreview: React.FC<{ config: config }> = ({ config }) => {
     const colorVariables = config.variables.filter(v => v.type === 'color');
     return (
-        <div>
-            <h3 className='text-2xl font-semibold'>Colors</h3>
-            <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-                {colorVariables.map(variable => (
-                    <div key={variable.id} className='text-center'>
-                        <div className='w-full aspect-video rounded-lg border shadow-sm' style={{ backgroundColor: variable.color }}></div>
-                        <p className='mt-2 text-sm font-medium'>{variable.name}</p>
-                        <p className='text-xs text-muted-foreground'>{variable.color}</p>
+        <div className='flex flex-wrap gap-4'>
+            <h3 className='text-2xl font-semibold w-full'>Colors</h3>
+            { colorVariables.map(({ id, color, name }) => {
+                let [ h, s, l ] = hexToHsl(color);
+                const foregroundHex = hslToHex(h, s / 2, l > 50 ? 20 : 80);
+
+                return(
+                    <div key={ id } className='basis-32 grow max-w-64 text-center'>
+                        <Card
+                            className='w-full aspect-video flex justify-end items-start p-4 gap-2'
+                            style={ { backgroundColor: color, color: foregroundHex } }
+                        >
+                            <p className='text-sm font-medium'>{ name }</p>
+                            <p className='text-xs opacity-75'>{ color }</p>
+                        </Card>
                     </div>
-                ))}
-            </div>
+                );
+            }) }
         </div>
     );
 };
 
 const FontPreview: React.FC<{ config: config }> = ({ config }) => {
+    const fonts = React.useMemo(() =>
+        config.variables.filter(({ type }) =>
+            type === 'font'
+        ) as fontVariable[]
+    , [ config.variables ]);
+
     return (
         <div>
             <h3 className='text-2xl font-semibold mb-4'>Fonts</h3>
             <div className='space-y-6'>
-                {config.fonts.map((font, index) => (
-                    <div key={index}>
-                        <h4 className='text-lg font-medium' style={{ fontFamily: font.family }}>{font.family}</h4>
-                        <p className='text-muted-foreground text-sm' style={{ fontFamily: font.family }}>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </p>
-                    </div>
+                { fonts.map((font) => (
+                    <p
+                        key={ font.id }
+                        className={ `text-muted-foreground text-sm overflow-scroll text-nowrap max-h-[${ font.size }]` }
+                        style={ { font: fontToCss(font) } }
+                    >{ font.name }</p>
                 ))}
             </div>
         </div>

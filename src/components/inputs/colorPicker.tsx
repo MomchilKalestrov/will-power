@@ -38,7 +38,6 @@ const ColorPicker: React.FC<Props> = ({
     React.useEffect(() => {
         if (!config) return;
         const variables = config.variables.filter(variable => variable.type === 'color');
-        console.log(variables)
         setVariables(variables);
         
         if (color || !initialColor.startsWith('var(--')) return;
@@ -51,11 +50,12 @@ const ColorPicker: React.FC<Props> = ({
     }, [ config ]);
 
     const onVariableChange = (variableId: string) => {
-        const newVariable = variables.find(variable => variable.id === variableId);
+        const newVariable = variables.find(({ id }) => id === variableId);
+        if (!newVariable) return;
         setVariable(newVariable);
         const color = (newVariable as typeof newVariable & { color: string }).color;
         setColor(color);
-        onChangeCallback(`var(--${ newVariable?.id })`);
+        onChangeCallback(`var(--${ newVariable.id })`);
     };
 
     const onColorChange = (newColor: string) => {

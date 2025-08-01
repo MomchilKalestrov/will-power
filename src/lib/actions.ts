@@ -2,44 +2,17 @@
 import { put, list } from '@vercel/blob';
 import { z } from 'zod';
 
-let _cachedBlobList: BlobInformation[] | undefined = [
-  {
-    url: 'https://5r8xi2igslacumom.public.blob.vercel-storage.com/HellYeah.png',
-    downloadUrl: 'https://5r8xi2igslacumom.public.blob.vercel-storage.com/HellYeah.png?download=1',
-    pathname: 'HellYeah.png',
-    size: 9148,
-    uploadedAt: new Date('2025-07-24T18:43:36.000Z')
-  },
-  {
-    url: 'https://5r8xi2igslacumom.public.blob.vercel-storage.com/HellYeah.png',
-    downloadUrl: 'https://5r8xi2igslacumom.public.blob.vercel-storage.com/HellYeah.png?download=1',
-    pathname: 'Hell.png',
-    size: 9148,
-    uploadedAt: new Date('2025-07-24T18:43:36.000Z')
-  },
-  {
-    url: 'https://5r8xi2igslacumom.public.blob.vercel-storage.com/HellYeah.png',
-    downloadUrl: 'https://5r8xi2igslacumom.public.blob.vercel-storage.com/HellYeah.png?download=1',
-    pathname: 'Yeah.png',
-    size: 9148,
-    uploadedAt: new Date('2025-07-24T18:43:36.000Z')
-  },
-  {
-    url: 'https://5r8xi2igslacumom.public.blob.vercel-storage.com/config.json',
-    downloadUrl: 'https://5r8xi2igslacumom.public.blob.vercel-storage.com/config.json?download=1',
-    pathname: 'config.json',
-    size: 19,
-    uploadedAt: new Date('2025-07-17T07:20:49.000Z')
-  }
-];
+declare global {
+    var cachedBlobList: BlobInformation[] | undefined;
+}
 
 const getBlobList = async (): Promise<BlobInformation[]> => {
-    if (_cachedBlobList)
-        return _cachedBlobList;
+    if (global.cachedBlobList)
+        return global.cachedBlobList;
     
     try {
         const { blobs } = await list();
-        _cachedBlobList = blobs;
+        global.cachedBlobList = blobs;
         return blobs;
     } catch (error) {
         console.error('Error listing blobs:', error);
@@ -62,9 +35,9 @@ const addBlob = async (path: string, body: string, options: any): Promise<boolea
     try {
         let blob = await put(path, body, options);
         
-        if (!_cachedBlobList)
+        if (!global.cachedBlobList)
             await getBlobList();
-        _cachedBlobList!.push({
+        global.cachedBlobList!.push({
             ...blob,
             size: body.length,
             uploadedAt: new Date()

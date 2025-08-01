@@ -14,7 +14,13 @@ const Overlay: React.FC<Props> = ({ id, zIndex }) => {
         })
     , [ id ]);
 
-    return (<span data-drag-id={ id } onClick={ select } style={ { zIndex } } className={ styles.Overlay }></span>);
+    return (
+        <span
+            onClick={ select }
+            style={ { zIndex } }
+            className={ styles.Overlay }
+        />
+    );
 };
 
 export default Overlay;

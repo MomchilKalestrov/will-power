@@ -13,7 +13,6 @@ const ConfigProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const [ config, setConfig ] = React.useState<config | undefined>();
 
     const updateConfig = async (newConfig: Partial<config>) => {
-        console.log('updating', newConfig)
         setConfig({ ...config!, ...newConfig });
         await saveConfig(newConfig);
     };

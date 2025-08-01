@@ -14,7 +14,8 @@ const CssUnitInput: React.FC<{
     units: string[];
     onChange: (newValue: string) => void;
     count?: number;
-}> = ({ value, units, onChange, count = 1 }) => {
+    allowCustom?: boolean;
+}> = ({ value, units, onChange, count = 1, allowCustom = true }) => {
     const [ currentValues, setCurrentValues ] = React.useState<string[]>([]);
     const [ currentUnit, setCurrentUnit ] = React.useState<string>('');
 
@@ -100,7 +101,7 @@ const CssUnitInput: React.FC<{
                             { unit }
                         </SelectItem>
                     )) }
-                    <SelectItem value='custom'>custom</SelectItem>
+                    { allowCustom && <SelectItem value='custom'>custom</SelectItem> }
                 </SelectContent>
             </Select>
         </div>

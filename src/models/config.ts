@@ -10,6 +10,7 @@ const variableSchema = new mongoose.Schema({
     style: { type: String, enum: [ 'normal', 'italic' ] },
     size: { type: String },
     weight: { type: String, enum: [ 'normal', 'bold', 'lighter', 'bolder' ] },
+    fallback: { type: String, enum: [ 'serif', 'sans-serif', 'cursive', 'monospace' ] },
     
     // Color-specific field
     color: { type: String }
