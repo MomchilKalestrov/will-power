@@ -44,7 +44,6 @@ const defaultConfig: config = {
 }; 
 
 const getConfig = async (): Promise<config> => {
-    console.log(JSON.stringify(global.config, null, '\t'));
     if (!!global.config) return JSON.parse(JSON.stringify(global.config));
     
     await connect();

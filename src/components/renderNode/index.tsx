@@ -39,8 +39,19 @@ const RenderNode: React.FC<Props> = ({
 
     if (Component === undefined) return null;
 
+    let newStyle: React.CSSProperties = {
+        ...style,
+        ...(editor && (style.position === 'static' || style.position === undefined) && {
+            position: 'relative',
+            top: 'unset',
+            bottom: 'unset',
+            left: 'unset',
+            right: 'unset'
+        })
+    };
+    
     return (
-        <Component { ...{ ...attributes, ...props, style, id } }>
+        <Component { ...{ ...attributes, ...props, style: newStyle, id } }>
             { children.map((child) => (
                 <RenderNode
                     depth={ depth + 1 }

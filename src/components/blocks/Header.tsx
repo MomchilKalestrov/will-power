@@ -25,8 +25,14 @@ type Props = {
     type?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 };
 
-const Header: React.FC<Props> = ({ type = 'h1', contents, ...props }) =>
-    React.createElement(type, props, contents);
+const Header: React.FC<React.PropsWithChildren<Props>> = ({
+    type: Element = 'h1',
+    contents,
+    children,
+    ...props
+}) => (
+    <Element { ...props }>{ contents }{ children }</Element>
+);
 
 export default Header;
 export { metadata };

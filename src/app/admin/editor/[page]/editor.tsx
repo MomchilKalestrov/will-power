@@ -126,7 +126,7 @@ const Editor: React.FC<Props> = ({ page: pageName }) => {
             </header>
             <main className='w-screen h-[calc(100dvh_-_var(--spacing)_*_16)] flex flex-col overflow-hidden bg-background'>
                 <div className='flex flex-1 overflow-hidden'>
-                    <Card className='min-w-32 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-0 border-r bg-muted/20 p-4'>
+                    <Card className='min-w-32 w-80 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-0 border-r bg-muted/20 p-4'>
                         { 
                             (selectedNode && selectedNodeMetadata)
                             ?   <PropertiesPanel

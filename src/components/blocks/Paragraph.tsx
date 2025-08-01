@@ -16,8 +16,13 @@ type Props = {
     contents: string;
 };
 
-const Paragraph: React.FC<Props> = ({ contents, ...props }) =>
-    <p { ...props }>{ contents }</p>
+const Paragraph: React.FC<React.PropsWithChildren<Props>> = ({ 
+    contents,
+    children,
+    ...props
+}) => (
+    <p { ...props }>{ contents }{ children }</p>
+)
 
 export default Paragraph;
 export { metadata };

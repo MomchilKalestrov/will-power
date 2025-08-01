@@ -45,7 +45,7 @@ const addBlob = async (path: string, body: string, options: any): Promise<boolea
 
         return true;
     } catch (error) {
-        console.log('Error saving blobs: ', error);
+        console.error('Error saving blobs: ', error);
         return false;
     };
 };
