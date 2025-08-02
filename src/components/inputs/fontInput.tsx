@@ -11,6 +11,7 @@ import CssUnitInput from './cssUnitInput';
 import CssKeywordInput from './cssKeywordInput';
 import { cn, fontToCss } from '@/lib/utils';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 type Props = {
     value: string | fontVariable;
@@ -23,6 +24,7 @@ const FontInput: React.FC<Props> = ({
     onChange: onChangeCallback,
     noVars
 }) => {
+    const path = usePathname();
     const { config } = useConfig();
     const [ variable, setVariable ] = React.useState<fontVariable | undefined>(undefined);
     const [ variables, setVariables ] = React.useState<fontVariable[]>([]); 
@@ -93,7 +95,7 @@ const FontInput: React.FC<Props> = ({
         onChangeCallback(fontToCss(newFont));
     }, [ font, variable ]);
 
-    if (!font) return;
+    if (!font) return null;
 
     const showVars = (variables.length !== 0) && !noVars;
     const currentVarId = variable?.id;
@@ -109,11 +111,9 @@ const FontInput: React.FC<Props> = ({
                 {
                     showVars &&
                     <div className='col-span-full flex justify-end gap-2'>
-                        <Link href='/admin/config'>
-                            <Button variant='outline' size='icon'>
-                                <Settings />
-                            </Button>
-                        </Link>
+                        <Button variant='outline' size='icon'>
+                            <Link href='/admin/config'><Settings /></Link>
+                        </Button>
                         <Popover>
                             <PopoverTrigger asChild>
                                 <Button variant='outline' size='icon'>
@@ -131,9 +131,7 @@ const FontInput: React.FC<Props> = ({
                                             'w-full justify-start rounded-none',
                                             variable.id === currentVarId && 'bg-muted'
                                         ) }
-                                    >
-                                        { variable.name }
-                                    </Button>
+                                    >{ variable.name }</Button>
                                 )) }
                             </PopoverContent>
                         </Popover>

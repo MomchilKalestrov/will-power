@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { Plus } from 'lucide-react';
+import { Plus, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import PropertiesPanel from '@/components/propertiesPanel';
@@ -9,6 +9,7 @@ import TreePanel from '@/components/treePanel';
 import { getPageByName, savePage } from '@/lib/db/actions';
 import useNodeTree from '@/hooks/useNodeTree';
 import BlockPanel from '@/components/blocksPanel';
+import SettingsPopover from '@/components/settingsPopover';
 
 type Props = {
     page: string
@@ -112,12 +113,15 @@ const Editor: React.FC<Props> = ({ page: pageName }) => {
     return (
         <>
             <header className='h-16 w-full px-4 border-b bg-background flex justify-between items-center gap-4 shrink-0'>
-                <Button className='size-9 p-0' variant='outline' onClick={ () => setSelectedNode(undefined) }>
-                    <Plus />
-                </Button>
                 <section className='flex gap-2'>
-                    <Button variant='outline' onClick={ onReset }>
-                        Reset
+                    <SettingsPopover />
+                    <Button className='size-9 p-0' variant='outline' onClick={ () => setSelectedNode(undefined) }>
+                        <Plus />
+                    </Button>
+                </section>
+                <section className='flex gap-2'>
+                    <Button variant='outline' size='icon' onClick={ onReset }>
+                        <RotateCcw />
                     </Button>
                     <Button onClick={ () => savePage({ name: pageName, rootNode: tree, lastEdited: Date.now() }) }>
                         Save

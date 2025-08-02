@@ -65,14 +65,14 @@ const ColorPicker: React.FC<Props> = ({
     };
 
     const showVars = (variables.length !== 0) || !noVars;
-
+    
     return (
         <Popover>
             <PopoverTrigger asChild>
                 {
                     preview
                     ?   <div className='flex gap-2 items-stretch'>
-                            <div className='flex-grow bg-card text-card-foreground rounded-md border shadow-sm p-1'>
+                            <div className='flex-grow bg-card text-card-foreground rounded-md border shadow-sm p-1 min-w-9'>
                                 <div className='size-full' style={ { borderRadius: 4, backgroundColor: color } } />
                             </div>
                             <Button variant={ selected ? 'outline' : 'ghost' } size='icon'>

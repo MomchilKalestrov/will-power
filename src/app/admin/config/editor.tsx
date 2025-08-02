@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Trash2 } from 'lucide-react';
+import { ChevronLeft, RotateCcw, Trash2 } from 'lucide-react';
 import ColorPicker from '@/components/inputs/colorPicker';
 import { useConfig } from '@/components/configProvider';
 import { Select } from '@radix-ui/react-select';
@@ -15,6 +15,9 @@ import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 import CssUnitInput from '@/components/inputs/cssUnitInput';
 import FontInput from '@/components/inputs/fontInput';
 import { cssToFont, fontToCss, hexToHsl, hslToHex } from '@/lib/utils';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import SettingsPopover from '@/components/settingsPopover';
 
 type Props = {
     initialConfig: config;
@@ -26,13 +29,17 @@ type EditorProps = {
 };
 
 const Editor: React.FC<Props> = ({ initialConfig }) => {
+    const prevUrl = useSearchParams().get('return');
+    const router = useRouter();
     const { updateConfig } = useConfig();
     const [ config, setConfig ] = React.useState<config>(initialConfig);
     const [ saveState, setSaveState ] = React.useState<boolean>(true);
 
     const onWindowChange = React.useCallback((e: Event) => {
+        e.preventDefault();
         if (saveState)
             return;
+        ((e as any || (window as any).event)).returnValue = 'Any unsaved changes will be lost.';
         return 'Any unsaved changes will be lost.';
     }, [ saveState ]);
 
@@ -52,10 +59,20 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
     return (
         <>
             <header className='h-16 w-full px-4 border-b bg-background flex justify-between items-center gap-4 shrink-0'>
-                <div />
                 <section className='flex gap-2'>
-                    <Button variant='outline' onClick={ () => setConfig(initialConfig) }>
-                        Reset
+                    <SettingsPopover />
+                    { 
+                        prevUrl &&
+                        <Link href={ decodeURIComponent(prevUrl) }>
+                            <Button variant='outline' size='icon'>
+                                <ChevronLeft />
+                            </Button>
+                        </Link>
+                    }
+                </section>
+                <section className='flex gap-2'>
+                    <Button variant='outline' size='icon' onClick={ () => setConfig(initialConfig) }>
+                        <RotateCcw />
                     </Button>
                     <Button
                         disabled={ saveState }
@@ -67,7 +84,7 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
                 </section>
             </header>
             <main className='flex h-[calc(100dvh_-_var(--spacing)_*_16)]'>
-                <Card className='min-w-32 max-w-[33%] overflow-x-hidden overflow-y-scroll resize-x h-full rounded-none border-0 border-r p-4'>
+                <Card className='min-w-32 max-w-[33%] overflow-x-hidden overflow-y-scroll resize-x h-full rounded-none border-0 border-r p-4 shadow-none'>
                     <div className='space-y-4'>
                         <ColorEditor { ...editorParams } />
                         <Separator />
@@ -144,6 +161,7 @@ const ColorEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
                         value={ color }
                         selected={ true }
                         onChange={ (value) => handleColorChange(id, 'color', value) }
+                        preview={ true }
                     />
                     <Button
                         variant='outline'
