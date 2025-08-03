@@ -1,3 +1,4 @@
+import { Toaster } from 'sonner';
 import { ComponentDbProvider } from '@/components/componentDb';
 import './globals.css';
 
@@ -8,6 +9,7 @@ const RootLayout: React.FC<React.PropsWithChildren> = async ({ children }) => (
             <link rel="stylesheet" href="/api/css/custom" />
         </head>
         <body>
+            <Toaster />
             <ComponentDbProvider>
                 { children }
             </ComponentDbProvider>

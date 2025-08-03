@@ -58,7 +58,7 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
 
     return (
         <>
-            <header className='h-16 w-full px-4 border-b bg-background flex justify-between items-center gap-4 shrink-0'>
+            <header className='h-16 px-4 border-b bg-background flex justify-between items-center gap-4'>
                 <section className='flex gap-2'>
                     <SettingsPopover />
                     { 
@@ -93,8 +93,6 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
                         <FontEditor { ...editorParams } />
                     </div>
                 </Card>
-
-                {/* Right Panel: Visualization */}
                 <section className='flex-1 p-8 overflow-y-auto'>
                     <div className='mx-auto overflow-x-hidden overflow-y-scroll'>
                         <h2 className='text-3xl font-bold'>Preview</h2>
