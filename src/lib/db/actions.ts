@@ -10,6 +10,7 @@ const getPageByName = async (name: string): Promise<Page | null> => {
     await connect();
     let page = await Page.findOne({ name }).lean();
     if (!page) return null;
+    console.log(page)
     return JSON.parse(JSON.stringify(page)); // hackey solution
 };
 
@@ -42,8 +43,7 @@ const savePage = async (pageData: Page): Promise<boolean> => {
 };
 
 const createPage = async (name: string): Promise<boolean> => {
-    if (!global.pageNames)
-        await getAllPages();
+    if (!global.pageNames) await getAllPages();
 
     if (
         name !== encodeURIComponent(name) ||
@@ -70,7 +70,8 @@ const createPage = async (name: string): Promise<boolean> => {
     };
 
     try {
-        await Page.insertOne(page);
+        const doc = new Page(page);
+        await doc.save();
         global.pageNames!.add(name);
         return true;
     } catch (error) {

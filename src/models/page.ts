@@ -4,25 +4,15 @@ import mongoose from 'mongoose';
 const pageNodeSchema = new mongoose.Schema({
     id: { type: String, required: true },
     type: { type: String, required: true },
-    style: { type: Object, of: String }, // Changed from Map to Object
-    attributes: { type: Object, of: String }, // Changed from Map to Object
-    children: [
-        {
-            type: mongoose.Schema.Types.Mixed,
-            validate: {
-                validator: function (value: string | any[]) {
-                    return (
-                        typeof value === 'string' ||
-                        (Array.isArray(value) &&
-                            value.every((v) => typeof v === 'object' && v.id && v.type))
-                    );
-                },
-                message: 'children must be a string or an array of PageNode objects',
-            },
-        },
-    ],
-    props: { type: mongoose.Schema.Types.Mixed },
-});
+    style: { type: mongoose.Schema.Types.Mixed, default: {} },
+    attributes: { type: mongoose.Schema.Types.Mixed, default: {} },
+    props: { type: mongoose.Schema.Types.Mixed, default: {} },
+    acceptChildren: { type: Boolean, default: false }
+}, { minimize: false });
+
+pageNodeSchema.add({
+    children: { type: [ pageNodeSchema ], default: [] }
+})
 
 const pageSchema = new mongoose.Schema<PageNode>({
     name: { type: String, required: true },
