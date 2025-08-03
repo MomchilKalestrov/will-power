@@ -33,7 +33,7 @@ const isVisible = (
     if (!condition) return true;
     const nodeAccessor: string = ({ props: 'props', styles: 'style', attributes: 'attributes' })[ key ];
 
-    const value = node[ nodeAccessor ][ condition.key ] ?? metadata[ key ][ condition.key ].default;
+    const value = node[ nodeAccessor ]?.[ condition.key ] ?? metadata[ key ][ condition.key ].default;
     let result = value == condition.value;
     if (condition.comparison === 'different')
         result = !result;

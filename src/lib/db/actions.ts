@@ -83,7 +83,7 @@ const deletePage = async (name: string): Promise<boolean> => {
     try {
         await Page.findOneAndDelete({ name });
         if (global.pageNames)
-            global.pageNames.delete(name);
+            return global.pageNames.delete(name);
         return true;
     } catch (error) {
         console.error('Error deleting page: ' + error);
