@@ -6,18 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import PropertiesPanel from '@/components/propertiesPanel';
 import TreePanel from '@/components/treePanel';
-import { getPageByName, savePage } from '@/lib/db/actions';
+import { getComponentByName, saveComponent } from '@/lib/db/actions';
 import useNodeTree from '@/hooks/useNodeTree';
 import BlockPanel from '@/components/blocksPanel';
 import SettingsPopover from '@/components/settingsPopover';
 
 type Props = {
-    page: string
+    component: string;
 };
 
 const randomId = (): string => Math.floor(Math.random() * 9999).toString().padStart(4, '0');
 
-const newNode = (type: string): PageNode => ({
+const newNode = (type: string): ComponentNode => ({
     id: type + '-' + randomId(),
     type,
     style: {},
@@ -39,22 +39,25 @@ const getMetadata = (type: string): NodeMetadata | null => {
     return metadata;
 };
 
-const Editor: React.FC<Props> = ({ page: pageName }) => {
+const Editor: React.FC<Props> = ({ component: componentName }) => {
+    const [ type, setType ] = React.useState<componentType>('page');
     const { tree, setTree, findNode, updateNode, reparentNode, addNode } = useNodeTree();
-    const [ selectedNode, setSelectedNode ] = React.useState<PageNode | undefined>();
+    const [ selectedNode, setSelectedNode ] = React.useState<ComponentNode | undefined>();
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
     React.useEffect(() => {
-        if (!pageName) return;
+        if (!componentName) return;
 
-        getPageByName(pageName)
+        getComponentByName(componentName)
             .then((remoteRevision) => {
+                console.log(remoteRevision);
                 if (!remoteRevision)
                     notFound();
-
-                const localRevisionString = localStorage.getItem(pageName);
+                
+                setType(remoteRevision.type);
+                const localRevisionString = localStorage.getItem(componentName);
                 if (localRevisionString) {
-                    const localRevision: Page = JSON.parse(localRevisionString);
+                    const localRevision: Component = JSON.parse(localRevisionString);
                     if (localRevision.lastEdited < remoteRevision.lastEdited)
                         alert('A newer version is available on remote');
                     setTree(localRevision.rootNode);
@@ -62,15 +65,15 @@ const Editor: React.FC<Props> = ({ page: pageName }) => {
                 }
 
                 setTree(remoteRevision.rootNode);
-                localStorage.setItem(pageName, JSON.stringify(remoteRevision));
+                localStorage.setItem(componentName, JSON.stringify(remoteRevision));
             });
-    }, [ pageName ]);
+    }, [ componentName ]);
 
     React.useEffect(() => {
         if (!iframeRef.current || !tree) return
         
-        localStorage.setItem(pageName, JSON.stringify({
-            name: pageName,
+        localStorage.setItem(componentName, JSON.stringify({
+            name: componentName,
             rootNode: tree,
             lastEdited: Date.now()
         }));
@@ -86,18 +89,18 @@ const Editor: React.FC<Props> = ({ page: pageName }) => {
             case 'select':
                 setSelectedNode(findNode(event.data.payload)!);
         }
-    }, [ pageName, tree, findNode ]);
+    }, [ tree, findNode ]);
 
     const onReset = React.useCallback(async () => {
-        const remoteRevision = await getPageByName(pageName);
+        const remoteRevision = await getComponentByName(componentName);
         setTree(remoteRevision?.rootNode);
-        localStorage.setItem(pageName, JSON.stringify(remoteRevision));
-    }, [ pageName ]);
+        localStorage.setItem(componentName, JSON.stringify(remoteRevision));
+    }, [ componentName ]);
     
     React.useEffect(() => {
         window.addEventListener('message', onMessage);
         return () => window.removeEventListener('message', onMessage);
-    }, [ pageName ]);
+    }, []);
 
     React.useEffect(() => {
         if (!selectedNode) return;
@@ -123,7 +126,14 @@ const Editor: React.FC<Props> = ({ page: pageName }) => {
                     <Button variant='outline' size='icon' onClick={ onReset }>
                         <RotateCcw />
                     </Button>
-                    <Button onClick={ () => savePage({ name: pageName, rootNode: tree, lastEdited: Date.now() }) }>
+                    <Button onClick={ () =>
+                        saveComponent({
+                            type,
+                            name: componentName,
+                            rootNode: tree,
+                            lastEdited: Date.now()
+                        })
+                    }>
                         Save
                     </Button>
                 </section>
@@ -144,7 +154,7 @@ const Editor: React.FC<Props> = ({ page: pageName }) => {
                     
                     <iframe 
                         ref={ iframeRef } 
-                        src={ `/admin/viewer/${ pageName }` }
+                        src={ `/admin/viewer/${ componentName }` }
                         className='flex-grow h-full border-0'
                         title='Page Editor'
                     />

@@ -1,22 +1,25 @@
 
 declare global {
     type timestamp = number;
+    type componentType = 'header' | 'page' | 'footer' | 'component';
     
-    interface PageNode {
+    interface ComponentNode {
         id: string;
         type: string;
         style?: Record<string, string>;
         attributes?: Record<string, string>;
-        children?: PageNode[];
-        props?: any; // react component props
+        children?: ComponentNode[];
+        props?: any;
         acceptChildren: boolean;
         [ key: string ]: any;
     };
 
-    interface Page {
+    interface Component {
+        type: componentType;
         name: string;
         lastEdited: timestamp;
-        rootNode: PageNode;
+        rootNode: ComponentNode;
+        displayCondition?: [ displayCondition, ...displayCondition[] ];
     }
 
     interface User {
@@ -25,15 +28,26 @@ declare global {
         role: 'editor' | 'admin';
     };
 
-    type condition = {
+    type displayCondition = {
+        show: 'all';
+        name?: string;
+    } | {
+        show: 'page';
+        name: string;
+    } | {
+        show: 'exclude';
+        name: string;
+    };
+
+    type editorVisibilityCondition = {
         key: string;
         value: string;
-        and: condition;
+        and: editorVisibilityCondition;
         comparison?: 'equal' | 'different';
     } | {
         key: string;
         value: string;
-        or: condition;
+        or: editorVisibilityCondition;
         comparison?: 'equal' | 'different';
     } | {
         key: string;
@@ -44,7 +58,7 @@ declare global {
     type style = {
         type: 'string' | 'css-units' | 'shadow' | 'background' | 'keyword';
         default: string;
-        condition?: condition;
+        condition?: editorVisibilityCondition;
         in: string;
     } & ({
         type: 'css-units';
@@ -57,7 +71,7 @@ declare global {
     type attribute = {
         type: 'string' | 'enum';
         default: any;
-        condition?: condition;
+        condition?: editorVisibilityCondition;
         in: string;
     };
 
@@ -77,7 +91,7 @@ declare global {
     type prop = {
         type: 'string' | 'number' | 'custom' | 'enum';
         default: any;
-        condition?: condition;
+        condition?: editorVisibilityCondition;
     } & ({
         type: 'string' | 'number' | 'enum';
     } | {

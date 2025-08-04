@@ -1,32 +1,82 @@
 'use server';
+import z from 'zod';
 import connect from '.';
-import Page from '@/models/page';
+import Component from '@/models/component';
 
 declare global {
-    var pageNames: Set<string> | undefined;
+    var componentNames: { [ key: string ]: Set<string> | undefined };
 };
 
-const getPageByName = async (name: string): Promise<Page | null> => {
+const componentName = z.string().min(1).refine(name => name === encodeURIComponent(name));
+
+const componentNodeSchema = z.object({
+    id: z.string(),
+    type: z.string(),
+    style: z.record(z.string(), z.string()),
+    attributes: z.record(z.string(), z.string()),
+    props: z.object(),
+    acceptsChildren: z.boolean().optional()
+});
+
+const componentTypes = z.literal([ 'header', 'page', 'footer', 'component' ]);
+
+const componentSchema = z.union([
+    z.object({
+        type: z.enum([ 'header', 'footer' ]),
+        name: componentName,
+        lastEdited: z.number(),
+        rootNode: componentNodeSchema,
+        displayCondition: z.union([
+            z.object({
+                show: z.literal('all'),
+            }),
+            z.object({
+                show: z.enum([ 'page', 'exclude' ]),
+                name: z.string()
+            })
+        ])
+    }),
+    z.object({
+        type: z.enum([ 'page', 'component' ]),
+        name: componentName,
+        lastEdited: z.number(),
+        rootNode: componentNodeSchema
+    }),
+]);
+
+if (!global.componentNames)
+    global.componentNames = {};
+
+const getComponentByName = async (name: string): Promise<Component | null> => {
     await connect();
-    let page = await Page.findOne({ name }).lean();
-    if (!page) return null;
-    return JSON.parse(JSON.stringify(page)); // hackey solution
+
+    let component = await Component.findOne({ name }).lean();
+    if (!component) return null;
+    
+    return JSON.parse(JSON.stringify(component));
 };
 
-const getAllPages = async (): Promise<string[]> => {
-    if (global.pageNames) return [ ...global.pageNames ];
+const getAllComponents = async (type: componentType = 'page'): Promise<string[]> => {
+    console.log(global.componentNames[ type ]);
+    try { componentTypes.parse(type); } catch { return []; };
+
+    if (global.componentNames[ type ])
+        return [ ...global.componentNames[ type ] ];
+
     await connect();
-    let pages = await Page.distinct('name').lean();
-    global.pageNames = new Set(pages);
-    return [ ...global.pageNames ];
+    let components = await Component.find({ type }).distinct('name').lean();
+    global.componentNames[ type ] = new Set(components);
+
+    return [ ...global.componentNames[ type ] ];
 };
 
-const savePage = async (pageData: Page): Promise<boolean> => {
-    await connect();
-    const { name, ...data } = pageData;
-
+const saveComponent = async (component: Component): Promise<boolean> => {
     try {
-        await Page.findOneAndUpdate(
+        const model = componentSchema.parse(component);
+        const { name, ...data } = model;
+
+        await connect();
+        await Component.findOneAndUpdate(
             { name },
             { name, ...data },
             {
@@ -34,6 +84,7 @@ const savePage = async (pageData: Page): Promise<boolean> => {
                 runValidators: true,
             }
         );
+
         return true;
     } catch (error) {
         console.error('Error saving page: ' + error);
@@ -41,23 +92,33 @@ const savePage = async (pageData: Page): Promise<boolean> => {
     }
 };
 
-const createPage = async (name: string): Promise<boolean> => {
-    if (!global.pageNames) await getAllPages();
+const createComponent = async (name: string, type: componentType = 'page'): Promise<boolean> => {
+    try {
+        componentTypes.parse(type);
+        componentName.parse(name);
+    } catch { return false; };
+
+    if (!global.componentNames[ type ])
+        await getAllComponents(type);
 
     if (
-        name === 'admin' ||
-        name !== encodeURIComponent(name) ||
-        name.length === 0 ||
-        global.pageNames?.has(name)
+        (type === 'page' && name === 'admin') ||
+        global.componentNames[ type ]!.has(name)
     ) return false;
     
-    const exists = await Page.findOne({ name }).lean();
-
+    const exists = await Component.findOne({ name, type }).lean();
     if (exists) return false;
 
     try {
-        await new Page({ name }).save();
-        global.pageNames!.add(name);
+        await new Component({
+            name,
+            type,
+            displayCondition:
+                type === 'header' || type === 'footer'
+                ?   []
+                :   undefined
+        }).save();
+        global.componentNames[ type ]!.add(name);
         return true;
     } catch (error) {
         console.error('Error creating page: ' + error);
@@ -65,11 +126,12 @@ const createPage = async (name: string): Promise<boolean> => {
     }
 };
 
-const deletePage = async (name: string): Promise<boolean> => {
+const deleteComponent = async (name: string): Promise<boolean> => {
     try {
-        await Page.findOneAndDelete({ name });
-        if (global.pageNames)
-            return global.pageNames.delete(name);
+        const component = await Component.findOneAndDelete({ name });
+        if (!component) return false;
+        if (global.componentNames[ component.type ])
+            return global.componentNames[ component.type ]!.delete(name);
         return true;
     } catch (error) {
         console.error('Error deleting page: ' + error);
@@ -77,4 +139,4 @@ const deletePage = async (name: string): Promise<boolean> => {
     }
 };
 
-export { getPageByName, savePage, getAllPages, createPage, deletePage };
+export { getComponentByName, saveComponent, getAllComponents, createComponent, deleteComponent };

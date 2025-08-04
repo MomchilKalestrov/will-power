@@ -5,7 +5,7 @@ import { CirclePlus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { createPage } from '@/lib/db/actions';
+import { createComponent } from '@/lib/db/actions';
 import { toast } from 'sonner';
 
 const CreatePageDialog: React.FC<{ pages: string[] }> = ({ pages }) => {
@@ -13,7 +13,7 @@ const CreatePageDialog: React.FC<{ pages: string[] }> = ({ pages }) => {
     const [ name, setName ] = React.useState<string>('');
 
     const onPageCreated = React.useCallback(async () => {
-        if(!(await createPage(name)))
+        if(!(await createComponent(name, 'page')))
             return toast('Couldn\'t create a page with that name');
         router.push('/admin/editor/' + name);
     }, [ name ]);

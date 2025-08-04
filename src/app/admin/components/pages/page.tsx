@@ -2,7 +2,7 @@
 import React from 'react';
 import type { NextPage } from 'next';
 import Image from 'next/image';
-import { getAllPages, deletePage } from '@/lib/db/actions';
+import { getAllComponents, deleteComponent } from '@/lib/db/actions';
 import { Card, CardFooter } from '@/components/ui/card';
 import fallback from './fallback.png';
 import { Button } from '@/components/ui/button';
@@ -20,12 +20,10 @@ const PageCard: React.FC<{ name: string, removePage: (name: string) => void }> =
         if (!button) return;
         button.disabled = true;
 
-        deletePage(name).then((success) => {
+        deleteComponent(name).then((success) => {
             button.disabled = false;
             if (!success)
                 return toast('Failed deleting the page.');
-            
-            deletePage(name);
             removePage(name);
         })
     }, [ name ]);
@@ -61,7 +59,7 @@ const Page: NextPage = () => {
     const [ pages, setPages ] = React.useState<string[]>([]);
 
     React.useEffect(() => {
-        getAllPages().then(setPages);
+        getAllComponents('page').then(setPages);
     }, []);
 
     return (

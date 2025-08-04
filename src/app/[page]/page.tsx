@@ -3,7 +3,7 @@ import React from 'react';
 import { NextPage } from 'next';
 import { notFound } from 'next/navigation';
 import RenderNode from '@/components/renderNode';
-import { getPageByName } from '@/lib/db/actions';
+import { getComponentByName } from '@/lib/db/actions';
 
 type Props = {
     params: Promise<{ page: string }>
@@ -11,7 +11,7 @@ type Props = {
 
 const Page: NextPage<Props> = async ({ params }) => {
     const { page: pageName } = await params;
-    const page = await getPageByName(pageName);
+    const page = await getComponentByName(pageName, 'page');
     
     return page ? <RenderNode node={ page.rootNode } /> : notFound();
 };

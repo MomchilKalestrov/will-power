@@ -3,7 +3,7 @@ import Editor from './editor';
 import { FileSelectorProvider } from '@/components/fileSelector';
 
 type Props = {
-    params: Promise<{ page: string }>
+    params: Promise<{ component: string }>
 };
 
 const Page: NextPage<Props> = async ({ params }) => (
