@@ -18,7 +18,7 @@ const CreatePageDialog: React.FC<{ pages: string[] }> = ({ pages }) => {
         router.push('/admin/editor/' + name);
     }, [ name ]);
 
-    const validInput = name === encodeURIComponent(name) && name.length !== 0 && !pages.includes(name);
+    const validInput = name === encodeURIComponent(name) && name.length !== 0 && !pages.includes(name) && name !== 'admin';
 
     return (
         <Dialog>

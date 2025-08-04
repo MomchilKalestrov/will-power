@@ -1,3 +1,4 @@
+import { config } from '@/lib/config';
 import mongoose from 'mongoose';
 
 const variableSchema = new mongoose.Schema({
@@ -28,6 +29,6 @@ const ConfigSchema = new mongoose.Schema({
 });
 
 const db = mongoose.connection;
-const Config = db.models.Config || mongoose.model('Config', ConfigSchema);
+const Config = db.models.Config || mongoose.model<config>('Config', ConfigSchema);
 
 export default Config;

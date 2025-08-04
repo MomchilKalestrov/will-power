@@ -16,11 +16,23 @@ pageNodeSchema.add({
 
 const pageSchema = new mongoose.Schema<PageNode>({
     name: { type: String, required: true },
-    lastEdited: { type: Number, required: true },
-    rootNode: { type: pageNodeSchema, required: true }
+    lastEdited: { type: Number, required: true, default: Date.now() },
+    rootNode: {
+        type: pageNodeSchema,
+        required: true,
+        default: {
+            id: 'root',
+            type: 'Container',
+            style: {},
+            attributes: {},
+            children: [],
+            props: {},
+            acceptChildren: true
+        }
+    }
 });
 
 const db = mongoose.connection;
-const Page = db.models.Page || mongoose.model('Page', pageSchema);
+const Page = db.models.Page || mongoose.model<Page>('Page', pageSchema);
 
 export default Page;

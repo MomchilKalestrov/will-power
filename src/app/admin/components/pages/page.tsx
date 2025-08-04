@@ -23,9 +23,10 @@ const PageCard: React.FC<{ name: string, removePage: (name: string) => void }> =
         deletePage(name).then((success) => {
             button.disabled = false;
             if (!success)
-                toast('Failed deleting the page.');
-            else
-                deletePage(name);
+                return toast('Failed deleting the page.');
+            
+            deletePage(name);
+            removePage(name);
         })
     }, [ name ]);
 

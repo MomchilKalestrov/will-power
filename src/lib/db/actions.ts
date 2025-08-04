@@ -10,7 +10,6 @@ const getPageByName = async (name: string): Promise<Page | null> => {
     await connect();
     let page = await Page.findOne({ name }).lean();
     if (!page) return null;
-    console.log(page)
     return JSON.parse(JSON.stringify(page)); // hackey solution
 };
 
@@ -46,6 +45,7 @@ const createPage = async (name: string): Promise<boolean> => {
     if (!global.pageNames) await getAllPages();
 
     if (
+        name === 'admin' ||
         name !== encodeURIComponent(name) ||
         name.length === 0 ||
         global.pageNames?.has(name)
@@ -55,23 +55,8 @@ const createPage = async (name: string): Promise<boolean> => {
 
     if (exists) return false;
 
-    const page: Page = {
-        name,
-        lastEdited: Date.now(),
-        rootNode: {
-            id: 'root',
-            type: 'Container',
-            style: {},
-            attributes: {},
-            children: [],
-            props: {},
-            acceptChildren: true
-        }
-    };
-
     try {
-        const doc = new Page(page);
-        await doc.save();
+        await new Page({ name }).save();
         global.pageNames!.add(name);
         return true;
     } catch (error) {

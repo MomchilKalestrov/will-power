@@ -1,11 +1,20 @@
-'use client';
 import React from 'react';
-import { NextPage } from 'next';
-import SettingsPopover from '@/components/settingsPopover';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarRail } from '@/components/ui/sidebar';
-import { usePathname } from 'next/navigation';
+import { NextPage } from 'next';
+import { headers } from 'next/headers';
+import SettingsPopover from '@/components/settingsPopover';
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton, 
+    SidebarMenuItem,
+    SidebarProvider,
+    SidebarRail
+} from '@/components/ui/sidebar';
 
 const pages: string[] = [
     'headers',
@@ -16,10 +25,10 @@ const pages: string[] = [
 
 const Layout: NextPage<{
     children: React.JSX.Element
-}> = ({
+}> = async ({
     children
 }) => {
-    const currentPage = usePathname().split('/')[ 3 ].split('?')[ 0 ];
+    const currentPage = (await headers()).get('x-current-path')!.split('/')[ 3 ].split('?')[ 0 ];
 
     return (
         <SidebarProvider>
@@ -36,7 +45,7 @@ const Layout: NextPage<{
                                 { pages.map((page) => (
                                     <SidebarMenuItem key={ page }>
                                         <SidebarMenuButton asChild isActive={ currentPage === page }>
-                                            <Link className='capitalize' href={ '/admin/pages/' + page }>
+                                            <Link className='capitalize' href={ '/admin/components/' + page }>
                                                 { page }
                                             </Link>
                                         </SidebarMenuButton>
