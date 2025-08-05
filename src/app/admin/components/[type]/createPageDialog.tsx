@@ -4,21 +4,39 @@ import { useRouter } from 'next/navigation';
 import { CirclePlus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from '@/components/ui/dialog';
 import { createComponent } from '@/lib/db/actions';
 import { toast } from 'sonner';
 
-const CreatePageDialog: React.FC<{ pages: string[] }> = ({ pages }) => {
+const CreateComponentDialog: React.FC<{
+    components: string[],
+    type: componentType
+}> = ({
+    components,
+    type
+}) => {
     const router = useRouter();
     const [ name, setName ] = React.useState<string>('');
 
     const onPageCreated = React.useCallback(async () => {
-        if(!(await createComponent(name, 'page')))
+        if(!(await createComponent(name, type)))
             return toast('Couldn\'t create a page with that name');
         router.push('/admin/editor/' + name);
-    }, [ name ]);
+    }, [ name, type ]);
 
-    const validInput = name === encodeURIComponent(name) && name.length !== 0 && !pages.includes(name) && name !== 'admin';
+    const validInput =
+        name === encodeURIComponent(name) &&
+        name.length !== 0 &&
+        !components.includes(name) &&
+        !(name === 'admin' && type === 'page');
 
     return (
         <Dialog>
@@ -29,9 +47,9 @@ const CreatePageDialog: React.FC<{ pages: string[] }> = ({ pages }) => {
             </DialogTrigger>
             <DialogContent className='max-w-[256px_!important]'>
                 <DialogHeader>
-                    <DialogTitle>Create Page</DialogTitle>
+                    <DialogTitle>Create new { type }</DialogTitle>
                     <DialogDescription>
-                        Give the new page a name. The name cannot be changed after creation.
+                        Give the new { type } a name. The name cannot be changed after creation.
                     </DialogDescription>
                 </DialogHeader>
                 <div className='grid gap-2 grid-cols-[auto_1fr]'>
@@ -58,4 +76,4 @@ const CreatePageDialog: React.FC<{ pages: string[] }> = ({ pages }) => {
     );
 };
 
-export default CreatePageDialog;
+export default CreateComponentDialog;

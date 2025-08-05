@@ -11,7 +11,7 @@ type Props = {
 
 const Page: NextPage<Props> = async ({ params }) => {
     const { page: pageName } = await params;
-    const page = await getComponentByName(pageName, 'page');
+    const page = await getComponentByName(pageName);
     
     return page ? <RenderNode node={ page.rootNode } /> : notFound();
 };

@@ -8,7 +8,7 @@ import Logo from '@/components/icons/logo';
 
 const paths: Record<string, string> = {
     config: '/admin/config',
-    pages: '/admin/pages'
+    pages: '/admin/components'
 }
 
 const SettingsPopover: React.FC = () => {

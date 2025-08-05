@@ -1,7 +1,7 @@
+'use client';
 import React from 'react';
 import Link from 'next/link';
 import { NextPage } from 'next';
-import { headers } from 'next/headers';
 import SettingsPopover from '@/components/settingsPopover';
 import {
     Sidebar,
@@ -15,20 +15,17 @@ import {
     SidebarProvider,
     SidebarRail
 } from '@/components/ui/sidebar';
+import { notFound, useParams } from 'next/navigation';
 
-const pages: string[] = [
-    'headers',
-    'pages',
-    'footers',
-    'components'
-];
+const pages: string[] = [ 'header', 'page', 'footer', 'component' ];
 
 const Layout: NextPage<{
     children: React.JSX.Element
-}> = async ({
+}> = ({
     children
 }) => {
-    const currentPage = (await headers()).get('x-current-path')!.split('/')[ 3 ].split('?')[ 0 ];
+    const { type } = useParams();
+    if (type && !pages.includes(type as string)) notFound();
 
     return (
         <SidebarProvider>
@@ -44,7 +41,7 @@ const Layout: NextPage<{
                             <SidebarMenu>
                                 { pages.map((page) => (
                                     <SidebarMenuItem key={ page }>
-                                        <SidebarMenuButton asChild isActive={ currentPage === page }>
+                                        <SidebarMenuButton asChild isActive={ type === page }>
                                             <Link className='capitalize' href={ '/admin/components/' + page }>
                                                 { page }
                                             </Link>

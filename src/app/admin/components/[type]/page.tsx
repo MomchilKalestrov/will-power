@@ -10,6 +10,7 @@ import Link from 'next/link';
 import CreatePageDialog from './createPageDialog';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useParams } from 'next/navigation';
 
 
 const PageCard: React.FC<{ name: string, removePage: (name: string) => void }> = ({ name, removePage }) => {
@@ -56,22 +57,24 @@ const PageCard: React.FC<{ name: string, removePage: (name: string) => void }> =
 };
 
 const Page: NextPage = () => {
-    const [ pages, setPages ] = React.useState<string[]>([]);
+    const { type }: { type: componentType; } = useParams();
+    const [ components, setComponents ] = React.useState<string[]>([]);
 
     React.useEffect(() => {
-        getAllComponents('page').then(setPages);
-    }, []);
+        if (!type) return;
+        getAllComponents(type).then(setComponents);
+    }, [ type ]);
 
     return (
         <section className='flex gap-2 flex-wrap justify-center'>
-            { pages.map((page) => (
+            { components.map((component) => (
                 <PageCard
-                    key={ page }
-                    name={ page }
-                    removePage={ (name) => setPages(pages.filter((page) => page !== name)) }
+                    key={ component }
+                    name={ component }
+                    removePage={ (name) => setComponents(components.filter((component) => component !== name)) }
                 />
             )) }
-            <CreatePageDialog pages={ pages } />
+            <CreatePageDialog components={ components } type={ type } />
         </section>
     )
 };
