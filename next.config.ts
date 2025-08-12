@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
         new Promise((resolve) =>
             resolve([
                 {
-                    source: '/admin/pages',
-                    destination: '/admin/pages/pages',
+                    source: '/admin/components',
+                    destination: '/admin/components/page',
                     permanent: true
                 }
             ])

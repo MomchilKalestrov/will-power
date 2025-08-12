@@ -10,9 +10,17 @@ import { getComponentByName, saveComponent } from '@/lib/db/actions';
 import useNodeTree from '@/hooks/useNodeTree';
 import BlockPanel from '@/components/blocksPanel';
 import SettingsPopover from '@/components/settingsPopover';
+import ComponentHistoryMenu from './componentHistoryMenu';
 
 type Props = {
     component: string;
+};
+
+const colors: Record<componentType, string> = {
+    header: 'var(--color-green-900)',
+    page: 'var(--color-cyan-900)',
+    footer: 'var(--color-purple-900)',
+    component: 'var(--color-rose-900)'
 };
 
 const randomId = (): string => Math.floor(Math.random() * 9999).toString().padStart(4, '0');
@@ -115,12 +123,21 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
 
     return (
         <>
-            <header className='h-16 w-full px-4 border-b bg-background flex justify-between items-center gap-4 shrink-0'>
+            <header
+                className='h-16 w-full px-4 border-b bg-background flex justify-between items-center gap-4 shrink-0'
+                style={ { '--primary': colors[ type ] } as React.CSSProperties }
+            >
                 <section className='flex gap-2'>
                     <SettingsPopover />
-                    <Button className='size-9 p-0' variant='outline' onClick={ () => setSelectedNode(undefined) }>
+                    <Button size='icon' variant='outline' onClick={ () => setSelectedNode(undefined) }>
                         <Plus />
                     </Button>
+                </section>
+                <section>
+                    <ComponentHistoryMenu
+                        type={ type }
+                        currentComponentName={ componentName }
+                    />
                 </section>
                 <section className='flex gap-2'>
                     <Button variant='outline' size='icon' onClick={ onReset }>
@@ -133,12 +150,13 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                             rootNode: tree,
                             lastEdited: Date.now()
                         })
-                    }>
-                        Save
-                    </Button>
+                    }>Save</Button>
                 </section>
             </header>
-            <main className='w-screen h-[calc(100dvh_-_var(--spacing)_*_16)] flex flex-col overflow-hidden bg-background'>
+            <main
+                className='w-screen h-[calc(100dvh_-_var(--spacing)_*_16)] flex flex-col overflow-hidden bg-background'
+                style={ { '--primary': colors[ type ] } as React.CSSProperties }
+            >
                 <div className='flex flex-1 overflow-hidden'>
                     <Card className='min-w-32 w-80 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-0 border-r bg-muted/20 p-4'>
                         { 

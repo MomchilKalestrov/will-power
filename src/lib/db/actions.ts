@@ -47,17 +47,19 @@ const componentSchema = z.union([
 if (!global.componentNames)
     global.componentNames = {};
 
-const getComponentByName = async (name: string): Promise<Component | null> => {
-    await connect();
+const getComponentByName = async (name: string, type?: componentType): Promise<Component | null> => {
+    let params: any = { name };
+    try {
+        componentTypes.parse(type);
+        params.type = type;
+    } catch {};
 
-    let component = await Component.findOne({ name }).lean();
-    if (!component) return null;
-    
-    return JSON.parse(JSON.stringify(component));
+    await connect();
+    let component = await Component.findOne(params).lean();
+    return component ? JSON.parse(JSON.stringify(component)) : null;
 };
 
 const getAllComponents = async (type: componentType = 'page'): Promise<string[]> => {
-    console.log(global.componentNames[ type ]);
     try { componentTypes.parse(type); } catch { return []; };
 
     if (global.componentNames[ type ])
@@ -70,7 +72,7 @@ const getAllComponents = async (type: componentType = 'page'): Promise<string[]>
     return [ ...global.componentNames[ type ] ];
 };
 
-const saveComponent = async (component: Component): Promise<boolean> => {
+const saveComponent = async (component: Partial<Component>): Promise<boolean> => {
     try {
         const model = componentSchema.parse(component);
         const { name, ...data } = model;
@@ -78,7 +80,7 @@ const saveComponent = async (component: Component): Promise<boolean> => {
         await connect();
         await Component.findOneAndUpdate(
             { name },
-            { name, ...data },
+            { $set: data },
             {
                 upsert: true,
                 runValidators: true,
@@ -87,7 +89,7 @@ const saveComponent = async (component: Component): Promise<boolean> => {
 
         return true;
     } catch (error) {
-        console.error('Error saving page: ' + error);
+        console.error('Error saving component: ' + error);
         return false;
     }
 };

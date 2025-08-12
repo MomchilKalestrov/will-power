@@ -7,13 +7,53 @@ import { Card, CardFooter } from '@/components/ui/card';
 import fallback from './fallback.png';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import CreatePageDialog from './createPageDialog';
+import CreatePageDialog from './createComponentDialog';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
+import { StaticImport } from 'next/dist/shared/lib/get-img-props';
+import { get, set } from 'idb-keyval';
+import screenshot from '@/lib/screenshot';
 
+type ComponentCardProps = {
+    name: string;
+    removeComponent: (name: string) => void;
+};
 
-const PageCard: React.FC<{ name: string, removePage: (name: string) => void }> = ({ name, removePage }) => {
+const ComponentCard: React.FC<ComponentCardProps> = ({
+    name,
+    removeComponent
+}) => {
+    const { type }: { type: componentType; } = useParams();
+    const [ preview, setPreview ] = React.useState<StaticImport | string>(fallback);
+
+    const createPreview = React.useCallback(() => {
+        screenshot(name)
+            .then((value: Blob) => {
+                set(`preview-${ name }`, value);
+                setPreview(URL.createObjectURL(value));
+            });
+    }, [ name ]);
+
+    React.useEffect(() => {
+        if (type !== 'page') return;
+
+        get(`preview-${ name }`)
+            .then((value: Blob | undefined) => {
+                if (!value) return createPreview();
+
+                let timestamp: string | null = localStorage.getItem('screenshot-timestamp'); 
+                if (!timestamp)
+                    localStorage.setItem('screenshot-timestamp', Date.now().toString());
+                else if (Date.now() - Number(timestamp) < 1000 * 60 * 60 * 24 * 7)
+                    return createPreview();
+
+                setPreview(URL.createObjectURL(value));
+            });
+    }, [ name, type ]);
+
+    console.log(name, preview);
+    
     const onDelete = React.useCallback((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.stopPropagation();
         
@@ -25,7 +65,7 @@ const PageCard: React.FC<{ name: string, removePage: (name: string) => void }> =
             button.disabled = false;
             if (!success)
                 return toast('Failed deleting the page.');
-            removePage(name);
+            removeComponent(name);
         })
     }, [ name ]);
 
@@ -35,7 +75,7 @@ const PageCard: React.FC<{ name: string, removePage: (name: string) => void }> =
                 width={ 384 }
                 height={ 216 }
                 alt='fallback'
-                src={ fallback }
+                src={ preview }
                 priority={ true }
                 className='w-full rounded-xl'
             />
@@ -68,10 +108,10 @@ const Page: NextPage = () => {
     return (
         <section className='flex gap-2 flex-wrap justify-center'>
             { components.map((component) => (
-                <PageCard
+                <ComponentCard
                     key={ component }
                     name={ component }
-                    removePage={ (name) => setComponents(components.filter((component) => component !== name)) }
+                    removeComponent={ (name) => setComponents(components.filter((component) => component !== name)) }
                 />
             )) }
             <CreatePageDialog components={ components } type={ type } />

@@ -27,13 +27,11 @@ const CssKeywordInput: React.FC<CssKeywordInputProps> = ({
             <SelectValue />
         </SelectTrigger>
         <SelectContent>
-            {
-                options.map((option) => (
-                    <SelectItem key={ option } value={ option }>
-                        { option.replaceAll('-', ' ') }
-                    </SelectItem>
-                ))
-            }
+            { options.map((option) => (
+                <SelectItem key={ option } value={ option }>
+                    { option.replaceAll('-', ' ') }
+                </SelectItem>
+            )) }
         </SelectContent>
     </Select>
 );
