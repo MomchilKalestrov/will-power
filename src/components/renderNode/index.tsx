@@ -4,7 +4,7 @@ import Overlay from './overlay';
 import { useComponentDb } from '@/components/componentDb';
 
 type Props = {
-    node: PageNode;
+    node: ComponentNode;
     editor?: true;
     root?: true;
     depth?: number;
