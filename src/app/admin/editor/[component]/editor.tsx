@@ -2,6 +2,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { Plus, RotateCcw } from 'lucide-react';
+import { del } from 'idb-keyval';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import PropertiesPanel from '@/components/propertiesPanel';
@@ -143,14 +144,15 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                     <Button variant='outline' size='icon' onClick={ onReset }>
                         <RotateCcw />
                     </Button>
-                    <Button onClick={ () =>
+                    <Button onClick={ () => {
+                        del(`preview-${ componentName }`);
                         saveComponent({
                             type,
                             name: componentName,
                             rootNode: tree,
                             lastEdited: Date.now()
-                        })
-                    }>Save</Button>
+                        });
+                    } }>Save</Button>
                 </section>
             </header>
             <main
