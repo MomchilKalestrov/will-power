@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import { NextPage } from 'next';
 import useNodeTree from '@/hooks/useNodeTree';
 import RenderNode from '@/components/renderNode';
@@ -11,34 +11,29 @@ type Props = {
 
 const Page: NextPage<Props> = ({ params }) => {
     const router = useRouter();
+    const { page } = React.use(params);
     const { tree, setTree } = useNodeTree();
-    const [ pageName, setPageName ] = useState<string | undefined>();
 
     const onMessage = React.useCallback((event: MessageEvent) => {
-        if (!pageName) return;
+        if (!page) return;
         switch (event.data.type) {
             case 'update-tree':
-                setTree(JSON.parse(localStorage.getItem(pageName)!).rootNode);
+                setTree(JSON.parse(localStorage.getItem(page)!).rootNode);
                 break;
         };
-    }, [ pageName ]);
+    }, [ page ]);
 
     React.useEffect(() => {
-        params.then(({ page }) => {
-            if (window.top === window.self)
-                router.replace(`/admin/editor/${ page }`);
-            setPageName(page)
-        });
+        if (window.top === window.self)
+            router.replace(`/admin/editor/${ page }`);
     }, []);
     
     React.useEffect(() => {
-        if (!pageName) return;
-        
-        setTree(JSON.parse(localStorage.getItem(pageName)!).rootNode);
+        setTree(JSON.parse(localStorage.getItem(page)!).rootNode);
 
         window.addEventListener('message', onMessage);
         return () => window.removeEventListener('message', onMessage);
-    }, [ pageName ]);
+    }, [ page ]);
 
     if (!tree) return null;
 
