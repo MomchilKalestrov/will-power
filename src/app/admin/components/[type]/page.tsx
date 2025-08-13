@@ -2,18 +2,29 @@
 import React from 'react';
 import type { NextPage } from 'next';
 import Image from 'next/image';
-import { getAllComponents, deleteComponent } from '@/lib/db/actions';
-import { Card, CardFooter } from '@/components/ui/card';
-import fallback from './fallback.png';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import CreatePageDialog from './createComponentDialog';
+import { get, set } from 'idb-keyval';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
-import { get, set } from 'idb-keyval';
+
+import { getAllComponents, deleteComponent } from '@/lib/db/actions';
+import { Card, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+
 import screenshot from '@/lib/screenshot';
+
+import CreatePageDialog from './createComponentDialog';
+import headerFallback from './header.png';
+import pageFallback from './page.png';
+
+const fallbacks: Record<componentType, typeof pageFallback> = {
+    'header': headerFallback,
+    'page': pageFallback,
+    'footer': pageFallback,
+    'component': pageFallback
+};
+
 
 type ComponentCardProps = {
     name: string;
@@ -25,7 +36,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
     removeComponent
 }) => {
     const { type }: { type: componentType; } = useParams();
-    const [ preview, setPreview ] = React.useState<StaticImport | string>(fallback);
+    const [ preview, setPreview ] = React.useState<typeof pageFallback | string>(fallbacks[ type ]);
 
     const createPreview = React.useCallback(() => {
         screenshot(name)
@@ -36,8 +47,6 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
     }, [ name ]);
 
     React.useEffect(() => {
-        if (type !== 'page') return;
-
         get(`preview-${ name }`)
             .then((value: Blob | undefined) => {
                 if (!value) return createPreview();
@@ -64,10 +73,10 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
         deleteComponent(name).then((success) => {
             button.disabled = false;
             if (!success)
-                return toast('Failed deleting the page.');
+                return toast(`Failed deleting the ${ type }.`);
             removeComponent(name);
         })
-    }, [ name ]);
+    }, [ name, type ]);
 
     return (
         <Card className='p-0 gap-0 basis-64 grow max-w-96 text-center'>
