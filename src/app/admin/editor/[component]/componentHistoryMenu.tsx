@@ -48,7 +48,7 @@ const ComponentHistoryMenu: React.FC<Props> = ({ currentComponentName, type }) =
 
     if (!history) return;
     
-    const Icon = icons[ type ];
+    const CurrentIcon = icons[ type ];
 
     return (
         <Popover>
@@ -57,27 +57,30 @@ const ComponentHistoryMenu: React.FC<Props> = ({ currentComponentName, type }) =
                     variant='ghost'
                     className='flex gap-1 flex-nowrap items-center justify-between min-w-32'
                 >
-                    <Icon color={ `var(--color-${ colors[ type ] })` } />
+                    <CurrentIcon color={ `var(--color-${ colors[ type ] })` } />
                     <span className='grow text-center uppercase font-semibold'>{ currentComponentName }</span>
                     <ChevronDown />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className='grid min-w-32 w-[unset] p-2'>
-                { history.map(({ name, type }) => (
-                    <Button
-                        variant='ghost'
-                        key={ name }
-                        value={ name }
-                    >
-                        <Link
-                            href={ '/admin/editor/' + name }
-                            className='w-full flex gap-1 flex-nowrap items-center'
+                { history.map(({ name, type }) => {
+                    const Icon = icons[ type ];
+                    return (
+                        <Button
+                            variant='ghost'
+                            key={ name }
+                            value={ name }
                         >
-                            <Icon color={ `var(--color-${ colors[ type ] })` } />
-                            <span className='grow text-center'>{ name }</span>
-                        </Link>
-                    </Button>
-                )) }
+                            <Link
+                                href={ '/admin/editor/' + name }
+                                className='w-full flex gap-1 flex-nowrap items-center'
+                            >
+                                <Icon color={ `var(--color-${ colors[ type ] })` } />
+                                <span className='grow text-center'>{ name }</span>
+                            </Link>
+                        </Button>
+                    );
+                }) }
             </PopoverContent>
         </Popover>
     );
