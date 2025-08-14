@@ -17,12 +17,14 @@ import screenshot from '@/lib/screenshot';
 import CreatePageDialog from './createComponentDialog';
 import headerFallback from './header.png';
 import pageFallback from './page.png';
+import footerFallback from './footer.png';
+import componentFallback from './component.png';
 
 const fallbacks: Record<componentType, typeof pageFallback> = {
     'header': headerFallback,
     'page': pageFallback,
-    'footer': pageFallback,
-    'component': pageFallback
+    'footer': footerFallback,
+    'component': componentFallback
 };
 
 
