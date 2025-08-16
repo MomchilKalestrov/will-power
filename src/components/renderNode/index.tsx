@@ -8,6 +8,7 @@ type Props = {
     editor?: true;
     root?: true;
     depth?: number;
+    onTreeLoaded?: () => void;
 };
 
 const RenderNode: React.FC<Props> = ({
@@ -21,16 +22,29 @@ const RenderNode: React.FC<Props> = ({
     },
     editor,
     root,
-    depth = 0
+    depth = 0,
+    onTreeLoaded: onTreeLoadedCallback
 }) => {
     const { getComponent } = useComponentDb();
+    const [ loadedCount, setLoadedCount ] = React.useState<number>(0);
     const [ Component, setComponent ] = React.useState<React.ComponentType<any> | null | undefined>();
-    
+
+    const onTreeLoaded = React.useCallback(() => {
+        setLoadedCount(loadedCount + 1);
+        if (loadedCount + 1 === children.length)
+            onTreeLoadedCallback?.();
+    }, [ loadedCount ]);
+
     React.useEffect(() => {
         getComponent(type)
             .then((value) => setComponent(() => (value ? value.Component : null)))
             .catch(() => setComponent(null));
     }, [ type ]);
+
+    React.useEffect(() => {
+        if (children.length === 0)
+            onTreeLoadedCallback?.();
+    }, []);
 
     if (Component === null) {
         console.warn("Unknown node type: " + type);
@@ -57,7 +71,8 @@ const RenderNode: React.FC<Props> = ({
                     depth={ depth + 1 }
                     key={ id + '-' + child.id }
                     node={ child }
-                    { ...{ editor } }
+                    editor={ editor }
+                    onTreeLoaded={ onTreeLoaded }
                 />
             )) }
             { (editor && !root) && <Overlay { ...{ id, zIndex: depth + 1 } } /> }

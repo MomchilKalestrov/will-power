@@ -27,7 +27,6 @@ const fallbacks: Record<componentType, typeof pageFallback> = {
     'component': componentFallback
 };
 
-
 type ComponentCardProps = {
     name: string;
     removeComponent: (name: string) => void;
@@ -42,15 +41,15 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
 
     const createPreview = React.useCallback(() => {
         screenshot(name)
-            .then((value: Blob) => {
+            .then((value: string) => {
                 set(`preview-${ name }`, value);
-                setPreview(URL.createObjectURL(value));
+                setPreview(value);
             });
     }, [ name ]);
 
     React.useEffect(() => {
         get(`preview-${ name }`)
-            .then((value: Blob | undefined) => {
+            .then((value: string | undefined) => {
                 if (!value) return createPreview();
 
                 let timestamp: string | null = localStorage.getItem('screenshot-timestamp'); 
@@ -59,25 +58,25 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
                 else if (Date.now() - Number(timestamp) < 1000 * 60 * 60 * 24 * 7)
                     return createPreview();
 
-                setPreview(URL.createObjectURL(value));
+                setPreview(value);
             });
     }, [ name, type ]);
-
-    console.log(name, preview);
     
     const onDelete = React.useCallback((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.stopPropagation();
         
         const button = event.target as HTMLButtonElement | null;
         if (!button) return;
+
         button.disabled = true;
 
-        deleteComponent(name).then((success) => {
-            button.disabled = false;
-            if (!success)
-                return toast(`Failed deleting the ${ type }.`);
-            removeComponent(name);
-        })
+        deleteComponent(name)
+            .then(success => {
+                button.disabled = false;
+                if (!success)
+                    return toast(`Failed deleting the ${ type }.`);
+                removeComponent(name);
+            });
     }, [ name, type ]);
 
     return (
@@ -99,9 +98,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
                     variant='destructive'
                     size='icon'
                     onClick={ onDelete }
-                >
-                    <Trash2 />
-                </Button>
+                ><Trash2 /></Button>
             </CardFooter>
         </Card>
     );
@@ -113,16 +110,17 @@ const Page: NextPage = () => {
 
     React.useEffect(() => {
         if (!type) return;
-        getAllComponents(type).then(setComponents);
+        getAllComponents(type)
+            .then(setComponents);
     }, [ type ]);
 
     return (
         <section className='flex gap-2 flex-wrap justify-center'>
-            { components.map((component) => (
+            { components.map(component => (
                 <ComponentCard
                     key={ component }
                     name={ component }
-                    removeComponent={ (name) => setComponents(components.filter((component) => component !== name)) }
+                    removeComponent={ name => setComponents(components.filter(component => component !== name)) }
                 />
             )) }
             <CreatePageDialog components={ components } type={ type } />
