@@ -1,4 +1,3 @@
-'use server';
 import React from 'react';
 import { NextPage } from 'next';
 import { notFound } from 'next/navigation';
