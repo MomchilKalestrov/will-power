@@ -9,14 +9,17 @@ declare global {
 
 const componentName = z.string().min(1).refine(name => name === encodeURIComponent(name));
 
-const componentNodeSchema = z.object({
-    id: z.string(),
-    type: z.string(),
-    style: z.record(z.string(), z.string()),
-    attributes: z.record(z.string(), z.string()),
-    props: z.object(),
-    acceptsChildren: z.boolean().optional()
-});
+const componentNodeSchema: z.ZodType<any> = z.lazy(() =>
+    z.object({
+        id: z.string(),
+        type: z.string(),
+        style: z.record(z.string(), z.string()),
+        attributes: z.record(z.string(), z.string()),
+        props: z.looseObject({}),
+        acceptChildren: z.boolean(),
+        children: z.array(componentNodeSchema)
+    })
+);
 
 const componentTypes = z.literal([ 'header', 'page', 'footer', 'component' ]);
 
@@ -73,6 +76,7 @@ const getAllComponents = async (type: componentType = 'page'): Promise<string[]>
 };
 
 const saveComponent = async (component: Partial<Component>): Promise<boolean> => {
+    console.log(component);
     try {
         const model = componentSchema.parse(component);
         const { name, ...data } = model;
