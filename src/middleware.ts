@@ -23,11 +23,8 @@ const authenticate = async (request: NextRequest): Promise<NextResponse> => {
 
 const middleware = (request: NextRequest): NextResponse | Promise<NextResponse> => {
     const { pathname } = request.nextUrl;
-    if (
-        pathname.startsWith('/admin') &&
-        !pathname.startsWith('/admin/auth')
-    ) return authenticate(request);
-
+    if (/^\/admin(?!\/auth)/.test(pathname))
+        return authenticate(request);
     return next(request);
 };
 
