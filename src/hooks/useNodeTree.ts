@@ -1,13 +1,13 @@
 'use client';
 import React from 'react';
 
-const useNodeTree = (initialTree?: PageNode) => {
-    const [tree, setTree] = React.useState<PageNode | undefined>(initialTree);
+const useNodeTree = (initialTree?: ComponentNode) => {
+    const [tree, setTree] = React.useState<ComponentNode | undefined>(initialTree);
     const treeRef = React.useRef(tree);
 
     React.useEffect(() => { treeRef.current = tree; }, [ tree ]);
 
-    const findNode = React.useCallback((id: string, node?: PageNode): PageNode | null => {
+    const findNode = React.useCallback((id: string, node?: ComponentNode): ComponentNode | null => {
         const startNode = node || treeRef.current;
 
         if (!startNode) return null;
@@ -40,13 +40,13 @@ const useNodeTree = (initialTree?: PageNode) => {
             return;
         }
 
-        let nodeToMove: PageNode | null = null;
+        let nodeToMove: ComponentNode | null = null;
 
         setTree(currentTree => {
             if (!currentTree) return undefined;
 
             // First, find and remove the node from its current position
-            const remove = (node: PageNode): PageNode | null => {
+            const remove = (node: ComponentNode): ComponentNode | null => {
                 // If this is the node to move, save it and remove it from the tree by returning null
                 if (node.id === childId) {
                     nodeToMove = { ...node };
@@ -57,7 +57,7 @@ const useNodeTree = (initialTree?: PageNode) => {
                 if (Array.isArray(node.children)) {
                     const newChildren = node.children
                         .map(child => remove(child))
-                        .filter(Boolean) as PageNode[];
+                        .filter(Boolean) as ComponentNode[];
                     
                     // Return the node with its potentially updated children list
                     return { ...node, children: newChildren };
@@ -67,7 +67,7 @@ const useNodeTree = (initialTree?: PageNode) => {
             };
 
             // Then, add the removed node to its new parent
-            const add = (node: PageNode): PageNode => {
+            const add = (node: ComponentNode): ComponentNode => {
                 // If this is the new parent, add the node to its children
                 if (node.id === newParentId && nodeToMove) {
                     const children = Array.isArray(node.children) ? [...node.children, nodeToMove] : [nodeToMove];
@@ -94,8 +94,8 @@ const useNodeTree = (initialTree?: PageNode) => {
         });
     }, [findNode]);
 
-    const updateNode = React.useCallback((id: string, data: Partial<Omit<PageNode, 'children'>>) => {
-        const update = (node: PageNode): PageNode => {
+    const updateNode = React.useCallback((id: string, data: Partial<Omit<ComponentNode, 'children'>>) => {
+        const update = (node: ComponentNode): ComponentNode => {
             if (node.id === id) {
                 const newProps = { ...(node.props || {}), ...(data.props || {}) };
                 const newStyle = { ...(node.style || {}), ...(data.style || {}) };
@@ -112,14 +112,14 @@ const useNodeTree = (initialTree?: PageNode) => {
         setTree(currentTree => currentTree ? update(currentTree) : undefined);
     }, []);
 
-    const addNode = React.useCallback((parentId: string, newNode: PageNode) => {
+    const addNode = React.useCallback((parentId: string, newNode: ComponentNode) => {
         const parentNode = findNode(parentId);
         if (parentNode && !parentNode.acceptChildren) {
             console.error("The parent node does not accept children.");
             return;
         }
 
-        const add = (node: PageNode): PageNode => {
+        const add = (node: ComponentNode): ComponentNode => {
             if (node.id === parentId) {
                 const children = Array.isArray(node.children) ? [...node.children, { ...newNode }] : [{ ...newNode }];
                 return { ...node, children };
@@ -136,9 +136,9 @@ const useNodeTree = (initialTree?: PageNode) => {
     }, []);
 
     const removeNode = React.useCallback((id: string) => {
-        const remove = (node: PageNode): PageNode | null => {
+        const remove = (node: ComponentNode): ComponentNode | null => {
             if (Array.isArray(node.children)) {
-                const newChildren = node.children.map(child => remove(child)).filter(Boolean) as PageNode[];
+                const newChildren = node.children.map(child => remove(child)).filter(Boolean) as ComponentNode[];
                 if (newChildren.length !== node.children.length) {
                     return { ...node, children: newChildren };
                 }
@@ -156,23 +156,23 @@ const useNodeTree = (initialTree?: PageNode) => {
             return;
         }
 
-        let nodeToMove: PageNode | null = null;
+        let nodeToMove: ComponentNode | null = null;
 
         // First, remove the node from its current position
-        const remove = (node: PageNode): PageNode | null => {
+        const remove = (node: ComponentNode): ComponentNode | null => {
             if (node.id === nodeId) {
                 nodeToMove = { ...node };
                 return null;
             }
             if (Array.isArray(node.children)) {
-                const newChildren = node.children.map(child => remove(child)).filter(Boolean) as PageNode[];
+                const newChildren = node.children.map(child => remove(child)).filter(Boolean) as ComponentNode[];
                 return { ...node, children: newChildren };
             }
             return node;
         };
 
         // Then, add it to the new parent
-        const add = (node: PageNode): PageNode => {
+        const add = (node: ComponentNode): ComponentNode => {
             if (node.id === newParentId && nodeToMove) {
                 const children = Array.isArray(node.children) ? [...node.children] : [];
                 children.splice(index, 0, nodeToMove);
