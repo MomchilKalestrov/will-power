@@ -17,17 +17,18 @@ const metadata: NodeMetadata = {
         type: {
             values: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ]
         }
-    }
+    },
+    acceptChildren: false
 };
 
 type Props = {
-    contents: string;
+    contents?: string;
     type?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 };
 
 const Header: React.FC<React.PropsWithChildren<Props>> = ({
     type: Element = 'h1',
-    contents,
+    contents = 'Hello world!',
     children,
     ...props
 }) => (

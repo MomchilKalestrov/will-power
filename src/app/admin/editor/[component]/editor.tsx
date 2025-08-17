@@ -12,6 +12,7 @@ import useNodeTree from '@/hooks/useNodeTree';
 import BlockPanel from '@/components/blocksPanel';
 import SettingsPopover from '@/components/settingsPopover';
 import ComponentHistoryMenu from './componentHistoryMenu';
+import { toast } from 'sonner';
 
 type Props = {
     component: string;
@@ -26,14 +27,14 @@ const colors: Record<componentType, string> = {
 
 const randomId = (): string => Math.floor(Math.random() * 9999).toString().padStart(4, '0');
 
-const newNode = (type: string): ComponentNode => ({
+const newNode = (type: string, acceptChildren: boolean): ComponentNode => ({
     id: type + '-' + randomId(),
     type,
     style: {},
     attributes: {},
     children: [],
     props: {},
-    acceptChildren: false
+    acceptChildren
 });
 
 const metadataCache = new Map<string, NodeMetadata>();
@@ -59,7 +60,6 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
 
         getComponentByName(componentName)
             .then((remoteRevision) => {
-                console.log(remoteRevision);
                 if (!remoteRevision)
                     notFound();
                 
@@ -68,7 +68,7 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                 if (localRevisionString) {
                     const localRevision: Component = JSON.parse(localRevisionString);
                     if (localRevision.lastEdited < remoteRevision.lastEdited)
-                        alert('A newer version is available on remote');
+                        toast('A newer version is available on remote');
                     setTree(localRevision.rootNode);
                     return;
                 }
@@ -144,14 +144,21 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                     <Button variant='outline' size='icon' onClick={ onReset }>
                         <RotateCcw />
                     </Button>
-                    <Button onClick={ () => {
+                    <Button onClick={ ({ currentTarget: button }) => {
+                        button.disabled = true;
                         del(`preview-${ componentName }`);
                         saveComponent({
                             type,
                             name: componentName,
                             rootNode: tree,
-                            lastEdited: Date.now()
-                        });
+                            lastEdited: JSON.parse(localStorage.getItem(componentName)!).lastEdited
+                        }).then(() => {
+                            button.disabled = false;
+                            toast('Saved!');
+                        }).catch(() => {
+                            button.disabled = false;
+                            toast('Failed saving.');
+                        })
                     } }>Save</Button>
                 </section>
             </header>
@@ -168,7 +175,10 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                                     metadata={ selectedNodeMetadata }
                                     onNodeUpdate={ updateNode }
                                 />
-                            :   <BlockPanel onNodeAdd={ (type) => addNode(tree.id, newNode(type)) } />
+                            :   <BlockPanel onNodeAdd={
+                                    (type, acceptChildren) =>
+                                        addNode(tree.id, newNode(type, acceptChildren))
+                                } />
                         }
                     </Card>
                     

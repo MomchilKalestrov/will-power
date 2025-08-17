@@ -107,6 +107,8 @@ declare global {
         styles: Record<string, style>;
 
         enumerators: Record<string, { values: string[], icon?: boolean }>;
+
+        acceptChildren: boolean;
     }
 };
 

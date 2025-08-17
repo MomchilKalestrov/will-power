@@ -49,4 +49,4 @@ const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     );
 };
 
-export { useComponentDb, ComponentDbProvider }; 
+export { useComponentDb, ComponentDbProvider, type componentData };

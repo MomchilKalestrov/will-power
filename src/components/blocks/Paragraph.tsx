@@ -9,15 +9,16 @@ const metadata: NodeMetadata = {
     },
     attributes: {},
     styles: {},
-    enumerators: {}
+    enumerators: {},
+    acceptChildren: false
 };
 
 type Props = {
-    contents: string;
+    contents?: string;
 };
 
 const Paragraph: React.FC<React.PropsWithChildren<Props>> = ({ 
-    contents,
+    contents = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
     children,
     ...props
 }) => (

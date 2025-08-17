@@ -1,29 +1,32 @@
 'use client';
 import React from 'react';
 import { Type } from 'lucide-react';
-import { useComponentDb } from '@/components/componentDb';
+import { useComponentDb, type componentData } from '@/components/componentDb';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 
 type Props = {
-    onNodeAdd: (type: string) => void;
+    onNodeAdd: (type: string, acceptChildren: boolean) => void;
 };
 
 const ComponentButton: React.FC<Props & { type: string }> = ({ type, onNodeAdd }) => {
     const { getComponent } = useComponentDb();
-    const [ Icon, setIcon ] = React.useState<React.ComponentType<any>>(Type);
+    const [ { Icon, acceptChildren }, setData ] = React.useState<{ Icon: React.ComponentType<any>, acceptChildren: boolean }>({ Icon: Type, acceptChildren: false });
+    
 
     React.useEffect(() => {
         getComponent(type)
-            .then((value) => value?.Icon ? setIcon(() => value.Icon) : null)
-            .catch(() => null);
+            .then((data) => setData({
+                Icon: data!.Icon,
+                acceptChildren: data!.metadata.acceptChildren
+            }))
     }, [ type ]);
 
     return (
         <Button
             variant="outline"
             className='flex-grow basis-24 max-w-32 aspect-square flex flex-col items-center justify-center p-2 m-0 gap-0 h-auto'
-            onClick={() => onNodeAdd(type)}
+            onClick={() => onNodeAdd(type, acceptChildren) }
         >
             <Icon className='size-[50%] opacity-75' />
             <span className='mt-2 text-sm font-semibold'>{ type }</span>

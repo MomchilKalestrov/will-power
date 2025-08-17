@@ -183,7 +183,8 @@ const metadata: NodeMetadata = {
             values: [ 'static', 'relative', 'fixed', 'sticky', 'absolute' ],
             icon: false
         }
-    }
+    },
+    acceptChildren: true
 };
 
 const Container: React.FC<React.PropsWithChildren> = ({ children, ...props }) =>
