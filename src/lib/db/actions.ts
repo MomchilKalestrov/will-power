@@ -145,4 +145,21 @@ const deleteComponent = async (name: string): Promise<boolean> => {
     }
 };
 
-export { getComponentByName, saveComponent, getAllComponents, createComponent, deleteComponent };
+const getMatchingComponents = async (name: string, type: 'header' | 'footer'): Promise<Component[]> => {
+    await connect();
+
+    const components = await Component.find({
+        type,
+        $nor: [ { displayCondition: { $elemMatch: { show: 'exclude', name } } } ],
+        $or: [
+            { displayCondition: { $exists: false } },
+            { displayCondition: { $size: 0 } },
+            { displayCondition: { $elemMatch: { show: 'all' } } },
+            { displayCondition: { $elemMatch: { show: 'page', name } } }
+        ]
+    }).lean();
+    
+    return JSON.parse(JSON.stringify(components));
+};
+
+export { getComponentByName, saveComponent, getAllComponents, createComponent, deleteComponent, getMatchingComponents };
