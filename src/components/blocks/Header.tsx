@@ -32,7 +32,10 @@ const Header: React.FC<React.PropsWithChildren<Props>> = ({
     children,
     ...props
 }) => (
-    <Element { ...props }>{ contents }{ children }</Element>
+    <Element { ...props }>
+        <span dangerouslySetInnerHTML={ { __html: contents } } />
+        { children }
+    </Element>
 );
 
 export default Header;

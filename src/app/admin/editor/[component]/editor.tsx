@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { ComponentType } from 'react';
 import { notFound } from 'next/navigation';
 import { Plus, RotateCcw } from 'lucide-react';
 import { del } from 'idb-keyval';
@@ -13,6 +13,7 @@ import BlockPanel from '@/components/blocksPanel';
 import SettingsPopover from '@/components/settingsPopover';
 import ComponentHistoryMenu from './componentHistoryMenu';
 import { toast } from 'sonner';
+import { storage } from '@/lib/utils';
 
 type Props = {
     component: string;
@@ -64,9 +65,8 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                     notFound();
                 
                 setType(remoteRevision.type);
-                const localRevisionString = localStorage.getItem(componentName);
-                if (localRevisionString) {
-                    const localRevision: Component = JSON.parse(localRevisionString);
+                if (storage.has(componentName)) {
+                    const localRevision: Component = storage.parse<Component>(componentName);
                     if (localRevision.lastEdited < remoteRevision.lastEdited)
                         toast('A newer version is available on remote');
                     setTree(localRevision.rootNode);
@@ -74,18 +74,18 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                 }
 
                 setTree(remoteRevision.rootNode);
-                localStorage.setItem(componentName, JSON.stringify(remoteRevision));
+                storage.set(componentName, remoteRevision);
             });
     }, [ componentName ]);
 
     React.useEffect(() => {
         if (!iframeRef.current || !tree) return
         
-        localStorage.setItem(componentName, JSON.stringify({
+        storage.set(componentName, {
             name: componentName,
             rootNode: tree,
             lastEdited: Date.now()
-        }));
+        });
 
         iframeRef.current.contentWindow?.postMessage({
             type: 'update-tree',
@@ -103,7 +103,7 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
     const onReset = React.useCallback(async () => {
         const remoteRevision = await getComponentByName(componentName);
         setTree(remoteRevision?.rootNode);
-        localStorage.setItem(componentName, JSON.stringify(remoteRevision));
+        storage.set(componentName, remoteRevision);
     }, [ componentName ]);
     
     React.useEffect(() => {
@@ -151,7 +151,7 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                             type,
                             name: componentName,
                             rootNode: tree,
-                            lastEdited: JSON.parse(localStorage.getItem(componentName)!).lastEdited
+                            lastEdited: storage.parse<Component>(componentName).lastEdited
                         }).then(() => {
                             button.disabled = false;
                             toast('Saved!');

@@ -15,19 +15,20 @@ import CssUnitInput from '@/components/inputs/cssUnitInput';
 import GradientPicker from '@/components/inputs/gradientPicker';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 import BackgroundPicker from '@/components/inputs/backgroundPicker';
+import AdvancedTextarea from '../inputs/advancedTextarea';
 
 type PropertiesPanelProps = {
-    node: PageNode;
+    node: ComponentNode;
     metadata: NodeMetadata;
-    onNodeUpdate: (id: string, data: Partial<Omit<PageNode, 'children'>>) => void;
+    onNodeUpdate: (id: string, data: Partial<Omit<ComponentNode, 'children'>>) => void;
 };
 
 type groupedProps<T> = Record<string, (Omit<T & { name: string, key: string }, 'in'>)[]>;
 
 const isVisible = (
-    node: PageNode,
+    node: ComponentNode,
     metadata: NodeMetadata,
-    condition: condition | undefined,
+    condition: editorVisibilityCondition | undefined,
     key: 'props' | 'styles' | 'attributes'
 ): boolean => {
     if (!condition) return true;
@@ -110,10 +111,10 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                         return (
                             <div key={ key } className='grid gap-2'>
                                 <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
-                                <Textarea
+                                <AdvancedTextarea
                                     id={ `input-${ key }` }
                                     value={ currentValue }
-                                    onChange={ (e) => handleChange(key, e.target.value, 'props') }
+                                    onChange={ (value) => handleChange(key, value, 'props') }
                                 />
                             </div>
                         );

@@ -1,10 +1,8 @@
-import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { clsx, type ClassValue } from 'clsx';
 import type { config, font } from './config';
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 export const fontToCss = (font: font): string =>
     `${ font.style } ${ font.weight } ${ font.size } "${ font.family }", ${ font.fallback }`
@@ -93,4 +91,42 @@ const cssFromConfig = (config: config): string =>
         '}\n'
     , '');
 
-export { cssFromConfig };
+const deepCompare = (obj1: any, obj2: any) => {
+    if (typeof obj1 !== 'object') return obj1 === obj2;
+
+    for (const key in obj1)
+        if (!deepCompare(obj1[ key ], obj2[ key ]))
+            return false;
+    
+    return true;
+};
+
+type parser<T = any> = (value: string) => T;
+
+class storage {
+    static has = (key: string): boolean => localStorage.getItem(key) !== null;
+
+    static get = (key: string): string | null => localStorage.getItem(key);
+    static tryGet = (key: string, fallback: string): string =>
+        this.get(key) || fallback;
+    
+    static parse = <T = any>(
+        key: string,
+        parser: parser<T> = (value: string) => JSON.parse(value)
+    ): T =>
+        parser(localStorage.getItem(key)!);
+    
+    static tryParse = <T = any>(
+        key: string,
+        fallback: T,
+        parser?: parser<T>
+    ): T => {
+        try   { return this.parse<T>(key, parser); }
+        catch { return fallback; };
+    };
+
+    static set = (key: string, value: any) =>
+        localStorage.setItem(key, `${ value }` !== '[object Object]' ? value.toString() : JSON.stringify(value))
+}
+
+export { cssFromConfig, deepCompare, storage };

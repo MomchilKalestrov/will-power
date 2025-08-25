@@ -19,6 +19,7 @@ import headerFallback from './header.png';
 import pageFallback from './page.png';
 import footerFallback from './footer.png';
 import componentFallback from './component.png';
+import { storage } from '@/lib/utils';
 
 const fallbacks: Record<componentType, typeof pageFallback> = {
     'header': headerFallback,
@@ -51,10 +52,10 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
         get(`preview-${ name }`)
             .then((value: string | undefined) => {
                 if (!value) return createPreview();
-
-                let timestamp: string | null = localStorage.getItem('screenshot-timestamp'); 
+                
+                let timestamp: string | null = storage.get('screenshot-timestamp'); 
                 if (!timestamp)
-                    localStorage.setItem('screenshot-timestamp', Date.now().toString());
+                    storage.set('screenshot-timestamp', Date.now());
                 else if (Date.now() - Number(timestamp) < 1000 * 60 * 60 * 24 * 7)
                     return createPreview();
 

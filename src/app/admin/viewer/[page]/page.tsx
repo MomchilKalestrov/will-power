@@ -5,6 +5,7 @@ import useNodeTree from '@/hooks/useNodeTree';
 import RenderNode from '@/components/renderNode';
 import { notFound, useRouter } from 'next/navigation';
 import { getComponentByName } from '@/lib/db/actions';
+import { storage } from '@/lib/utils';
 
 type Props = {
     params: Promise<{ page: string }>;
@@ -19,7 +20,7 @@ const Page: NextPage<Props> = ({ params }) => {
         if (!page) return;
         switch (event.data.type) {
             case 'update-tree':
-                setTree(JSON.parse(localStorage.getItem(page)!).rootNode);
+                setTree(storage.parse<Component>(page).rootNode);
                 break;
         };
     }, [ page ]);
@@ -40,7 +41,7 @@ const Page: NextPage<Props> = ({ params }) => {
     }, []);
     
     React.useEffect(() => {
-        const localRevision: ComponentNode | undefined = JSON.parse(localStorage.getItem(page) || '{}').rootNode;
+        const localRevision: ComponentNode | undefined = storage.tryParse<Component | any>(page, {}).rootNode;
         
         if (!localRevision)
             getComponentByName(page).then((component) => {

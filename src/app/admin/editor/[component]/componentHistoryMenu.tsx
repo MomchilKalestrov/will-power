@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ChevronDown, PanelBottom, PanelTop, Puzzle, StickyNote, type LucideProps } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
+import { storage } from '@/lib/utils';
 
 type history = ({ name: string, type: componentType })[];
 
@@ -34,7 +35,7 @@ const ComponentHistoryMenu: React.FC<Props> = ({ currentComponentName, type }) =
     React.useEffect(() => {
         let currentHistory: history = history
             ?   [ ...history ]
-            :   JSON.parse(localStorage.getItem('editorHistory') ?? '[]');
+            :   storage.tryParse<history>('editorHistory', []);
         
         currentHistory = currentHistory.filter(({ name }) => name !== currentComponentName).slice(0, 3);
         if (
@@ -42,7 +43,7 @@ const ComponentHistoryMenu: React.FC<Props> = ({ currentComponentName, type }) =
             currentHistory[ currentHistory.length - 1 ].name !== currentComponentName
         ) currentHistory.push({ name: currentComponentName, type });
 
-        localStorage.setItem('editorHistory', JSON.stringify(currentHistory));
+        storage.set('editorHistory', currentHistory);
         setHistory(currentHistory);
     }, [ currentComponentName ]);
 
@@ -58,7 +59,7 @@ const ComponentHistoryMenu: React.FC<Props> = ({ currentComponentName, type }) =
                     className='flex gap-1 flex-nowrap items-center justify-between min-w-32'
                 >
                     <CurrentIcon color={ `var(--color-${ colors[ type ] })` } />
-                    <span className='grow text-center uppercase font-semibold'>{ currentComponentName }</span>
+                    <span className='grow text-center font-semibold'>{ currentComponentName }</span>
                     <ChevronDown />
                 </Button>
             </PopoverTrigger>
