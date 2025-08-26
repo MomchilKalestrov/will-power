@@ -22,11 +22,12 @@ const icons: Record<componentType, lucideComponent> = {
     component: Puzzle
 };
 
-const colors: Record<componentType, string> = {
-    header: 'green-900',
-    page: 'cyan-900',
-    footer: 'purple-900',
-    component: 'rose-900'
+
+const colors: Record<componentType, [ string, string ]> = {
+    header: [ 'green-900', 'green-300' ],
+    page: [ 'cyan-900', 'indigo-300' ],
+    footer: [ 'purple-900', 'purple-300' ],
+    component: [ 'rose-900', 'rose-300' ]
 };
 
 const ComponentHistoryMenu: React.FC<Props> = ({ currentComponentName, type }) => {
@@ -58,7 +59,7 @@ const ComponentHistoryMenu: React.FC<Props> = ({ currentComponentName, type }) =
                     variant='ghost'
                     className='flex gap-1 flex-nowrap items-center justify-between min-w-32'
                 >
-                    <CurrentIcon color={ `var(--color-${ colors[ type ] })` } />
+                    <CurrentIcon color={ `var(--color-${ colors[ type ][ document.body.classList.contains('dark') ? 1 : 0 ] })` } />
                     <span className='grow text-center font-semibold'>{ currentComponentName }</span>
                     <ChevronDown />
                 </Button>

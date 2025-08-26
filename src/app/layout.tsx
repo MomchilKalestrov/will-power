@@ -2,7 +2,7 @@ import { Toaster } from 'sonner';
 import { ComponentDbProvider } from '@/components/componentDb';
 import './globals.css';
 
-const RootLayout: React.FC<React.PropsWithChildren> = async ({ children }) => (
+const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
     <html lang='en'>
         <head>
             <link rel="stylesheet" href="/api/css/theme" />

@@ -29,7 +29,7 @@ const Layout: NextPage<{
 
     return (
         <SidebarProvider>
-            <Sidebar>
+            <Sidebar className='dark:bg-accent'>
                 <SidebarHeader className='flex flex-row items-center gap-2'>
                     <SettingsPopover />
                     <p className='font-bold text-xl grow text-center'>Will-Power</p>
@@ -54,7 +54,7 @@ const Layout: NextPage<{
                 </SidebarContent>
                 <SidebarRail />
             </Sidebar>
-            <main className='p-4 grow'>{ children }</main>
+            <main className='p-4 grow bg-background'>{ children }</main>
         </SidebarProvider>
     );
 };

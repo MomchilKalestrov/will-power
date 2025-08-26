@@ -1,6 +1,7 @@
 import type{ NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+    reactStrictMode: false,
     redirects: () =>
         new Promise((resolve) =>
             resolve([

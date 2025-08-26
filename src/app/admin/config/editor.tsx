@@ -29,8 +29,6 @@ type EditorProps = {
 };
 
 const Editor: React.FC<Props> = ({ initialConfig }) => {
-    const prevUrl = useSearchParams().get('return');
-    const router = useRouter();
     const { updateConfig } = useConfig();
     const [ config, setConfig ] = React.useState<config>(initialConfig);
     const [ saveState, setSaveState ] = React.useState<boolean>(true);
@@ -61,14 +59,6 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
             <header className='h-16 px-4 border-b bg-background flex justify-between items-center gap-4'>
                 <section className='flex gap-2'>
                     <SettingsPopover />
-                    { 
-                        prevUrl &&
-                        <Link href={ decodeURIComponent(prevUrl) }>
-                            <Button variant='outline' size='icon'>
-                                <ChevronLeft />
-                            </Button>
-                        </Link>
-                    }
                 </section>
                 <section className='flex gap-2'>
                     <Button variant='outline' size='icon' onClick={ () => setConfig(initialConfig) }>
@@ -84,7 +74,7 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
                 </section>
             </header>
             <main className='flex h-[calc(100dvh_-_var(--spacing)_*_16)]'>
-                <Card className='min-w-32 max-w-[33%] overflow-x-hidden overflow-y-scroll resize-x h-full rounded-none border-0 border-r p-4 shadow-none'>
+                <Card className='min-w-32 max-w-[33%] bg-background overflow-x-hidden overflow-y-scroll resize-x h-full rounded-none border-0 border-r p-4 shadow-none'>
                     <div className='space-y-4'>
                         <ColorEditor { ...editorParams } />
                         <Separator />
@@ -93,7 +83,7 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
                         <FontEditor { ...editorParams } />
                     </div>
                 </Card>
-                <section className='flex-1 p-8 overflow-y-auto'>
+                <section className='flex-1 p-8 overflow-y-auto bg-background'>
                     <div className='mx-auto overflow-x-hidden overflow-y-scroll'>
                         <h2 className='text-3xl font-bold'>Preview</h2>
                         <Separator className='my-8' />

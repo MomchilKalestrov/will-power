@@ -1,5 +1,5 @@
 'use client';
-import React, { ComponentType } from 'react';
+import React from 'react';
 import { notFound } from 'next/navigation';
 import { Plus, RotateCcw } from 'lucide-react';
 import { del } from 'idb-keyval';
@@ -19,11 +19,11 @@ type Props = {
     component: string;
 };
 
-const colors: Record<componentType, string> = {
-    header: 'var(--color-green-900)',
-    page: 'var(--color-cyan-900)',
-    footer: 'var(--color-purple-900)',
-    component: 'var(--color-rose-900)'
+const colors: Record<componentType, [ string, string ]> = {
+    header: [ 'var(--color-green-900)', 'var(--color-green-300)' ],
+    page: [ 'var(--color-cyan-900)', 'var(--color-indigo-300)' ],
+    footer: [ 'var(--color-purple-900)', 'var(--color-purple-300)' ],
+    component: [ 'var(--color-rose-900)', 'var(--color-rose-300)' ]
 };
 
 const randomId = (): string => Math.floor(Math.random() * 9999).toString().padStart(4, '0');
@@ -136,7 +136,9 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
         <>
             <header
                 className='h-16 w-full px-4 border-b bg-background flex justify-between items-center gap-4 shrink-0'
-                style={ { '--primary': colors[ type ] } as React.CSSProperties }
+                style={ {
+                    '--primary': colors[ type ][ document.body.classList.contains('dark') ? 1 : 0 ]
+                } as React.CSSProperties }
             >
                 <section className='flex gap-2'>
                     <SettingsPopover />
