@@ -173,7 +173,10 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                             ?   <PropertiesPanel
                                     node={ selectedNode }
                                     metadata={ selectedNodeMetadata }
-                                    onNodeUpdate={ updateNode }
+                                    onNodeUpdate={ (id, data) => {
+                                        setSelectedNode((state) => ({ ...state!, ...data }));
+                                        updateNode(id, data);
+                                    } }
                                 />
                             :   <BlockPanel onNodeAdd={
                                     (type, acceptChildren) =>
