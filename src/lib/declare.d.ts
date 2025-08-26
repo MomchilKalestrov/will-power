@@ -104,7 +104,7 @@ declare global {
     interface NodeMetadata {
         props: Record<string, prop>;
         attributes: Record<string, attribute>;
-        styles: Record<string, style>;
+        styles: Partial<Record<keyof React.CSSProperties, style>>;
 
         enumerators: Record<string, { values: string[], icon?: boolean }>;
 

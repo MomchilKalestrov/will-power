@@ -106,7 +106,18 @@ const TreePanelNode: React.FC<Props> = ({ node, selectedNodeId, onParentChange: 
     :   child;
 };
 
-const TreePanel: React.FC<Props> = (props) => {
+const TreePanel: React.FC<Props & {
+    onDelete?: () => void;
+    onMoveUp?: () => void;
+    onMoveDown?: () => void;
+    hasSelectedNode?: boolean
+}> = ({
+    onDelete,
+    onMoveUp,
+    onMoveDown,
+    hasSelectedNode,
+    ...props
+}) => {
     return (
         <div className='h-full flex flex-col gap-2'>
             <div className='overflow-y-scroll flex-1'>
@@ -116,14 +127,20 @@ const TreePanel: React.FC<Props> = (props) => {
                 <Button
                     variant='outline'
                     size='icon'
+                    onClick={ onMoveUp }
+                    disabled={ !hasSelectedNode }
                 ><ChevronUp /></Button>
                 <Button
                     variant='outline'
                     size='icon'
+                    onClick={ onMoveDown }
+                    disabled={ !hasSelectedNode }
                 ><ChevronDown /></Button>
                 <Button
                     variant='destructive'
                     className='flex-1'
+                    onClick={ onDelete }
+                    disabled={ !hasSelectedNode }
                 ><Trash2 /> Delete</Button>
             </div>
         </div>

@@ -52,7 +52,17 @@ const getMetadata = (type: string): NodeMetadata | null => {
 
 const Editor: React.FC<Props> = ({ component: componentName }) => {
     const [ type, setType ] = React.useState<componentType>('page');
-    const { tree, setTree, findNode, updateNode, reparentNode, addNode } = useNodeTree();
+    const {
+        tree,
+        setTree,
+        findNode,
+        updateNode,
+        reparentNode,
+        addNode,
+        removeNode,
+        moveNodeUp,
+        moveNodeDown
+    } = useNodeTree();
     const [ selectedNode, setSelectedNode ] = React.useState<ComponentNode | undefined>();
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
@@ -197,7 +207,14 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                         style={ { direction: 'rtl' } }
                     >
                         <div style={ { direction: 'ltr' } } className='h-full'>
-                            <TreePanel node={ tree } onParentChange={ reparentNode } />
+                            <TreePanel
+                                node={ tree }
+                                onParentChange={ reparentNode }
+                                hasSelectedNode={ !!selectedNode }
+                                onDelete={ () => removeNode(selectedNode!.id) }
+                                onMoveUp={ () => moveNodeUp(selectedNode!.id) }
+                                onMoveDown={ () => moveNodeDown(selectedNode!.id) }
+                            />
                         </div>
                     </Card>
                 </div>

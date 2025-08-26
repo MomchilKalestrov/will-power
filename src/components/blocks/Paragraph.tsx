@@ -22,7 +22,10 @@ const Paragraph: React.FC<React.PropsWithChildren<Props>> = ({
     children,
     ...props
 }) => (
-    <p { ...props }>{ contents }{ children }</p>
+    <p { ...props }>
+        <span dangerouslySetInnerHTML={ { __html: contents } } />
+        { children }
+    </p>
 )
 
 export default Paragraph;

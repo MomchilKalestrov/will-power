@@ -192,7 +192,47 @@ const useNodeTree = (initialTree?: ComponentNode) => {
         });
     }, []);
 
-    return { tree, setTree, findNode, updateNode, addNode, removeNode, moveNode, reparentNode };
+    const moveNodeUp = React.useCallback((nodeId: string) => {
+        setTree(currentTree => {
+            if (!currentTree) return undefined;
+
+            // Helper to recursively find and move the node up
+            const moveUp = (node: ComponentNode): ComponentNode => {
+                if (!Array.isArray(node.children)) return node;
+                const idx = node.children.findIndex(child => child.id === nodeId);
+                if (idx > 0) {
+                    const newChildren = [...node.children];
+                    [newChildren[idx - 1], newChildren[idx]] = [newChildren[idx], newChildren[idx - 1]];
+                    return { ...node, children: newChildren };
+                }
+                return { ...node, children: node.children.map(child => moveUp(child)) };
+            };
+
+            return moveUp(currentTree);
+        });
+    }, []);
+
+    const moveNodeDown = React.useCallback((nodeId: string) => {
+        setTree(currentTree => {
+            if (!currentTree) return undefined;
+
+            // Helper to recursively find and move the node down
+            const moveDown = (node: ComponentNode): ComponentNode => {
+                if (!Array.isArray(node.children)) return node;
+                const idx = node.children.findIndex(child => child.id === nodeId);
+                if (idx !== -1 && idx < node.children.length - 1) {
+                    const newChildren = [...node.children];
+                    [newChildren[idx], newChildren[idx + 1]] = [newChildren[idx + 1], newChildren[idx]];
+                    return { ...node, children: newChildren };
+                }
+                return { ...node, children: node.children.map(child => moveDown(child)) };
+            };
+
+            return moveDown(currentTree);
+        });
+    }, []);
+
+    return { tree, setTree, findNode, updateNode, addNode, removeNode, moveNode, reparentNode, moveNodeDown, moveNodeUp };
 };
 
 export default useNodeTree;

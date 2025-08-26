@@ -28,6 +28,11 @@ const metadata: NodeMetadata = {
             default: 'normal normal 1rem "Times New Roman", sans-serif',
             in: 'Styling'
         },
+        textAlign: {
+            type: 'keyword',
+            default: 'start',
+            in: 'Styling'
+        },
         margin: {
             type: 'css-units',
             default: '0px',
@@ -88,6 +93,10 @@ const metadata: NodeMetadata = {
         },
         position: {
             values: [ 'static', 'relative', 'fixed', 'sticky', 'absolute' ],
+            icon: false
+        },
+        textAlign: {
+            values: [ 'start', 'center', 'end', 'justify' ],
             icon: false
         }
     },
