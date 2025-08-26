@@ -19,7 +19,7 @@ const Overlay: React.FC<Props> = ({ id, zIndex }) => {
             onClick={ select }
             style={ { zIndex } }
             className={ styles.Overlay }
-        />
+        ></span>
     );
 };
 

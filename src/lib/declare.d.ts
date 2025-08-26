@@ -56,7 +56,7 @@ declare global {
     };
 
     type style = {
-        type: 'string' | 'css-units' | 'shadow' | 'background' | 'keyword';
+        type: 'string' | 'css-units' | 'shadow' | 'background' | 'color' | 'keyword';
         default: string;
         condition?: editorVisibilityCondition;
         in: string;
@@ -65,7 +65,7 @@ declare global {
         count?: number;
         units: string[];
     } | {
-        type: 'string' | 'shadow' | 'background' | 'keyword';
+        type: 'string' | 'shadow' | 'background' | 'color' | 'keyword';
     });
 
     type attribute = {

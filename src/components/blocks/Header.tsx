@@ -12,7 +12,18 @@ const metadata: NodeMetadata = {
         }
     },
     attributes: {},
-    styles: {},
+    styles: {
+        color: {
+            type: 'color',
+            default: '#ffffff',
+            in: 'Styling'
+        },
+        background: {
+            type: 'color',
+            default: '#00000000',
+            in: 'Styling',
+        },
+    },
     enumerators: {
         type: {
             values: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ]

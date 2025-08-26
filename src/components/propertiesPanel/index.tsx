@@ -196,6 +196,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                         </div>
                                                     );
                                                 case 'background':
+                                                case 'color':
                                                     let selected: 'image' | 'gradient' | 'color' | 'none';                                                    
                                                     if (currentValue.includes('url'))
                                                         selected = 'image';
@@ -213,15 +214,20 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                                         <div key={ style.key } className='flex items-center justify-between flex-wrap gap-2'>
                                                             <Label htmlFor={ style.key } className='capitalize w-32'>{ style.name }</Label>
                                                             <div className='flex gap-2'>
-                                                                <ColorPicker selected={ selected === 'color' } { ...params } />
-                                                                <BackgroundPicker selected={ selected === 'image' } { ...params } />
-                                                                <GradientPicker selected={ selected === 'gradient' } { ...params } />
-                                                                <Button
-                                                                    size='icon'
-                                                                    className='size-8 p-2'
-                                                                    variant={ selected === 'none' ? 'outline' : 'ghost' }
-                                                                    onClick={ () => handleChange(style.key, 'unset', 'style') }
-                                                                ><Ban /></Button>
+                                                                <ColorPicker preview={ style.type === 'color' } selected={ selected === 'color' } { ...params } />
+                                                                {
+                                                                    style.type === 'background' &&
+                                                                    <>
+                                                                        <BackgroundPicker selected={ selected === 'image' } { ...params } />
+                                                                        <GradientPicker selected={ selected === 'gradient' } { ...params } />
+                                                                        <Button
+                                                                            size='icon'
+                                                                            className='size-8 p-2'
+                                                                            variant={ selected === 'none' ? 'outline' : 'ghost' }
+                                                                            onClick={ () => handleChange(style.key, 'unset', 'style') }
+                                                                        ><Ban /></Button>
+                                                                    </>
+                                                                }
                                                             </div>
                                                         </div>
                                                     );
