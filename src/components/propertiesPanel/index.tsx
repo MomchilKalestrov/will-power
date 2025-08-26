@@ -16,6 +16,7 @@ import GradientPicker from '@/components/inputs/gradientPicker';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 import BackgroundPicker from '@/components/inputs/backgroundPicker';
 import AdvancedTextarea from '../inputs/advancedTextarea';
+import FontInput from '../inputs/fontInput';
 
 type PropertiesPanelProps = {
     node: ComponentNode;
@@ -155,6 +156,18 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                             if (!isVisible(node, metadata, style.condition, 'styles')) return;
 
                                             switch(style.type) {
+                                                case 'font':
+                                                    return (
+                                                        <div key={ style.key } className='flex items-center flex-wrap justify-between gap-2'>
+                                                            <Label htmlFor={ `input-${ style.key }` } className='capitalize'>{ style.name }</Label>
+                                                            <div className='grow flex justify-end'>
+                                                                <FontInput
+                                                                    value={ currentValue }
+                                                                    onChange={ (value) => handleChange(style.key, value, 'style') }
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    );
                                                 case 'string':
                                                     return (
                                                         <div key={ style.key } className='grid gap-2'>

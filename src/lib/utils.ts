@@ -5,7 +5,7 @@ import type { config, font } from './config';
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 export const fontToCss = (font: font): string =>
-    `${ font.style } ${ font.weight } ${ font.size } "${ font.family }", ${ font.fallback }`
+    `${ font.style } ${ font.weight } ${ font.size } "${ font.family }", ${ font.fallback }`;
 
 export const cssToFont = (css: string): font => {
     const regex = /^(normal|italic)\s+(normal|bold|lighter|bolder)\s+([\d.]+[a-z]+(?:\/[^"]+)?)\s+"([^"]+)",\s+(.*)$/;
@@ -77,7 +77,7 @@ const cssFromConfig = (config: config): string =>
     ':root {\n' +
         config.variables.reduce<string>((acc: string, curr: config[ 'variables' ][ number ]) =>
             curr.type === 'font'
-            ?   acc + `\t--${ curr.name }: ${ fontToCss(curr) };\n`
+            ?   acc + `\t--${ curr.id }: ${ fontToCss(curr) };\n`
             :   acc + `\t--${ curr.name }: ${ curr.color };\n`
         , '') +
     '}\n' +

@@ -23,10 +23,72 @@ const metadata: NodeMetadata = {
             default: '#00000000',
             in: 'Styling',
         },
+        font: {
+            type: 'font',
+            default: 'normal normal 1rem "Times New Roman", sans-serif',
+            in: 'Styling'
+        },
+        margin: {
+            type: 'css-units',
+            default: '0px',
+            count: 4,
+            units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+            in: 'Positioning'
+        },
+        position: {
+            type: 'keyword',
+            default: 'static',
+            in: 'Positioning'
+        },
+        top: {
+            type: 'css-units',
+            default: '0px',
+            units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+            in: 'Positioning',
+            condition: {
+                key: 'position',
+                value: 'static',
+                comparison: 'different'
+            }
+        },
+        left: {
+            type: 'css-units',
+            default: '0px',
+            units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+            in: 'Positioning',
+            condition: {
+                key: 'position',
+                value: 'static',
+                comparison: 'different'
+            }
+        },
+        width: {
+            type: 'css-units',
+            default: '100%',
+            units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+            in: 'Sizing',
+        },
+        height: {
+            type: 'css-units',
+            default: '100%',
+            units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+            in: 'Sizing',
+        },
+        padding: {
+            type: 'css-units',
+            default: '0px 0px 0px 0px',
+            count: 4,
+            units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+            in: 'Sizing'
+        },
     },
     enumerators: {
         type: {
             values: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ]
+        },
+        position: {
+            values: [ 'static', 'relative', 'fixed', 'sticky', 'absolute' ],
+            icon: false
         }
     },
     acceptChildren: false

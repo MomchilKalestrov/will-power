@@ -1,17 +1,19 @@
 'use client';
 import React from 'react';
+import Link from 'next/link';
 import { CaseSensitive, Settings, Variable } from 'lucide-react';
+
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { useConfig } from '@/components/configProvider';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
-import { useConfig } from '@/components/configProvider';
+
 import type { fontVariable, font } from '@/lib/config';
+import { cn, fontToCss, cssToFont } from '@/lib/utils';
+
 import CssUnitInput from './cssUnitInput';
 import CssKeywordInput from './cssKeywordInput';
-import { cn, fontToCss } from '@/lib/utils';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 type Props = {
     value: string | fontVariable;
@@ -24,7 +26,6 @@ const FontInput: React.FC<Props> = ({
     onChange: onChangeCallback,
     noVars
 }) => {
-    const path = usePathname();
     const { config } = useConfig();
     const [ variable, setVariable ] = React.useState<fontVariable | undefined>(undefined);
     const [ variables, setVariables ] = React.useState<fontVariable[]>([]); 
@@ -34,6 +35,8 @@ const FontInput: React.FC<Props> = ({
     React.useEffect(() => {
         if (typeof initialFont === 'object')
             setFont(initialFont);
+        else if (!initialFont.startsWith('var(--'))
+            setFont(cssToFont(initialFont));
     }, []);
 
     React.useEffect(() => {
@@ -85,7 +88,7 @@ const FontInput: React.FC<Props> = ({
         setFont(newVariable);
         setVariable(newVariable);
         onChangeCallback(`var(--${ newVariable.id })`);
-    }, [ variables ]);
+    }, [ variables, onChangeCallback ]);
 
     const updateFont = React.useCallback((key: string, value: string) => {
         if (variable)
@@ -93,7 +96,7 @@ const FontInput: React.FC<Props> = ({
         const newFont: font = { ...font!, [ key ]: value };
         setFont(newFont);
         onChangeCallback(fontToCss(newFont));
-    }, [ font, variable ]);
+    }, [ font, variable, onChangeCallback ]);
 
     if (!font) return null;
 
@@ -169,7 +172,7 @@ const FontInput: React.FC<Props> = ({
                 <CssKeywordInput
                     value={ font.weight }
                     onChange={ (value) => updateFont('weight', value) }
-                    options={ [ 'normal', 'bold', 'lighter', 'bolder' ] }
+                    options={ [ 'lighter', 'normal', 'bold', 'bolder' ] }
                     id='input-font-weight'
                 />
                 <Label htmlFor='input-font-weight'>Fallback</Label>
