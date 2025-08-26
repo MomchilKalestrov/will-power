@@ -193,7 +193,7 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                         className='min-w-48 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-l border-r-0 border-t-0 border-b-0 bg-muted/20 p-4 shadow-none'    
                         style={ { direction: 'rtl' } }
                     >
-                        <div style={ { direction: 'ltr' } }>
+                        <div style={ { direction: 'ltr' } } className='h-full'>
                             <TreePanel node={ tree } onParentChange={ reparentNode } />
                         </div>
                     </Card>

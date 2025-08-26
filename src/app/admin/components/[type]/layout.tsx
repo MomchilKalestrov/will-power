@@ -2,6 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { NextPage } from 'next';
+import { notFound, useParams } from 'next/navigation';
 import SettingsPopover from '@/components/settingsPopover';
 import {
     Sidebar,
@@ -15,7 +16,6 @@ import {
     SidebarProvider,
     SidebarRail
 } from '@/components/ui/sidebar';
-import { notFound, useParams } from 'next/navigation';
 
 const pages: string[] = [ 'header', 'page', 'footer', 'component' ];
 

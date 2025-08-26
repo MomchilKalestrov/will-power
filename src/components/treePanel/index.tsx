@@ -1,18 +1,19 @@
 'use client';
 import React from 'react';
-import { ChevronRight, Type } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronUp, Trash2, Type } from 'lucide-react';
 import { useComponentDb } from '@/components/componentDb';
 import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
 
 type Props = {
-    node: PageNode;
+    node: ComponentNode;
     selectedNodeId?: string;
     onParentChange?: (childId: string, newParentId: string) => void;
 };
 
 const DragCTX = React.createContext<(childId: string, newParentId: string) => void>(() => null);
 
-const TreePanel: React.FC<Props> = ({ node, selectedNodeId, onParentChange: onParentChangeCallback }) => {
+const TreePanelNode: React.FC<Props> = ({ node, selectedNodeId, onParentChange: onParentChangeCallback }) => {
     const { getComponent } = useComponentDb();
     const reference = React.useRef<HTMLDivElement>(null);
     const onParentChange = React.useContext(DragCTX);
@@ -87,7 +88,7 @@ const TreePanel: React.FC<Props> = ({ node, selectedNodeId, onParentChange: onPa
                     <div className='pl-4 border-l border-muted-foreground/20 ml-[11px]'>
                         {
                             Array.isArray(node.children) && node.children.map((child) => (
-                                <TreePanel
+                                <TreePanelNode
                                     key={ 'child-' + child.id }
                                     node={ child }
                                     selectedNodeId={ selectedNodeId }
@@ -103,6 +104,30 @@ const TreePanel: React.FC<Props> = ({ node, selectedNodeId, onParentChange: onPa
     return onParentChangeCallback
     ?   <DragCTX value={ onParentChangeCallback }>{ child }</DragCTX>
     :   child;
+};
+
+const TreePanel: React.FC<Props> = (props) => {
+    return (
+        <div className='h-full flex flex-col gap-2'>
+            <div className='overflow-y-scroll flex-1'>
+                <TreePanelNode { ...props } />
+            </div>
+            <div className='flex gap-2'>
+                <Button
+                    variant='outline'
+                    size='icon'
+                ><ChevronUp /></Button>
+                <Button
+                    variant='outline'
+                    size='icon'
+                ><ChevronDown /></Button>
+                <Button
+                    variant='destructive'
+                    className='flex-1'
+                ><Trash2 /> Delete</Button>
+            </div>
+        </div>
+    )
 };
 
 export default TreePanel;
