@@ -6,7 +6,7 @@ declare global {
     var config: config | undefined;
 };
 
-type font = {
+export type font = {
     family: string;
     style: 'normal' | 'italic';
     size: string;
@@ -14,22 +14,22 @@ type font = {
     fallback: 'serif' | 'sans-serif' | 'monospace' | 'cursive';
 };
 
-type fontVariable = {
+export type fontVariable = {
     type: 'font';
     id: string;
     name: string;
 } & font;
 
-type colorVariable = {
+export type colorVariable = {
     type: 'color';
     id: string;
     name: string;
     color: `#${string}`;
 };
 
-type variable = fontVariable | colorVariable;
+export type variable = fontVariable | colorVariable;
 
-type config = {
+export type config = {
     theme: string;
     fonts: ({ family: string, url: string })[];
     variables: variable[];
@@ -66,4 +66,3 @@ const setConfig = async (config: Partial<config>): Promise<void> => {
 };
 
 export { getConfig, setConfig };
-export type { config, fontVariable, colorVariable, variable, font };
