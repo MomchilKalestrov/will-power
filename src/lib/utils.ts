@@ -127,6 +127,31 @@ class storage {
 
     static set = (key: string, value: any) =>
         localStorage.setItem(key, `${ value }` !== '[object Object]' ? value.toString() : JSON.stringify(value))
+};
+
+class cookies {
+    static get = (key: string): string | null => {
+        let name = key + '=';
+        let decodedCookie = decodeURIComponent(document.cookie);
+        for (let pair of decodedCookie.split(';').map(v => v.trim()))
+            if (pair.startsWith(name))
+                return pair.substring(name.length);
+        return null;
+    }; 
+    
+    static set = (key: string, value: string, days?: number): void => {
+        let expires = '';
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = '; expires=' + date.toUTCString();
+        };
+        document.cookie = key + '=' + encodeURIComponent(value) + expires + '; path=/';
+    };
+
+    static delete = (key: string): void => {
+        document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    };
 }
 
-export { cssFromConfig, deepCompare, storage };
+export { cssFromConfig, deepCompare, storage, cookies };

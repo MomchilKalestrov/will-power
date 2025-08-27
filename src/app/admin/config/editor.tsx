@@ -1,23 +1,23 @@
 'use client';
 import React from 'react';
-import { font, fontVariable, type config } from '@/lib/config';
-import { Button } from '@/components/ui/button';
+import { RotateCcw, Trash2 } from 'lucide-react';
+import type { font, fontVariable, config } from '@/lib/config';
+
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ChevronLeft, RotateCcw, Trash2 } from 'lucide-react';
-import ColorPicker from '@/components/inputs/colorPicker';
-import { useConfig } from '@/components/configProvider';
-import { Select } from '@radix-ui/react-select';
-import { SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
-import CssKeywordInput from '@/components/inputs/cssKeywordInput';
-import CssUnitInput from '@/components/inputs/cssUnitInput';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+
 import FontInput from '@/components/inputs/fontInput';
-import { cssToFont, fontToCss, hexToHsl, hslToHex } from '@/lib/utils';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useConfig } from '@/components/configProvider';
+import ColorPicker from '@/components/inputs/colorPicker';
 import SettingsPopover from '@/components/settingsPopover';
+import CssUnitInput from '@/components/inputs/cssUnitInput';
+import CssKeywordInput from '@/components/inputs/cssKeywordInput';
+
+import { cssToFont, fontToCss, hexToHsl, hslToHex } from '@/lib/utils';
 
 type Props = {
     initialConfig: config;
@@ -35,13 +35,13 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
 
     const onWindowChange = React.useCallback((e: Event) => {
         e.preventDefault();
-        if (saveState)
-            return;
+        if (saveState) return;
         ((e as any || (window as any).event)).returnValue = 'Any unsaved changes will be lost.';
         return 'Any unsaved changes will be lost.';
     }, [ saveState ]);
 
     React.useEffect(() => {
+        return;
         window.addEventListener('beforeunload', onWindowChange);
         return () => window.removeEventListener('beforeunload', onWindowChange);
     }, []);
@@ -56,42 +56,28 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
 
     return (
         <>
-            <header className='h-16 px-4 border-b bg-background flex justify-between items-center gap-4'>
-                <section className='flex gap-2'>
-                    <SettingsPopover />
-                </section>
-                <section className='flex gap-2'>
-                    <Button variant='outline' size='icon' onClick={ () => setConfig(initialConfig) }>
-                        <RotateCcw />
-                    </Button>
-                    <Button
-                        disabled={ saveState }
-                        onClick={ () => {
-                            setSaveState(true);
-                            updateConfig?.(config);
-                        } }
-                    >Save</Button>
-                </section>
+            <header className='h-16 px-4 border-b bg-background flex justify-end items-center gap-4'>
+                <Button variant='outline' size='icon' onClick={ () => setConfig(initialConfig) }>
+                    <RotateCcw />
+                </Button>
+                <Button
+                    disabled={ saveState }
+                    onClick={ () => {
+                        setSaveState(true);
+                        updateConfig?.(config);
+                    } }
+                >Save</Button>
             </header>
-            <main className='flex h-[calc(100dvh_-_var(--spacing)_*_16)]'>
-                <Card className='min-w-32 max-w-[33%] bg-background overflow-x-hidden overflow-y-scroll resize-x h-full rounded-none border-0 border-r p-4 shadow-none'>
-                    <div className='space-y-4'>
-                        <ColorEditor { ...editorParams } />
-                        <Separator />
+            <main className='p-8 overflow-y-scroll bg-background h-[calc(100dvh_-_var(--spacing)_*_16)]'>
+                <div className='grid grid-cols-2 gap-4'>
+                    <ColorEditor { ...editorParams } />
+                    <ColorPreview config={ config } />
+                    <div>
                         <FontfaceEditor { ...editorParams } />
-                        <Separator />
                         <FontEditor { ...editorParams } />
                     </div>
-                </Card>
-                <section className='flex-1 p-8 overflow-y-auto bg-background'>
-                    <div className='mx-auto overflow-x-hidden overflow-y-scroll'>
-                        <h2 className='text-3xl font-bold'>Preview</h2>
-                        <Separator className='my-8' />
-                        <ColorPreview config={ config } />
-                        <Separator className='my-8' />
-                        <FontPreview config={ config } />
-                    </div>
-                </section>
+                    <FontPreview config={ config } />
+                </div>
             </main>
         </>
     );

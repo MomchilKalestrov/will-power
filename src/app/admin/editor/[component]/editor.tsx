@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { Plus, RotateCcw } from 'lucide-react';
 import { del } from 'idb-keyval';
 import { Button } from '@/components/ui/button';
@@ -10,10 +11,10 @@ import TreePanel from '@/components/treePanel';
 import { getComponentByName, saveComponent } from '@/lib/db/actions';
 import useNodeTree from '@/hooks/useNodeTree';
 import BlockPanel from '@/components/blocksPanel';
-import SettingsPopover from '@/components/settingsPopover';
 import ComponentHistoryMenu from './componentHistoryMenu';
 import { toast } from 'sonner';
 import { storage } from '@/lib/utils';
+import Logo from '@/components/icons/logo';
 
 type Props = {
     component: string;
@@ -141,7 +142,9 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                 } as React.CSSProperties }
             >
                 <section className='flex gap-2'>
-                    <SettingsPopover />
+                    <Button size='icon'>
+                        <Link href='/admin/components/page'><Logo /></Link>
+                    </Button>
                     <Button size='icon' variant='outline' onClick={ () => setSelectedNode(undefined) }>
                         <Plus />
                     </Button>
@@ -175,11 +178,11 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                 </section>
             </header>
             <main
-                className='w-screen h-[calc(100dvh_-_var(--spacing)_*_16)] flex flex-col overflow-hidden bg-background'
+                className='w-screen h-[calc(100dvh_-_var(--spacing)_*_16)] flex flex-col overflow-hidden'
                 style={ { '--primary': colors[ type ] } as React.CSSProperties }
             >
                 <div className='flex flex-1 overflow-hidden'>
-                    <Card className='min-w-32 w-80 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-0 border-r bg-muted/20 p-4'>
+                    <Card className='bg-background min-w-32 w-80 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-0 border-r p-4'>
                         { 
                             (selectedNode && selectedNodeMetadata)
                             ?   <PropertiesPanel
@@ -205,7 +208,7 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                     />
 
                     <Card
-                        className='min-w-48 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-l border-r-0 border-t-0 border-b-0 bg-muted/20 p-4 shadow-none'    
+                        className='bg-background min-w-48 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-l border-r-0 border-t-0 border-b-0 p-4 shadow-none'    
                         style={ { direction: 'rtl' } }
                     >
                         <div style={ { direction: 'ltr' } } className='h-full'>

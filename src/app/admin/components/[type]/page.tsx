@@ -116,7 +116,7 @@ const Page: NextPage = () => {
     }, [ type ]);
 
     return (
-        <section className='flex gap-2 flex-wrap justify-center'>
+        <main className='flex gap-2 flex-wrap justify-center p-8'>
             { components.map(component => (
                 <ComponentCard
                     key={ component }
@@ -125,7 +125,7 @@ const Page: NextPage = () => {
                 />
             )) }
             <CreatePageDialog components={ components } type={ type } />
-        </section>
+        </main>
     )
 };
 

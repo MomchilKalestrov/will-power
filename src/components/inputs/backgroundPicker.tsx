@@ -96,7 +96,7 @@ const BackgroundPicker: React.FC<Props> = ({
                                 height={ 128 }
                                 className='aspect-2/1 w-[100%]'
                             />
-                        :   <div className='aspect-2/1 w-[100%] bg-stone-100 flex justify-center content-center'>
+                        :   <div className='aspect-2/1 w-[100%] bg-stone-100 dark:bg-zinc-800 flex justify-center content-center'>
                                 <CirclePlus />
                             </div>
                     }
