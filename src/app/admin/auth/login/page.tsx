@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { NextPage } from 'next';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -12,7 +12,7 @@ const errors: Record<string, string> = {
     'CredentialsSignin': 'Invalid credentials. Please try again.'
 };
 
-const redirectPage: string = '/admin';
+const redirectPage: string = '/admin/components/page';
 
 const Page: NextPage = () => {
     const params = useSearchParams();

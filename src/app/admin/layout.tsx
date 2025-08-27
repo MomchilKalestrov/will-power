@@ -1,8 +1,12 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { NextPage } from 'next';
+import { NextComponentType, NextPageContext } from 'next';
+import { ChevronRight } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { SessionProvider } from 'next-auth/react';
+
+import { Switch } from '@/components/ui/switch';
 import {
   Collapsible,
   CollapsibleContent,
@@ -22,10 +26,11 @@ import {
     SidebarProvider,
     SidebarRail
 } from '@/components/ui/sidebar';
-import { cookies } from '@/lib/utils';
+
 import { ConfigProvider } from '@/components/configProvider';
-import { SessionProvider } from 'next-auth/react';
-import { ChevronRight } from 'lucide-react';
+
+import { cookies } from '@/lib/utils';
+import { Label } from '@/components/ui/label';
 
 type name = string;
 type path = string;
@@ -37,21 +42,26 @@ const pages: Record<name, Record<name, path> | path> = {
         'Footer': '/admin/components/footer',
         'Components': '/admin/components/component'
     },
-    'Config': '/admin/config'
+    'Config': '/admin/config',
+    'Users': '/admin/users',
+    'Personalization': '/admin/personalization',
+    'Plugins': '/admin/plugins'
 };
 
-const Layout: NextPage<{
-    children: React.JSX.Element
-}> = ({
+const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
     children
 }) => {
     const currentPath = usePathname().split('?')[ 0 ];
 
+    const [ darkMode, setDarkMode ] = React.useState<boolean>(false);
+
     React.useEffect(() => {
-        if (
-            !window.location.href.includes('/admin/viewer/') &&
-            cookies.get('darkMode') === 'true'
-        ) document.body.classList.add('dark')
+        if (typeof window === 'undefined') return;
+        const isDark = cookies.get('darkMode') === 'true';
+        if (!window.location.href.includes('/admin/viewer/') && isDark) {
+            document.body.classList.add('dark');
+        }
+        setDarkMode(isDark);
     }, []);
 
     if (currentPath.includes('/admin/viewer') || currentPath.includes('/admin/editor'))
@@ -65,7 +75,7 @@ const Layout: NextPage<{
                         <SidebarHeader className='flex flex-row items-center gap-2'>
                             <p className='font-bold text-xl grow text-center'>Will-Power</p>
                         </SidebarHeader>
-                        <SidebarContent>
+                        <SidebarContent className='grid grid-rows-[1fr_auto]'>
                             <SidebarGroup>
                                 <SidebarGroupContent>
                                     <SidebarMenu>
@@ -101,6 +111,26 @@ const Layout: NextPage<{
                                     </SidebarMenu>
                                 </SidebarGroupContent>
                             </SidebarGroup>
+                                <div className='flex gap-2 p-4'>
+                                    <Switch
+                                        checked={ darkMode }
+                                        name='dark-mode-toggle'
+                                        onClick={ () => {
+                                            const newMode = !darkMode;
+                                            setDarkMode(newMode);
+                                            if (newMode) {
+                                                cookies.set('darkMode', 'true');
+                                                document.body.classList.add('dark');
+                                            } else {
+                                                cookies.set('darkMode', 'false');
+                                                document.body.classList.remove('dark');
+                                            }
+                                        } }
+                                    />
+                                    <Label htmlFor='dark-mode-toggle'>
+                                        { darkMode ? 'Dark Mode' : 'Light Mode' }
+                                    </Label>
+                                </div>
                         </SidebarContent>
                         <SidebarRail />
                     </Sidebar>

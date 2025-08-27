@@ -4,11 +4,7 @@ import { notFound } from 'next/navigation';
 import RenderNode from '@/components/renderNode';
 import { getComponentByName, getMatchingComponents } from '@/lib/db/actions';
 
-type Props = {
-    params: Promise<{ page: string }>
-};
-
-const Page: NextPage<Props> = async ({ params }) => {
+const Page: NextPage<PageProps<'/[page]'>> = async ({ params }) => {
     const { page: pageName } = await params;
     const page = await getComponentByName(pageName, 'page');
     if (!page) return notFound();

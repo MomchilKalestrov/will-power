@@ -7,23 +7,19 @@ import { notFound, useRouter } from 'next/navigation';
 import { getComponentByName } from '@/lib/db/actions';
 import { storage } from '@/lib/utils';
 
-type Props = {
-    params: Promise<{ page: string }>;
-};
-
-const Page: NextPage<Props> = ({ params }) => {
+const Page: NextPage<PageProps<'/admin/viewer/[component]'>> = ({ params }) => {
     const router = useRouter();
-    const { page } = React.use(params);
+    const { component } = React.use(params);
     const { tree, setTree } = useNodeTree();
 
     const onMessage = React.useCallback((event: MessageEvent) => {
-        if (!page) return;
+        if (!component) return;
         switch (event.data.type) {
             case 'update-tree':
-                setTree(storage.parse<Component>(page).rootNode);
+                setTree(storage.parse<Component>(component).rootNode);
                 break;
         };
-    }, [ page ]);
+    }, [ component ]);
 
     const onTreeLoaded = React.useCallback(() => {
         window.top?.postMessage({
@@ -37,14 +33,14 @@ const Page: NextPage<Props> = ({ params }) => {
             window.top === window.self &&
             new URLSearchParams(document.location.search).get('force') !== 'true'
         )
-            router.replace(`/admin/editor/${ page }`);
+            router.replace(`/admin/editor/${ component }`);
     }, []);
     
     React.useEffect(() => {
-        const localRevision: ComponentNode | undefined = storage.tryParse<Component | any>(page, {}).rootNode;
+        const localRevision: ComponentNode | undefined = storage.tryParse<Component | any>(component, {}).rootNode;
         
         if (!localRevision)
-            getComponentByName(page).then((component) => {
+            getComponentByName(component).then((component) => {
                 if (!component) return notFound();
                 setTree(component.rootNode);
             });
@@ -53,7 +49,7 @@ const Page: NextPage<Props> = ({ params }) => {
 
         window.addEventListener('message', onMessage);
         return () => window.removeEventListener('message', onMessage);
-    }, [ page ]);
+    }, [ component ]);
 
     if (!tree) return null;
 
