@@ -1,23 +1,23 @@
 'use client';
 import React from 'react';
-import { RotateCcw, Trash2 } from 'lucide-react';
+import { Plus, RotateCcw, Trash2 } from 'lucide-react';
 import type { font, fontVariable, config } from '@/lib/config';
 
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
 import FontInput from '@/components/inputs/fontInput';
 import { useConfig } from '@/components/configProvider';
 import ColorPicker from '@/components/inputs/colorPicker';
-import SettingsPopover from '@/components/settingsPopover';
 import CssUnitInput from '@/components/inputs/cssUnitInput';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 
 import { cssToFont, fontToCss, hexToHsl, hslToHex } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 type Props = {
     initialConfig: config;
@@ -69,10 +69,11 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
                 >Save</Button>
             </header>
             <main className='p-8 overflow-y-scroll bg-background h-[calc(100dvh_-_var(--spacing)_*_16)]'>
-                <div className='grid grid-cols-2 gap-4'>
+                <div className='grid grid-cols-[384px_1fr] gap-4'>
                     <ColorEditor { ...editorParams } />
                     <ColorPreview config={ config } />
-                    <div>
+                    <Separator className='col-span-full' />
+                    <div className='space-y-4'>
                         <FontfaceEditor { ...editorParams } />
                         <FontEditor { ...editorParams } />
                     </div>
@@ -123,7 +124,31 @@ const ColorEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
 
     return (
         <section className='space-y-4'>
-            <h3 className='text-lg font-bold'>Colors</h3>
+            <div className='flex items-center justify-between'>
+                <h2 className='text-xl font-bold h-min'>Colors</h2>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant='outline' size='icon'><Plus /></Button>
+                    </PopoverTrigger>
+                    <PopoverContent align='end' className='grid grid-cols-[1fr_auto] items-end gap-2 p-4 border rounded-md border-dashed'>
+                        <Input
+                            placeholder='e.g., primary'
+                            value={ newColor.name }
+                            onChange={({ target: { value: name } }) => setNewColor({ ...newColor, name })}
+                        />
+                        <ColorPicker
+                            value={ newColor.color }
+                            selected={ true }
+                            onChange={ (color) => setNewColor({ ...newColor, color }) }
+                        />
+                        <Button
+                            variant='outline'
+                            className='col-span-full'
+                            onClick={ handleAddColor }
+                        >Add</Button>
+                    </PopoverContent>
+                </Popover>
+            </div>
             { colorVariables.map(({ id, name, color }) => (
                 <div key={ id } className='flex items-center gap-2 rounded-md'>
                     <Input
@@ -146,23 +171,6 @@ const ColorEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
                     </Button>
                 </div>
             )) }
-            <div className='grid grid-cols-[1fr_auto] items-end gap-2 p-4 border rounded-md border-dashed'>
-                <Input
-                    placeholder='e.g., primary'
-                    value={ newColor.name }
-                    onChange={({ target: { value: name } }) => setNewColor({ ...newColor, name })}
-                />
-                <ColorPicker
-                    value={ newColor.color }
-                    selected={ true }
-                    onChange={ (color) => setNewColor({ ...newColor, color }) }
-                />
-                <Button
-                    variant='outline'
-                    className='col-span-full'
-                    onClick={ handleAddColor }
-                >Add</Button>
-            </div>
         </section>
     );
 };
@@ -181,7 +189,35 @@ const FontfaceEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
 
     return (
         <section className='space-y-4'>
-            <h3 className='text-lg font-bold'>Font Families</h3>
+            <div className='flex items-center justify-between'>
+                <h2 className='text-xl font-bold h-min'>Font Families</h2>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant='outline' size='icon'><Plus /></Button>
+                    </PopoverTrigger>
+                    <PopoverContent align='end' className='grid grid-cols-[auto_1fr] gap-2 gap-x-4 p-4'>
+                        <Label htmlFor='input-fontface-family'>Family</Label>
+                        <Input
+                            id='input-fontface-family'
+                            placeholder='e.g., Inter'
+                            defaultValue={ newFont.family }
+                            onChange={ ({ target: { value: family } }) => setNewFont({ ...newFont, family }) }
+                        />
+                        <Label htmlFor='input-fontface-url'>URL</Label>
+                        <Input
+                            id='input-fontface-url'
+                            placeholder='/fonts/inter.woff2'
+                            defaultValue={ newFont.url }
+                            onChange={ ({ target: { value: url } }) => setNewFont({ ...newFont, url }) }
+                        />
+                        <Button
+                            variant='outline'
+                            className='col-span-full'
+                            onClick={ handleAddFont }
+                        >Add</Button>
+                    </PopoverContent>
+                </Popover>
+            </div>
             { config.fonts.map((font, index) => (
                 <div key={ font.family } className='flex items-center'>
                     <div className='flex-1 space-y-1'>
@@ -193,27 +229,6 @@ const FontfaceEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
                     </Button>
                 </div>
             )) }
-            <div className='grid grid-cols-[auto_1fr] gap-2 gap-x-4 p-4 border rounded-md border-dashed'>
-                <Label htmlFor='input-fontface-family'>Family</Label>
-                <Input
-                    id='input-fontface-family'
-                    placeholder='e.g., Inter'
-                    defaultValue={ newFont.family }
-                    onChange={ ({ target: { value: family } }) => setNewFont({ ...newFont, family }) }
-                />
-                <Label htmlFor='input-fontface-url'>URL</Label>
-                <Input
-                    id='input-fontface-url'
-                    placeholder='/fonts/inter.woff2'
-                    defaultValue={ newFont.url }
-                    onChange={ ({ target: { value: url } }) => setNewFont({ ...newFont, url }) }
-                />
-                <Button
-                    variant='outline'
-                    className='col-span-full'
-                    onClick={ handleAddFont }
-                >Add</Button>
-            </div>
         </section>
     );
 };
@@ -276,14 +291,74 @@ const FontEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
 
     return (
         <section className='space-y-4'>
-            <h3 className='text-lg font-bold'>Font Styles</h3>
+            <div className='flex items-center justify-between'>
+                <h2 className='text-xl font-bold h-min'>Font Styles</h2>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant='outline' size='icon'><Plus /></Button>
+                    </PopoverTrigger>
+                    <PopoverContent align='end' className='grid grid-cols-[auto_1fr] gap-2 gap-x-4 p-4'>
+                        <Label htmlFor='input-font-name'>Name</Label>
+                        <Input
+                            defaultValue={ name }
+                            onChange={ ({ target: { value } }) => setName(value) }
+                        />
+                        <Label htmlFor='input-font-family'>Family</Label>
+                        <Select onValueChange={ (family) => setNewFont({ ...newFont, family }) }>
+                            <SelectTrigger id='input-font-family' className='w-full' value={ newFont.family }>
+                                { newFont.family }
+                            </SelectTrigger>
+                            <SelectContent>
+                                { typefaces.map((typeface) => (
+                                    <SelectItem style={ { fontFamily: typeface } } key={ typeface } value={ typeface }>
+                                        { typeface }
+                                    </SelectItem>
+                                )) }
+                            </SelectContent>
+                        </Select>
+                        <Label htmlFor='input-font-style'>Style</Label>
+                        <CssKeywordInput
+                            id='input-font-style'
+                            value={ newFont.style }
+                            options={ [ 'normal', 'italic' ] }
+                            onChange={ (style) => setNewFont({ ...newFont, style: style as 'normal' | 'italic' }) }
+                            />
+                        <Label>Size</Label>
+                        <CssUnitInput
+                            value={ newFont.size }
+                            units={ [ 'rem', 'em', 'px' ] }
+                            onChange={ (size) => setNewFont({ ...newFont, size }) }
+                            allowCustom={ false }
+                            />
+                        <Label htmlFor='input-font-weight'>Weight</Label>
+                        <CssKeywordInput
+                            id='input-font-weight'
+                            value={ newFont.weight }
+                            options={ [ 'normal', 'bold', 'lighter', 'bolder' ] }
+                            onChange={ (weight) => setNewFont({ ...newFont, weight: weight as 'normal' | 'bold' | 'lighter' | 'bolder' }) }
+                            />
+                        <Label htmlFor='input-font-fallback'>Fallback</Label>
+                        <CssKeywordInput
+                            id='input-font-fallback'
+                            value={ newFont.fallback }
+                            options={ [ 'serif', 'sans-serif', 'monospace', 'cursive' ] }
+                            onChange={ (fallback) => setNewFont({ ...newFont, fallback: fallback as 'serif' | 'sans-serif' | 'monospace' | 'cursive' }) }
+                            />
+                        <Button
+                            variant='outline'
+                            className='col-span-full'
+                            onClick={ handleAddFont }
+                            >Add</Button>
+                    </PopoverContent>
+                </Popover>
+            </div>
             { fontVariables.map((font, index) => (
                 <div key={ font.id } className='flex items-center gap-2'>
                     <Input
                         defaultValue={ font.name }
                         className='text-sm font-medium flex-grow'
                         onChange={ ({ target: { value: name } }) => handleFontChange(font.id, { name }) }
-                    />
+                        />
                     <FontInput
                         value={ font }
                         noVars={ true }
@@ -294,60 +369,6 @@ const FontEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
                     </Button>
                 </div>
             )) }
-            
-            <div className='grid grid-cols-[auto_1fr] gap-2 gap-x-4 p-4 border rounded-md border-dashed'>
-                <Label htmlFor='input-font-name'>Name</Label>
-                <Input
-                    defaultValue={ name }
-                    onChange={ ({ target: { value } }) => setName(value) }
-                />
-                <Label htmlFor='input-font-family'>Family</Label>
-                <Select onValueChange={ (family) => setNewFont({ ...newFont, family }) }>
-                    <SelectTrigger id='input-font-family' className='w-full' value={ newFont.family }>
-                        { newFont.family }
-                    </SelectTrigger>
-                    <SelectContent>
-                        { typefaces.map((typeface) => (
-                            <SelectItem style={ { fontFamily: typeface } } key={ typeface } value={ typeface }>
-                                { typeface }
-                            </SelectItem>
-                        )) }
-                    </SelectContent>
-                </Select>
-                <Label htmlFor='input-font-style'>Style</Label>
-                <CssKeywordInput
-                    id='input-font-style'
-                    value={ newFont.style }
-                    options={ [ 'normal', 'italic' ] }
-                    onChange={ (style) => setNewFont({ ...newFont, style: style as 'normal' | 'italic' }) }
-                />
-                <Label>Size</Label>
-                <CssUnitInput
-                    value={ newFont.size }
-                    units={ [ 'rem', 'em', 'px' ] }
-                    onChange={ (size) => setNewFont({ ...newFont, size }) }
-                    allowCustom={ false }
-                />
-                <Label htmlFor='input-font-weight'>Weight</Label>
-                <CssKeywordInput
-                    id='input-font-weight'
-                    value={ newFont.weight }
-                    options={ [ 'normal', 'bold', 'lighter', 'bolder' ] }
-                    onChange={ (weight) => setNewFont({ ...newFont, weight: weight as 'normal' | 'bold' | 'lighter' | 'bolder' }) }
-                />
-                <Label htmlFor='input-font-fallback'>Fallback</Label>
-                <CssKeywordInput
-                    id='input-font-fallback'
-                    value={ newFont.fallback }
-                    options={ [ 'serif', 'sans-serif', 'monospace', 'cursive' ] }
-                    onChange={ (fallback) => setNewFont({ ...newFont, fallback: fallback as 'serif' | 'sans-serif' | 'monospace' | 'cursive' }) }
-                />
-                <Button
-                    variant='outline'
-                    className='col-span-full'
-                    onClick={ handleAddFont }
-                >Add</Button>
-            </div>
         </section>
     );
 };
@@ -356,7 +377,6 @@ const ColorPreview: React.FC<{ config: config }> = ({ config }) => {
     const colorVariables = config.variables.filter(v => v.type === 'color');
     return (
         <div className='flex flex-wrap gap-4'>
-            <h3 className='text-2xl font-semibold w-full'>Colors</h3>
             { colorVariables.map(({ id, color, name }) => {
                 let [ h, s, l ] = hexToHsl(color);
                 const foregroundHex = hslToHex(h, s / 2, l > 50 ? 20 : 80);
@@ -385,17 +405,14 @@ const FontPreview: React.FC<{ config: config }> = ({ config }) => {
     , [ config.variables ]);
 
     return (
-        <div>
-            <h3 className='text-2xl font-semibold mb-4'>Fonts</h3>
-            <div className='space-y-6'>
-                { fonts.map((font) => (
-                    <p
-                        key={ font.id }
-                        className={ `text-muted-foreground text-sm overflow-scroll text-nowrap max-h-[${ font.size }]` }
-                        style={ { font: fontToCss(font) } }
-                    >{ font.name }</p>
-                ))}
-            </div>
+        <div className='space-y-6'>
+            { fonts.map((font) => (
+                <p
+                    key={ font.id }
+                    className={ `text-muted-foreground text-sm overflow-scroll text-nowrap max-h-[${ font.size }]` }
+                    style={ { font: fontToCss(font) } }
+                >{ font.name }</p>
+            ))}
         </div>
     );
 };
