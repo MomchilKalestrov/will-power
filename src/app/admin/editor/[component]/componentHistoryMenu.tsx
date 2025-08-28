@@ -36,7 +36,7 @@ const ComponentHistoryMenu: React.FC<Props> = ({ currentComponentName, type }) =
     React.useEffect(() => {
         let currentHistory: history = history
             ?   [ ...history ]
-            :   storage.tryParse<history>('editorHistory', []);
+            :   storage.tryParse<history>('editor-history', []);
         
         currentHistory = currentHistory.filter(({ name }) => name !== currentComponentName).slice(0, 3);
         if (
@@ -44,7 +44,7 @@ const ComponentHistoryMenu: React.FC<Props> = ({ currentComponentName, type }) =
             currentHistory[ currentHistory.length - 1 ].name !== currentComponentName
         ) currentHistory.push({ name: currentComponentName, type });
 
-        storage.set('editorHistory', currentHistory);
+        storage.set('editor-history', currentHistory);
         setHistory(currentHistory);
     }, [ currentComponentName ]);
 

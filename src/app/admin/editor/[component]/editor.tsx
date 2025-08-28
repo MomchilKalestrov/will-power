@@ -76,31 +76,30 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                     notFound();
                 
                 setType(remoteRevision.type);
-                if (storage.has(componentName)) {
+
+                if (!storage.has(componentName)) {
+                    storage.set(componentName, remoteRevision);
+                    setTree(remoteRevision.rootNode);
+                } else {
                     const localRevision: Component = storage.parse<Component>(componentName);
+                    setTree(localRevision.rootNode);
                     if (localRevision.lastEdited < remoteRevision.lastEdited)
                         toast('A newer version is available on remote');
-                    setTree(localRevision.rootNode);
-                    return;
                 }
-
-                setTree(remoteRevision.rootNode);
-                storage.set(componentName, remoteRevision);
             });
     }, [ componentName ]);
 
     React.useEffect(() => {
-        if (!iframeRef.current || !tree) return
-        
+        if (!iframeRef.current || !tree) return;
+
         storage.set(componentName, {
-            name: componentName,
+            ...storage.parse<Component>(componentName),
             rootNode: tree,
             lastEdited: Date.now()
         });
 
         iframeRef.current.contentWindow?.postMessage({
-            type: 'update-tree',
-            payload: tree
+            type: 'update-tree'
         }, '*');
     }, [ tree ]);
 
@@ -163,10 +162,8 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                         button.disabled = true;
                         del(`preview-${ componentName }`);
                         saveComponent({
-                            type,
-                            name: componentName,
-                            rootNode: tree,
-                            lastEdited: storage.parse<Component>(componentName).lastEdited
+                            ...storage.parse<Component>(componentName),
+                            rootNode: tree
                         }).then(() => {
                             button.disabled = false;
                             toast('Saved!');

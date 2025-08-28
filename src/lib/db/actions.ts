@@ -29,15 +29,17 @@ const componentSchema = z.union([
         name: componentName,
         lastEdited: z.number(),
         rootNode: componentNodeSchema,
-        displayCondition: z.union([
-            z.object({
-                show: z.literal('all'),
-            }),
-            z.object({
-                show: z.enum([ 'page', 'exclude' ]),
-                name: z.string()
-            })
-        ])
+        displayCondition: z.array(
+            z.union([
+                z.object({
+                    show: z.literal('all'),
+                }),
+                z.object({
+                    show: z.enum([ 'page', 'exclude' ]),
+                    name: z.string()
+                })
+            ])
+        )
     }),
     z.object({
         type: z.enum([ 'page', 'component' ]),
@@ -76,7 +78,6 @@ const getAllComponents = async (type: componentType = 'page'): Promise<string[]>
 };
 
 const saveComponent = async (component: Partial<Component>): Promise<boolean> => {
-    console.log(component);
     try {
         const model = componentSchema.parse(component);
         const { name, ...data } = model;

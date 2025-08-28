@@ -113,8 +113,11 @@ class storage {
     static parse = <T = any>(
         key: string,
         parser: parser<T> = (value: string) => JSON.parse(value)
-    ): T =>
-        parser(localStorage.getItem(key)!);
+    ): T => {
+        const item = this.get(key);
+        if (!item) throw new Error('Cannot parse null values');
+        return parser(item);
+    };
     
     static tryParse = <T = any>(
         key: string,
