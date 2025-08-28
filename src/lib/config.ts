@@ -44,8 +44,7 @@ const defaultConfig: config = {
 }; 
 
 const getConfig = async (): Promise<config> => {
-    if (!!global.config) return JSON.parse(JSON.stringify(global.config));
-    
+    if (global.config) return JSON.parse(JSON.stringify(global.config));
     await connect();
     global.config = await Config.findOne().lean() as unknown as config;
     

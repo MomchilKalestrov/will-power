@@ -22,7 +22,6 @@ const icons: Record<componentType, lucideComponent> = {
     component: Puzzle
 };
 
-
 const colors: Record<componentType, [ string, string ]> = {
     header: [ 'green-900', 'green-300' ],
     page: [ 'cyan-900', 'indigo-300' ],
@@ -38,7 +37,7 @@ const ComponentHistoryMenu: React.FC<Props> = ({ currentComponentName, type }) =
             ?   [ ...history ]
             :   storage.tryParse<history>('editor-history', []);
         
-        currentHistory = currentHistory.filter(({ name }) => name !== currentComponentName).slice(0, 3);
+        currentHistory = currentHistory.filter(({ name }) => name !== currentComponentName).slice(0, 4);
         if (
             currentHistory.length === 0 ||
             currentHistory[ currentHistory.length - 1 ].name !== currentComponentName
@@ -65,7 +64,7 @@ const ComponentHistoryMenu: React.FC<Props> = ({ currentComponentName, type }) =
                 </Button>
             </PopoverTrigger>
             <PopoverContent className='grid min-w-32 w-[unset] p-2'>
-                { history.map(({ name, type }) => {
+                { [ ...history ].reverse().slice(1).map(({ name, type }) => {
                     const Icon = icons[ type ];
                     return (
                         <Button

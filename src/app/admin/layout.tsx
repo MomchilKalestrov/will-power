@@ -65,7 +65,13 @@ const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
     }, []);
 
     if (currentPath.includes('/admin/viewer') || currentPath.includes('/admin/editor'))
-        return children;
+        return (
+            <ConfigProvider>
+                <SessionProvider>
+                    { children }
+                </SessionProvider>
+            </ConfigProvider>
+        );
 
     return (
         <ConfigProvider>

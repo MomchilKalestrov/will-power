@@ -129,7 +129,7 @@ class storage {
     };
 
     static set = (key: string, value: any) =>
-        localStorage.setItem(key, `${ value }` !== '[object Object]' ? value.toString() : JSON.stringify(value))
+        localStorage.setItem(key, Object(value) !== value ? value.toString() : JSON.stringify(value))
 };
 
 class cookies {
