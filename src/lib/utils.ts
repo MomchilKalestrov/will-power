@@ -129,7 +129,7 @@ class storage {
     };
 
     static set = (key: string, value: any) =>
-        localStorage.setItem(key, Object(value) !== value ? value.toString() : JSON.stringify(value))
+        localStorage.setItem(key, typeof value !== 'object' ? value.toString() : JSON.stringify(value))
 };
 
 class cookies {
@@ -155,6 +155,13 @@ class cookies {
     static delete = (key: string): void => {
         document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     };
-}
+};
 
-export { cssFromConfig, deepCompare, storage, cookies };
+const awaitable = <T = unknown>(value: unknown): value is Promise<T> => {
+  return value !== null &&
+    value !== undefined &&
+    (typeof value === 'object' || typeof value === 'function') &&
+    typeof (value as { then?: unknown }).then === 'function';
+};
+
+export { cssFromConfig, deepCompare, storage, cookies, awaitable };

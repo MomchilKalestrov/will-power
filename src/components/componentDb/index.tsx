@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { awaitable } from '@/lib/utils';
 
 type componentData = {
     metadata: NodeMetadata;
@@ -26,7 +27,8 @@ const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
         if (components.has(type))
             return components.get(type)!;
         
-        const { metadata, Icon, default: Component } = require(`@/components/blocks/${ type }`);
+        const module = require(`@/components/blocks/${ type }`);
+        const { metadata, Icon, default: Component } = awaitable(module) ? await module : module;
         const data: componentData = { metadata, Component, Icon };
         
         const newMap = new Map(components);
@@ -39,7 +41,8 @@ const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     const componentNames = React.useMemo(() => [
         'Container',
         'Header',
-        'Paragraph'
+        'Paragraph',
+        'Component'
     ], []);
 
     return (

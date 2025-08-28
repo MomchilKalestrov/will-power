@@ -90,7 +90,7 @@ declare global {
 
     type prop = {
         type: 'string' | 'number' | 'custom' | 'enum';
-        default: any;
+        default?: any;
         condition?: editorVisibilityCondition;
     } & ({
         type: 'string' | 'number' | 'enum';

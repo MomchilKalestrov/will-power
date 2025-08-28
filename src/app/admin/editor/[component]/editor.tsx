@@ -15,6 +15,7 @@ import ComponentHistoryMenu from './componentHistoryMenu';
 import { toast } from 'sonner';
 import { storage } from '@/lib/utils';
 import Logo from '@/components/icons/logo';
+import { useComponentDb } from '@/components/componentDb';
 
 type Props = {
     component: string;
@@ -65,6 +66,8 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
         moveNodeDown
     } = useNodeTree();
     const [ selectedNode, setSelectedNode ] = React.useState<ComponentNode | undefined>();
+    const [ nodeMetadata, setNodeMetadata ] = React.useState<NodeMetadata | undefined>();
+    const { getComponent } = useComponentDb();
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
     React.useEffect(() => {
@@ -106,9 +109,12 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
     const onMessage = React.useCallback((event: MessageEvent) => {
         switch (event.data.type) {
             case 'select':
-                setSelectedNode(findNode(event.data.payload)!);
+                const node = findNode(event.data.payload)!;
+                setSelectedNode(node);
+                getComponent(node.type)
+                    .then((value) => setNodeMetadata(value!.metadata));
         }
-    }, [ tree, findNode ]);
+    }, [ findNode, getComponent ]);
 
     const onReset = React.useCallback(async () => {
         const remoteRevision = await getComponentByName(componentName);
@@ -129,8 +135,6 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
     }, [ tree, findNode, selectedNode ]);
     
     if (!tree) return null;
-    
-    const selectedNodeMetadata = selectedNode ? getMetadata(selectedNode.type) : null;
 
     return (
         <>
@@ -181,10 +185,10 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                 <div className='flex flex-1 overflow-hidden'>
                     <Card className='bg-background min-w-32 w-80 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-0 border-r p-4'>
                         { 
-                            (selectedNode && selectedNodeMetadata)
+                            (selectedNode && nodeMetadata)
                             ?   <PropertiesPanel
                                     node={ selectedNode }
-                                    metadata={ selectedNodeMetadata }
+                                    metadata={ nodeMetadata }
                                     onNodeUpdate={ (id, data) => {
                                         setSelectedNode((state) => ({ ...state!, ...data }));
                                         updateNode(id, data);
