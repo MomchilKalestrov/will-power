@@ -215,7 +215,15 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                         <div style={ { direction: 'ltr' } } className='h-full'>
                             <TreePanel
                                 node={ tree }
-                                onParentChange={ reparentNode }
+                                onParentChange={ (childId, newParentId) => {
+                                    try {
+                                        reparentNode(childId, newParentId);
+                                    } catch (error: Error & any) {
+                                        // like fuck you typescript, why can't I write `Error` instead of `Error & any`
+                                        if (error.message !== 'The new parent node does not accept children.')
+                                            throw error;
+                                    }
+                                } }
                                 hasSelectedNode={ !!selectedNode }
                                 onDelete={ () => removeNode(selectedNode!.id) }
                                 onMoveUp={ () => moveNodeUp(selectedNode!.id) }
