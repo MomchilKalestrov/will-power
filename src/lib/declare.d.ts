@@ -25,7 +25,7 @@ declare global {
     interface User {
         id: string;
         username: string;
-        role: 'editor' | 'admin';
+        role: 'editor' | 'admin' | 'owner';
     };
 
     type displayCondition = {
