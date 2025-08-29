@@ -1,4 +1,4 @@
-import type{ NextConfig } from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
     reactStrictMode: false,
@@ -8,6 +8,21 @@ const nextConfig: NextConfig = {
                 {
                     source: '/admin/components',
                     destination: '/admin/components/page',
+                    permanent: true
+                },
+                {
+                    source: '/admin',
+                    destination: '/admin/home',
+                    permanent: true
+                },
+                {
+                    source: '/admin/editor',
+                    destination: '/admin/home',
+                    permanent: true
+                },
+                {
+                    source: '/admin/viewer',
+                    destination: '/admin/home',
                     permanent: true
                 }
             ])
