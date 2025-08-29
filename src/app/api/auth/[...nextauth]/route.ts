@@ -4,6 +4,8 @@ import Credentials from 'next-auth/providers/credentials';
 import connect from '@/lib/db';
 import User from '@/models/user';
 
+type DbUser = User & { passwordHash: string, _id: object };
+
 const authOptions: AuthOptions = {
     providers: [
         Credentials({
@@ -12,32 +14,50 @@ const authOptions: AuthOptions = {
                 username: { label: 'Username', type: 'text' },
                 password: { label: 'Password', type: 'password' }
             },
-            authorize: (credentials) =>
-                new Promise(async (resolve) => {
-                    console.log(credentials);
-                    if (!credentials) return;
+            authorize: async (credentials) => {
+                    if (!credentials) return null;
                     const { username, password } = credentials;
 
                     try {
                         await connect();
                         
-                        const user = await User.findOne<User & { passwordHash?: string }>({ username });
+                        const user: DbUser | null = await User.findOne({ username }).lean() as DbUser | null;
                         if (!user || !(await argon2.verify(user.passwordHash!, password)))
-                            return resolve(null);
-                        
-                        let res = { ...user };
-                        delete res.passwordHash;
+                            return null;
 
-                        resolve(res);
+                        return {
+                            id: user._id.toString(),
+                            name: user.username,
+                            role: user.role
+                        };
                     } catch (error) {
                         console.error('Error signing in: ' + error);
-                        resolve(null);
+                        return null;
                     }
-                })
+                }
         })
     ],
     pages: {
         signIn: '/admin/auth/login'
+    },
+    callbacks: {
+        jwt: ({ token, user }) => {
+            if (user) {
+                token.id = user.id ?? token.sub;
+                token.role = (user as typeof user & { role: User[ 'role' ] }).role;
+                token.name = user.name ?? undefined;
+            }
+            return token;
+        },
+        session: ({ session, token }) => {
+            session.user = {
+                ...session.user,
+                id: token.id,
+                role: token.role,
+                name: token.name ?? session.user?.name
+            } as typeof session.user;
+            return session;
+        }
     }
 };
 
