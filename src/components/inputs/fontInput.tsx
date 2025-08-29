@@ -26,18 +26,12 @@ const FontInput: React.FC<Props> = ({
     onChange: onChangeCallback,
     noVars
 }) => {
+    console.log(initialFont);
     const { config } = useConfig();
     const [ variable, setVariable ] = React.useState<fontVariable | undefined>(undefined);
     const [ variables, setVariables ] = React.useState<fontVariable[]>([]); 
     const [ typefaces, setTypefaces ] = React.useState<string[]>([]);
     const [ font, setFont ] = React.useState<font>();
-    
-    React.useEffect(() => {
-        if (typeof initialFont === 'object')
-            setFont(initialFont);
-        else if (!initialFont.startsWith('var(--'))
-            setFont(cssToFont(initialFont));
-    }, []);
 
     React.useEffect(() => {
         if (!config) return;
@@ -62,24 +56,23 @@ const FontInput: React.FC<Props> = ({
                 ])
         );
 
-        if (typeof initialFont === 'object') return;
+        if (typeof initialFont === 'object')
+            return setFont(initialFont);
 
-        if (!font && !initialFont.includes('var(--')) {
-            setFont({
-                family: 'Times New Roman',
-                style: 'normal',
-                size: '1rem',
-                weight: 'normal',
-                fallback: 'sans-serif'
-            });
-            return;
-        };
+        if (!initialFont.startsWith('var(--'))
+            return setFont(cssToFont(initialFont));        
+
         const variableId = initialFont.substring(6, initialFont.length - 1);
         const variable = variables.find(({ id }) => variableId === id);
 
-        if (!variable) return;
         setVariable(variable);
-        setFont(variable);
+        setFont(variable || {
+            family: 'Times New Roman',
+            style: 'normal',
+            size: '1rem',
+            weight: 'normal',
+            fallback: 'sans-serif'
+        });
     }, [ config ]);
 
     const onVariableChange = React.useCallback((value: string) => {
