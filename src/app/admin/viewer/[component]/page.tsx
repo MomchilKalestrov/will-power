@@ -4,7 +4,7 @@ import { NextPage } from 'next';
 import useNodeTree from '@/hooks/useNodeTree';
 import RenderNode from '@/components/renderNode';
 import { notFound, useRouter } from 'next/navigation';
-import { getComponentByName } from '@/lib/db/actions';
+import { getComponentByName } from '@/lib/db/actions/';
 import { storage } from '@/lib/utils';
 
 const Page: NextPage<PageProps<'/admin/viewer/[component]'>> = ({ params }) => {

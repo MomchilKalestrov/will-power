@@ -8,7 +8,7 @@ import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 
-import { getAllComponents, deleteComponent } from '@/lib/db/actions';
+import { getAllComponents, deleteComponent } from '@/lib/db/actions/';
 import { Card, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -105,8 +105,8 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
     );
 };
 
-const Page: NextPage = () => {
-    const { type }: { type: componentType; } = useParams();
+const Page: NextPage<PageProps<'/admin/components/[type]'>> = ({ params }) => {
+    const { type } = React.use(params) as { type: componentType };
     const [ components, setComponents ] = React.useState<string[]>([]);
 
     React.useEffect(() => {

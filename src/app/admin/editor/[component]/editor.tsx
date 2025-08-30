@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import PropertiesPanel from '@/components/propertiesPanel';
 import TreePanel from '@/components/treePanel';
-import { getComponentByName, saveComponent } from '@/lib/db/actions';
+import { getComponentByName, saveComponent } from '@/lib/db/actions/';
 import useNodeTree from '@/hooks/useNodeTree';
 import BlockPanel from '@/components/blocksPanel';
 import ComponentHistoryMenu from './componentHistoryMenu';

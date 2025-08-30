@@ -13,7 +13,7 @@ import {
     DialogTitle,
     DialogTrigger
 } from '@/components/ui/dialog';
-import { createComponent } from '@/lib/db/actions';
+import { createComponent } from '@/lib/db/actions/';
 import { toast } from 'sonner';
 
 const CreateComponentDialog: React.FC<{

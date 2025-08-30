@@ -1,5 +1,5 @@
 import React from 'react';
-import { getAllComponents, getComponentByName } from '@/lib/db/actions';
+import { getAllComponents, getComponentByName } from '@/lib/db/actions/';
 import RenderNode from '@/components/renderNode';
 
 
@@ -24,7 +24,6 @@ type Props = {
 };
 
 const Container: React.FC<Props> = ({ component: name }) => {
-    console.log(name);
     const [ component, setComponent ] = React.useState<Component | undefined>();
 
     React.useEffect(() => {
