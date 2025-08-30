@@ -36,6 +36,7 @@ type name = string;
 type path = string;
 
 const pages: Record<name, Record<name, path> | path> = {
+    'Home': '/admin/home',
     'Components': {
         'Headers': '/admin/components/header',
         'Pages': '/admin/components/page',
@@ -48,6 +49,13 @@ const pages: Record<name, Record<name, path> | path> = {
     'Plugins': '/admin/plugins'
 };
 
+const hideNavInRoutes: string[] = [
+    '/admin/auth/login',
+    '/admin/viewer',
+    '/admin/editor',
+    '/admin/logout'
+];
+
 const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
     children
 }) => {
@@ -58,13 +66,12 @@ const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
     React.useEffect(() => {
         if (typeof window === 'undefined') return;
         const isDark = cookies.get('darkMode') === 'true';
-        if (!window.location.href.includes('/admin/viewer/') && isDark) {
+        if (!window.location.href.includes('/admin/viewer/') && isDark)
             document.body.classList.add('dark');
-        }
         setDarkMode(isDark);
     }, []);
 
-    if (currentPath.includes('/admin/viewer') || currentPath.includes('/admin/editor'))
+    if (hideNavInRoutes.some(currentPath.startsWith))
         return (
             <ConfigProvider>
                 <SessionProvider>
@@ -89,11 +96,11 @@ const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
                                             typeof value === 'object'
                                             ?   (
                                                     <SidebarMenuItem key={ key }>
-                                                        <Collapsible>
+                                                        <Collapsible className='group/collapsible' defaultOpen={ true }>
                                                             <CollapsibleTrigger asChild>
                                                                 <SidebarMenuButton className='flex justify-between'>
                                                                     { key }
-                                                                    <ChevronRight />
+                                                                    <ChevronRight className='group-data-[state=open]:rotate-90' />
                                                                 </SidebarMenuButton>
                                                             </CollapsibleTrigger>
                                                             <CollapsibleContent>
