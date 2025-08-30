@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { NextPage } from 'next';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -17,12 +17,19 @@ const redirectPage: string = '/admin/components/page';
 const Page: NextPage = () => {
     const params = useSearchParams();
     const router = useRouter();
+    const session = useSession();
+    
+    React.useEffect(() => {
+        if (session.status === 'authenticated')
+            router.replace(params.get('callbackUrl') ?? redirectPage);
+    }, [ session ]);
 
     const onSignIn = React.useCallback(async (data: FormData) => {
         const response = await signIn('credentials', { 
             username: data.get('username'),
             password: data.get('password')
         });
+        console.log(response);
         if (response?.ok)
             return router.replace(params.get('callbackUrl') ?? redirectPage);
     }, [ params ]);
