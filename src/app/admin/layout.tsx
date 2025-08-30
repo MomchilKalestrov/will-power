@@ -71,7 +71,7 @@ const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
         setDarkMode(isDark);
     }, []);
 
-    if (hideNavInRoutes.some(currentPath.startsWith))
+    if (hideNavInRoutes.some(v => currentPath.startsWith(v)))
         return (
             <ConfigProvider>
                 <SessionProvider>
