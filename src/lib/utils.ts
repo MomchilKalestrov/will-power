@@ -91,16 +91,6 @@ const cssFromConfig = (config: config): string =>
         '}\n'
     , '');
 
-const deepCompare = (obj1: any, obj2: any) => {
-    if (typeof obj1 !== 'object') return obj1 === obj2;
-
-    for (const key in obj1)
-        if (!deepCompare(obj1[ key ], obj2[ key ]))
-            return false;
-    
-    return true;
-};
-
 type parser<T = any> = (value: string) => T;
 
 class storage {
@@ -164,4 +154,24 @@ const awaitable = <T = unknown>(value: unknown): value is Promise<T> => {
     typeof (value as { then?: unknown }).then === 'function';
 };
 
-export { cssFromConfig, deepCompare, storage, cookies, awaitable };
+const hasAuthority = (requester: User[ 'role' ], target: User[ 'role' ]): boolean => {
+    const roleArray: User[ 'role' ][] = [ 'editor', 'admin', 'owner' ];
+    return roleArray.indexOf(requester) > roleArray.indexOf(target);
+};
+
+const validName = (name: string): boolean =>
+    /^[A-Za-z_]+$/.test(name);
+
+const validPassword = (password: string): boolean => {
+    if (password.length < 8) return false;
+
+    const letterMatches = password.match(/[A-Za-z]/g) || [];
+    if (letterMatches.length < 2) return false;
+
+    const specialMatches = password.match(/[^A-Za-z0-9]/g) || [];
+    if (specialMatches.length < 1) return false;
+
+    return true;
+};
+
+export { cssFromConfig, storage, cookies, awaitable, hasAuthority, validPassword, validName };

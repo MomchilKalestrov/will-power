@@ -1,6 +1,6 @@
 'use server';
 import z from 'zod';
-import connect from '..';
+import connect from '@/lib/db';
 import Component from '@/models/component';
 
 declare global {
@@ -92,7 +92,7 @@ const saveComponent = async (component: Partial<Component>): Promise<boolean> =>
         const { name, ...data } = model;
 
         await connect();
-        await Component.findOneAndUpdate(
+        await Component.updateOne(
             { name },
             { $set: data },
             {
