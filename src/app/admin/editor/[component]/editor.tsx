@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Plus, RotateCcw } from 'lucide-react';
 import { del } from 'idb-keyval';
@@ -8,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import PropertiesPanel from '@/components/propertiesPanel';
 import TreePanel from '@/components/treePanel';
-import { getComponentByName, saveComponent } from '@/lib/db/actions/';
+import { saveComponent } from '@/lib/db/actions/';
 import useNodeTree from '@/hooks/useNodeTree';
 import BlockPanel from '@/components/blocksPanel';
 import ComponentHistoryMenu from './componentHistoryMenu';
@@ -18,7 +17,7 @@ import Logo from '@/components/icons/logo';
 import { useComponentDb } from '@/components/componentDb';
 
 type Props = {
-    component: string;
+    component: Component;
 };
 
 const colors: Record<componentType, [ string, string ]> = {
@@ -40,20 +39,7 @@ const newNode = (type: string, acceptChildren: boolean): ComponentNode => ({
     acceptChildren
 });
 
-const metadataCache = new Map<string, NodeMetadata>();
-const getMetadata = (type: string): NodeMetadata | null => {
-    if (!type.match(/^[a-zA-Z]+$/)) return null; // check if it's a valid path
-
-    if (metadataCache.has(type))
-        return metadataCache.get(type)!;
-
-    const metadata = require(`@/components/blocks/${ type }`).metadata;
-    metadataCache.set(type, metadata);
-    return metadata;
-};
-
-const Editor: React.FC<Props> = ({ component: componentName }) => {
-    const [ type, setType ] = React.useState<componentType>('page');
+const Editor: React.FC<Props> = ({ component }) => {
     const {
         tree,
         setTree,
@@ -64,39 +50,27 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
         removeNode,
         moveNodeUp,
         moveNodeDown
-    } = useNodeTree();
+    } = useNodeTree(() => {
+        if (!storage.has(component.name)) {
+            storage.set(component.name, component);
+            return component.rootNode;
+        };
+        
+        const localRevision: Component = storage.parse<Component>(component.name);
+        if (localRevision.lastEdited < component.lastEdited)
+            toast('A newer version is available on remote');
+        return localRevision.rootNode;
+    });
     const [ selectedNode, setSelectedNode ] = React.useState<ComponentNode | undefined>();
     const [ nodeMetadata, setNodeMetadata ] = React.useState<NodeMetadata | undefined>();
     const { getComponent } = useComponentDb();
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
     React.useEffect(() => {
-        if (!componentName) return;
-
-        getComponentByName(componentName)
-            .then((remoteRevision) => {
-                if (!remoteRevision)
-                    notFound();
-                
-                setType(remoteRevision.type);
-
-                if (!storage.has(componentName)) {
-                    storage.set(componentName, remoteRevision);
-                    setTree(remoteRevision.rootNode);
-                } else {
-                    const localRevision: Component = storage.parse<Component>(componentName);
-                    setTree(localRevision.rootNode);
-                    if (localRevision.lastEdited < remoteRevision.lastEdited)
-                        toast('A newer version is available on remote');
-                }
-            });
-    }, [ componentName ]);
-
-    React.useEffect(() => {
         if (!iframeRef.current || !tree) return;
 
-        storage.set(componentName, {
-            ...storage.parse<Component>(componentName),
+        storage.set(component.name, {
+            ...storage.parse<Component>(component.name),
             rootNode: tree,
             lastEdited: Date.now()
         });
@@ -117,10 +91,9 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
     }, [ findNode, getComponent ]);
 
     const onReset = React.useCallback(async () => {
-        const remoteRevision = await getComponentByName(componentName);
-        setTree(remoteRevision?.rootNode);
-        storage.set(componentName, remoteRevision);
-    }, [ componentName ]);
+        setTree(component.rootNode);
+        storage.set(component.name, component);
+    }, [ component.name ]);
     
     React.useEffect(() => {
         window.addEventListener('message', onMessage);
@@ -141,7 +114,7 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
             <header
                 className='h-16 w-full px-4 border-b bg-background flex justify-between items-center gap-4 shrink-0'
                 style={ {
-                    '--primary': colors[ type ][ document.body.classList.contains('dark') ? 1 : 0 ]
+                    '--primary': colors[ component.type ][ document.body.classList.contains('dark') ? 1 : 0 ]
                 } as React.CSSProperties }
             >
                 <section className='flex gap-2'>
@@ -154,8 +127,8 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                 </section>
                 <section>
                     <ComponentHistoryMenu
-                        type={ type }
-                        currentComponentName={ componentName }
+                        type={ component.type }
+                        currentComponentName={ component.name }
                     />
                 </section>
                 <section className='flex gap-2'>
@@ -164,9 +137,9 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                     </Button>
                     <Button onClick={ ({ currentTarget: button }) => {
                         button.disabled = true;
-                        del(`preview-${ componentName }`);
+                        del(`preview-${ component.name }`);
                         saveComponent({
-                            ...storage.parse<Component>(componentName),
+                            ...storage.parse<Component>(component.name),
                             rootNode: tree
                         }).then(() => {
                             button.disabled = false;
@@ -180,7 +153,7 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
             </header>
             <main
                 className='w-screen h-[calc(100dvh_-_var(--spacing)_*_16)] flex flex-col overflow-hidden'
-                style={ { '--primary': colors[ type ] } as React.CSSProperties }
+                style={ { '--primary': colors[ component.type ] } as React.CSSProperties }
             >
                 <div className='flex flex-1 overflow-hidden'>
                     <Card className='bg-background min-w-32 w-80 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-0 border-r p-4'>
@@ -203,7 +176,7 @@ const Editor: React.FC<Props> = ({ component: componentName }) => {
                     
                     <iframe 
                         ref={ iframeRef } 
-                        src={ `/admin/viewer/${ componentName }` }
+                        src={ `/admin/viewer/${ component.name }` }
                         className='flex-grow h-full border-0'
                         title='Page Editor'
                     />
