@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { Type } from 'lucide-react';
-import { useComponentDb, type componentData } from '@/components/componentDb';
+import { useComponentDb, type componentData } from '@/components/componentDbProvider';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 

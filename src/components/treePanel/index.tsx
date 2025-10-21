@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { ChevronDown, ChevronRight, ChevronUp, Trash2, Type } from 'lucide-react';
-import { useComponentDb } from '@/components/componentDb';
+import { useComponentDb } from '@/components/componentDbProvider';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 

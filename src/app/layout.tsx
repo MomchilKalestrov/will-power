@@ -1,5 +1,5 @@
 import { Toaster } from 'sonner';
-import { ComponentDbProvider } from '@/components/componentDb';
+import { ComponentDbProvider } from '@/components/componentDbProvider';
 //@ts-ignore
 import './globals.css';
 

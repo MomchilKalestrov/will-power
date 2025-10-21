@@ -14,7 +14,7 @@ import ComponentHistoryMenu from './componentHistoryMenu';
 import { toast } from 'sonner';
 import { storage } from '@/lib/utils';
 import Logo from '@/components/icons/logo';
-import { useComponentDb } from '@/components/componentDb';
+import { useComponentDb } from '@/components/componentDbProvider';
 
 type Props = {
     component: Component;
