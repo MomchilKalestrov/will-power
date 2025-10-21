@@ -1,10 +1,12 @@
 'use server';
-import { put, list } from '@vercel/blob';
-import { z } from 'zod';
+import { put, list, del, PutCommandOptions } from '@vercel/blob';
+import { Readable } from 'stream';
 
 declare global {
     var cachedBlobList: BlobInformation[] | undefined;
-}
+};
+
+type PutBody = string | Readable | Buffer | Blob | ArrayBuffer | ReadableStream | File;
 
 const getBlobList = async (): Promise<BlobInformation[]> => {
     if (global.cachedBlobList)
@@ -20,18 +22,7 @@ const getBlobList = async (): Promise<BlobInformation[]> => {
     };
 };
 
-const addBlobSchema = z.object({
-    path: z.string().min(4),
-    body: z.string(),
-    options: z.any()    
-});
-
-const addBlob = async (path: string, body: string, options: any): Promise<boolean> => {
-    const validateInput = addBlobSchema.safeParse({ path, body, options });
-
-    if (!validateInput.success)
-        return false;
-
+const addBlob = async (path: string, body: PutBody, options: PutCommandOptions): Promise<boolean> => {
     try {
         let blob = await put(path, body, options);
         
@@ -39,7 +30,7 @@ const addBlob = async (path: string, body: string, options: any): Promise<boolea
             await getBlobList();
         global.cachedBlobList!.push({
             ...blob,
-            size: body.length,
+            size: body.toString().length,
             uploadedAt: new Date()
         });
 
@@ -50,4 +41,32 @@ const addBlob = async (path: string, body: string, options: any): Promise<boolea
     };
 };
 
-export { getBlobList, addBlob };
+const existsBlob = async (path: string): Promise<boolean> => {
+    try {
+        const blobs = await getBlobList();
+        if (path.endsWith('/'))
+            return blobs.some(b => b.pathname.startsWith(path));
+        return blobs.some(b => b.pathname === path || b.pathname.startsWith(path + '/'));
+    } catch (error) {
+        console.error('[blobs] existsBlob error:', error);
+        return false;
+    }
+}
+
+const deleteBlob = async (path: string): Promise<boolean> => {
+    try {
+        const blobs = await getBlobList();
+        const toDelete = blobs.filter(b => b.pathname === path || b.pathname.startsWith(path));
+        if (toDelete.length === 0) return true;
+
+        await del(toDelete.map(blob => blob.pathname));
+
+        global.cachedBlobList = (await getBlobList()).filter(b => !toDelete.some(d => d.pathname === b.pathname));
+        return true;
+    } catch (error) {
+        console.error('[blobs] deleteBlob error:', error);
+        return false;
+    }
+};
+
+export { getBlobList, addBlob, existsBlob, deleteBlob };

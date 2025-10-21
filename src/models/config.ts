@@ -35,10 +35,17 @@ const fontSchema = new mongoose.Schema({
     url: { type: String, required: true }
 }, { _id: false });
 
+const pluginSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    version: { type: String, required: true },
+    enabled: { type: Boolean, required: true, default: true }
+});
+
 const ConfigSchema = new mongoose.Schema({
     theme: { type: String, required: true, default: 'default' },
     fonts: { type: [ fontSchema ], default: [] },
-    variables: { type: [ variableSchema ], default: [] }
+    variables: { type: [ variableSchema ], default: [] },
+    plugins: { type: [ pluginSchema ], default: [] }
 });
 
 const db = mongoose.connection;

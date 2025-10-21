@@ -1,5 +1,6 @@
 import { Toaster } from 'sonner';
 import { ComponentDbProvider } from '@/components/componentDb';
+//@ts-ignore
 import './globals.css';
 
 const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
@@ -18,3 +19,4 @@ const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
 );
 
 export default RootLayout;
+

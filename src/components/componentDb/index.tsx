@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { awaitable } from '@/lib/utils';
+import { useConfig } from '@/components/configProvider';
 
 type componentData = {
     metadata: NodeMetadata;
@@ -17,6 +18,13 @@ const ComponentDbCTX = React.createContext<{
 });
 
 const useComponentDb = () => React.useContext(ComponentDbCTX);
+
+const baseComponentNames = [
+    'Container',
+    'Header',
+    'Paragraph',
+    'Component'
+];
 
 const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const [ components, setComponents ] = React.useState<Map<string, componentData>>(new Map());
@@ -38,12 +46,15 @@ const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
         return data;
     };
 
-    const componentNames = React.useMemo(() => [
-        'Container',
-        'Header',
-        'Paragraph',
-        'Component'
-    ], []);
+    const { config } = useConfig();
+
+    const [ componentNames, setComponentNames ] = React.useState(baseComponentNames);
+
+    React.useEffect(() => {
+        console.log(config)
+        if (!config) return;
+        setComponentNames([ ...baseComponentNames, ...config.plugins.map(({ name }) => name) ])
+    }, [ config ]);
 
     return (
         <ComponentDbCTX.Provider value={ { getComponent, components: componentNames } }>

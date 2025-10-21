@@ -34,18 +34,25 @@ export type config = {
     fonts: ({ family: string, url: string })[];
     variables: variable[];
     lastEdited: timestamp;
+    plugins: ({
+        name: string;
+        version: string;
+        enabled: boolean;
+    })[];
 };
 
 const defaultConfig: config = {
     theme: 'default',
     fonts: [],
     variables: [],
-    lastEdited: Date.now()
+    lastEdited: Date.now(),
+    plugins: []
 }; 
 
 const getConfig = async (): Promise<config> => {
     if (global.config) return JSON.parse(JSON.stringify(global.config));
     await connect();
+
     global.config = await Config.findOne().lean() as unknown as config;
     
     if (!global.config) {
@@ -61,7 +68,7 @@ const setConfig = async (config: Partial<config>): Promise<void> => {
     const currentConfig: config = global.config || await getConfig();
     const newConfig: config = { ...currentConfig, ...config };
     global.config = newConfig;
-    await Config.findOneAndUpdate({}, newConfig, { upsert: true, new: true });
+    await Config.updateOne({}, newConfig, { upsert: true });
 };
 
 export { getConfig, setConfig };

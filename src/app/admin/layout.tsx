@@ -31,6 +31,7 @@ import { ConfigProvider } from '@/components/configProvider';
 
 import { cookies } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
+import { ComponentDbProvider } from '@/components/componentDb';
 
 type name = string;
 type path = string;
@@ -45,7 +46,6 @@ const pages: Record<name, Record<name, path> | path> = {
     },
     'Config': '/admin/config',
     'Users': '/admin/users',
-    'Personalization': '/admin/personalization',
     'Plugins': '/admin/plugins'
 };
 
