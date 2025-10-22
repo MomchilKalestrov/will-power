@@ -21,7 +21,7 @@ const authenticate = async (request: NextRequest): Promise<NextResponse> => {
     return next(request);
 };
 
-const middleware = (request: NextRequest): NextResponse | Promise<NextResponse> => {
+const proxy = (request: NextRequest): NextResponse | Promise<NextResponse> => {
     const { pathname } = request.nextUrl;
     if (/^\/admin(?!\/auth)/.test(pathname))
         return authenticate(request);
@@ -34,4 +34,4 @@ const config = {
     ]
 };
 
-export { middleware, config };
+export { proxy, config };
