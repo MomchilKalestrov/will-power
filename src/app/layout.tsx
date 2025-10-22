@@ -2,6 +2,8 @@ import { Toaster } from 'sonner';
 import { ComponentDbProvider } from '@/components/componentDbProvider';
 //@ts-ignore
 import './globals.css';
+import { ConfigProvider } from '@/components/configProvider';
+import { PluginsProvider } from '@/components/pluginsProvider';
 
 const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
     <html lang='en'>
@@ -11,9 +13,13 @@ const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
         </head>
         <body>
             <Toaster />
-            <ComponentDbProvider>
-                { children }
-            </ComponentDbProvider>
+            <ConfigProvider>
+                <PluginsProvider>
+                    <ComponentDbProvider>
+                        { children }
+                    </ComponentDbProvider>
+                </PluginsProvider>
+            </ConfigProvider>
         </body>
     </html>
 );

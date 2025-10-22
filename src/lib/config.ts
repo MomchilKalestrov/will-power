@@ -29,16 +29,18 @@ export type colorVariable = {
 
 export type variable = fontVariable | colorVariable;
 
+export type plugin = {
+    name: string;
+    version: string;
+    enabled: boolean;
+};
+
 export type config = {
     theme: string;
     fonts: ({ family: string, url: string })[];
     variables: variable[];
     lastEdited: timestamp;
-    plugins: ({
-        name: string;
-        version: string;
-        enabled: boolean;
-    })[];
+    plugins: plugin[];
 };
 
 const defaultConfig: config = {
