@@ -31,7 +31,6 @@ import { ConfigProvider } from '@/components/configProvider';
 
 import { cookies } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
-import { ComponentDbProvider } from '@/components/componentDbProvider';
 
 type name = string;
 type path = string;

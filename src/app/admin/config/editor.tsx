@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
@@ -17,7 +18,6 @@ import CssUnitInput from '@/components/inputs/cssUnitInput';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 
 import { cssToFont, fontToCss, hexToHsl, hslToHex } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
 
 type Props = {
     initialConfig: config;
@@ -68,7 +68,7 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
                     } }
                 >Save</Button>
             </header>
-            <main className='p-8 overflow-y-scroll bg-background h-[calc(100dvh_-_var(--spacing)_*_16)]'>
+            <main className='p-8 overflow-y-scroll bg-background h-[calc(100dvh-var(--spacing)*16)]'>
                 <div className='grid grid-cols-[384px_1fr] gap-4'>
                     <ColorEditor { ...editorParams } />
                     <ColorPreview config={ config } />
@@ -356,7 +356,7 @@ const FontEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
                 <div key={ font.id } className='flex items-center gap-2'>
                     <Input
                         defaultValue={ font.name }
-                        className='text-sm font-medium flex-grow'
+                        className='text-sm font-medium grow'
                         onChange={ ({ target: { value: name } }) => handleFontChange(font.id, { name }) }
                         />
                     <FontInput

@@ -10,7 +10,7 @@ export default () => {
         getAllUsers().then(console.log);
     },[])
     return (
-    <div className="w-128 p-8">
+    <div className="w-lg p-8">
         <AdvancedInput onChange={ console.log } value={ '<br /><strong>tagtag</strong>tagtag' } />
     </div>
 );}
