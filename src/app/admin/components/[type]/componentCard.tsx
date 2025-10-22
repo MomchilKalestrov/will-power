@@ -102,3 +102,5 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
         </Card>
     );
 };
+
+export default ComponentCard;
