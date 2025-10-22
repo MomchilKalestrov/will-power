@@ -26,8 +26,9 @@ const screenshot = (page: string): Promise<string> =>
 
         window.addEventListener('message', onReady);
         
-        iframe.style.width = SCREENSHOT_WIDTH * 5 + 'px';
-        iframe.style.height = SCREENSHOT_HEIGHT * 5 + 'px';
+        iframe.style.position = 'fixed';
+        iframe.style.width = SCREENSHOT_WIDTH + 'px';
+        iframe.style.height = SCREENSHOT_HEIGHT + 'px';
         iframe.style.opacity = '0';
         iframe.src = `/admin/viewer/${ page }?force=true`;
 

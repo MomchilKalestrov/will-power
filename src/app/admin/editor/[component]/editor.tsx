@@ -152,7 +152,7 @@ const Editor: React.FC<Props> = ({ component }) => {
                 </section>
             </header>
             <main
-                className='w-screen h-[calc(100dvh_-_var(--spacing)_*_16)] flex flex-col overflow-hidden'
+                className='w-screen h-[calc(100dvh-var(--spacing)*16)] flex flex-col overflow-hidden'
                 style={ { '--primary': colors[ component.type ] } as React.CSSProperties }
             >
                 <div className='flex flex-1 overflow-hidden'>
@@ -177,7 +177,7 @@ const Editor: React.FC<Props> = ({ component }) => {
                     <iframe 
                         ref={ iframeRef } 
                         src={ `/admin/viewer/${ component.name }` }
-                        className='flex-grow h-full border-0'
+                        className='grow h-full border-0'
                         title='Page Editor'
                     />
 
