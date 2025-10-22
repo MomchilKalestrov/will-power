@@ -21,17 +21,15 @@ const authenticate = async (request: NextRequest): Promise<NextResponse> => {
     return next(request);
 };
 
-const proxy = (request: NextRequest): NextResponse | Promise<NextResponse> => {
+export const proxy = (request: NextRequest): NextResponse | Promise<NextResponse> => {
     const { pathname } = request.nextUrl;
     if (/^\/admin(?!\/auth)/.test(pathname))
         return authenticate(request);
     return next(request);
 };
 
-const config = {
+export const config = {
     matcher: [
         '/((?!api|_next/static|_next/image|favicon.ico).*)',
     ]
 };
-
-export { proxy, config };
