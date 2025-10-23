@@ -5,7 +5,6 @@ import { Ban } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
@@ -32,11 +31,13 @@ const isVisible = (
     condition: editorVisibilityCondition | undefined,
     key: 'props' | 'styles' | 'attributes'
 ): boolean => {
-    type genericMeta = Record<string, prop | style | attribute>;
     if (!condition) return true;
-    const nodeAccessor: string = ({ props: 'props', styles: 'style', attributes: 'attributes' })[ key ];
 
-    const value = node[ nodeAccessor ]?.[ condition.key ] ?? (metadata[ key ] as genericMeta)[ condition.key ].default;
+    key = (key === 'styles' ? 'style' : key) as typeof key;
+    if (key in node) return false;
+
+    const value = node[ key ][ condition.key ] ?? (metadata as any)[ key ][ condition.key ];
+
     let result = value == condition.value;
     if (condition.comparison === 'different')
         result = !result;
@@ -54,7 +55,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
 
     React.useEffect(() => {
         setEditableId(node.id);
-    }, [node.id]);
+    }, [ node.id ]);
 
     const handleIdUpdate = () => {
         if (editableId && editableId !== node.id)

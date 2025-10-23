@@ -30,6 +30,7 @@ const screenshot = (page: string): Promise<string> =>
         iframe.style.width = SCREENSHOT_WIDTH + 'px';
         iframe.style.height = SCREENSHOT_HEIGHT + 'px';
         iframe.style.opacity = '0';
+        iframe.style.display = 'none';
         iframe.src = `/admin/viewer/${ page }?force=true`;
 
         document.body.appendChild(iframe);

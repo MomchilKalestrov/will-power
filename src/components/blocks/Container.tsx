@@ -2,7 +2,12 @@ import React from 'react';
 import defaults from './defaults.module.css';
 
 const metadata: NodeMetadata = {
-    props: {},
+    props: {
+        type: {
+            type: 'enum',
+            default: 'div'
+        }
+    },
     attributes: {},
     styles: {
         background: {
@@ -182,13 +187,25 @@ const metadata: NodeMetadata = {
         position: {
             values: [ 'static', 'relative', 'fixed', 'sticky', 'absolute' ],
             icon: false
+        },
+        type: {
+            values: [ 'div', 'section', 'aside', 'nav', 'header', 'footer' ]            
         }
     },
     acceptChildren: true
 };
 
-const Container: React.FC<React.PropsWithChildren> = ({ children, ...props }) =>
-    <div className={ defaults.Container } { ...props }>{ children }</div>;
+type Props = {
+    type?: 'div' | 'section' | 'aside' | 'nav' | 'header' | 'footer';
+};
+
+const Container: React.FC<React.PropsWithChildren<Props>> = ({
+    children,
+    type: Element = 'div',
+    ...props
+}) => (
+    <Element className={ defaults.Container } { ...props }>{ children }</Element>
+);
 
 export default Container;
 export { metadata };

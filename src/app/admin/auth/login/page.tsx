@@ -29,7 +29,6 @@ const Page: NextPage = () => {
             username: data.get('username'),
             password: data.get('password')
         });
-        console.log(response);
         if (response?.ok)
             return router.replace(params.get('callbackUrl') ?? redirectPage);
     }, [ params ]);

@@ -2,7 +2,6 @@ import React from 'react';
 import { getAllComponents, getComponentByName } from '@/lib/db/actions/';
 import RenderNode from '@/components/renderNode';
 
-
 const metadata: NodeMetadata = {
     props: {
         component: {

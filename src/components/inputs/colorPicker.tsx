@@ -36,7 +36,6 @@ const ColorPicker: React.FC<Props> = ({
     }, []);
 
     React.useEffect(() => {
-        if (!config) return;
         const variables = config.variables.filter(variable => variable.type === 'color');
         setVariables(variables);
         
@@ -47,7 +46,7 @@ const ColorPicker: React.FC<Props> = ({
         if (!variable) return;
         setVariable(variable);
         setColor(variable.color);
-    }, [ config ]);
+    }, []);
 
     const onVariableChange = (variableId: string) => {
         const newVariable = variables.find(({ id }) => id === variableId);
@@ -72,7 +71,7 @@ const ColorPicker: React.FC<Props> = ({
                 {
                     preview
                     ?   <div className='flex gap-2 items-stretch'>
-                            <div className='flex-grow bg-card text-card-foreground rounded-md border shadow-sm p-1 min-w-9'>
+                            <div className='grow bg-card text-card-foreground rounded-md border shadow-sm p-1 min-w-9'>
                                 <div className='size-full' style={ { borderRadius: 4, backgroundColor: color } } />
                             </div>
                             <Button variant={ selected ? 'outline' : 'ghost' } size='icon'>

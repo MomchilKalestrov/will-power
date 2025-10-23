@@ -13,7 +13,6 @@ const metadataSchema = z.object({
 
 const isAuthenticated = async (): Promise<boolean> => {
     const session = await getServerSession();
-    console.log(session);
     if (hasAuthority('admin', 'editor'))
         return true;
     return false;
@@ -27,11 +26,18 @@ const addPlugin = async (data: FormData): Promise<plugin | string> => {
     if (!plugin) return 'Could not get plugin blob from form data';
     
     const archive = new AdmZip(Buffer.from(await plugin.arrayBuffer()));
-    const index = archive.readAsText('index.js');
-    if (index) return 'Could not find `index.js`';
+    const indexText = archive.readAsText('index.js');
+    if (!indexText) return 'Could not find `index.js`';
     const metaText = archive.readAsText('metadata.json');
     try { var metadata = metadataSchema.parse(JSON.parse(metaText)); }
     catch { return 'Could not parse plugin metadata' };
+
+    await actions.addBlob(`/plugins/${ metadata.name }/metadata.json`, metaText, {
+        access: 'public'
+    });
+    await actions.addBlob(`/plugins/${ metadata.name }/index.js`, indexText, {
+        access: 'public'
+    });
     
     const { plugins } = await getConfig();
 

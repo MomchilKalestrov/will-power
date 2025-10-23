@@ -18,18 +18,20 @@ import { usePlugins } from '@/components/pluginsProvider';
 
 const AddPluginDialog: React.FC = () => {
     const { addPlugin } = usePlugins();
-    const [file, setFile] = React.useState<File | undefined>();
-    const [dialogOpen, setDialogOpen] = React.useState<boolean>(false);
+    const [ file, setFile ] = React.useState<File | undefined>();
+    const [ dialogOpen, setDialogOpen ] = React.useState<boolean>(false);
 
     const onSend = React.useCallback(async (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.currentTarget.disabled = true;
+        if (event.currentTarget)
+            event.currentTarget.disabled = true;
 
         const response = await addPlugin!(file!);
         toast(response);
 
-        event.currentTarget.disabled = false;
+        if (event.currentTarget)
+            event.currentTarget.disabled = false;
         setDialogOpen(false);
-    }, [file]);
+    }, [ file ]);
 
     return (
 

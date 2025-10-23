@@ -12,7 +12,6 @@ type Props = {
 const ComponentButton: React.FC<Props & { type: string }> = ({ type, onNodeAdd }) => {
     const { getComponent } = useComponentDb();
     const [ { Icon, acceptChildren }, setData ] = React.useState<{ Icon: React.ComponentType<any>, acceptChildren: boolean }>({ Icon: Type, acceptChildren: false });
-    
 
     React.useEffect(() => {
         getComponent(type)
@@ -25,7 +24,7 @@ const ComponentButton: React.FC<Props & { type: string }> = ({ type, onNodeAdd }
     return (
         <Button
             variant="outline"
-            className='flex-grow basis-24 max-w-32 aspect-square flex flex-col items-center justify-center p-2 m-0 gap-0 h-auto'
+            className='grow basis-24 max-w-32 aspect-square flex flex-col items-center justify-center p-2 m-0 gap-0 h-auto'
             onClick={() => onNodeAdd(type, acceptChildren) }
         >
             <Icon className='size-[50%] opacity-75' />

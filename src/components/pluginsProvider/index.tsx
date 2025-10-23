@@ -6,15 +6,21 @@ import * as actions from '@/lib/plugins';
 
 
 const PluginsCTX = React.createContext<{
-    plugins: plugin[] | undefined,
-    addPlugin: ((plugin: Blob) => Promise<string>) | undefined;
-    removePlugin: ((name: string) => Promise<string>) | undefined;
-    togglePlugin: ((name: string) => Promise<string>) | undefined;
+    plugins: plugin[],
+    addPlugin: ((plugin: Blob) => Promise<string>);
+    removePlugin: ((name: string) => Promise<string>);
+    togglePlugin: ((name: string) => Promise<string>);
 }>({
-    plugins: undefined,
-    addPlugin: undefined,
-    removePlugin: undefined,
-    togglePlugin: undefined
+    plugins: [],
+    addPlugin: () => {
+        throw new Error('There is no plugin Provider!');
+    },
+    removePlugin: () => {
+        throw new Error('There is no plugin Provider!');
+    },
+    togglePlugin: () => {
+        throw new Error('There is no plugin Provider!');
+    }
 });
 
 const usePlugins = () => React.useContext(PluginsCTX);
@@ -23,8 +29,6 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const { config, updateConfig } = useConfig();
 
     const addPlugin = React.useCallback(async (plugin: Blob): Promise<string> => {
-        if (!config || !updateConfig) return 'Error: PluginsProvider is not wrapped in a ConfigProvider.';
-
         const data = new FormData();
         data.append('plugin', plugin, 'plugin.zip');
 
@@ -34,16 +38,13 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
             return `Error: ${ response }.`;
 
         updateConfig({
-            ...config,
             plugins: [ ...config.plugins, response ]
         }, false);
 
-        return 'Successfully added the plugin!';
+        return 'Successfully added the plugin.';
     }, [ config, updateConfig ]);
 
     const removePlugin = React.useCallback(async (name: string): Promise<string> => {
-        if (!config || !updateConfig) return 'Error: PluginsProvider is not wrapped in a ConfigProvider.';
-
         const response = await actions.removePlugin(name);
 
         if (typeof response === 'string')
@@ -53,12 +54,10 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
             plugins: config.plugins.filter(plugin => plugin.name !== name)
         }, false);
         
-        return 'I will never find peace.';
+        return `${ name } has been deleted.`;
     }, [ config, updateConfig ]);
 
     const togglePlugin = React.useCallback(async (name: string): Promise<string> => {
-        if (!config || !updateConfig) return 'Error: PluginsProvider is not wrapped in a ConfigProvider.';
-
         const response = await actions.togglePlugin(name);
 
         if (typeof response === 'string')
@@ -67,15 +66,14 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         let { plugins } = JSON.parse(JSON.stringify(config)) as config;
         const index = plugins.findIndex(plugin => plugin.name === name);
         plugins[ index ].enabled = !plugins[ index ].enabled;
-        console.log(plugins);
 
         updateConfig({ plugins }, false);
 
-        return 'It hurts.';
-    }, [ config, updateConfig ]);
+        return `${ name } has been toggled ${ plugins[ index ].enabled ? 'on' : 'off' }.`;
+    }, [ updateConfig ]);
 
     return (
-        <PluginsCTX.Provider value={ { addPlugin, removePlugin, togglePlugin, plugins: config?.plugins } }>
+        <PluginsCTX.Provider value={ { addPlugin, removePlugin, togglePlugin, plugins: config.plugins } }>
             { children }
         </PluginsCTX.Provider>
     );

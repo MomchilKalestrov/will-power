@@ -80,13 +80,12 @@ const Editor: React.FC<Props> = ({ component }) => {
         }, '*');
     }, [ tree ]);
 
-    const onMessage = React.useCallback((event: MessageEvent) => {
+    const onMessage = React.useCallback(async (event: MessageEvent) => {
         switch (event.data.type) {
             case 'select':
                 const node = findNode(event.data.payload)!;
                 setSelectedNode(node);
-                getComponent(node.type)
-                    .then((value) => setNodeMetadata(value!.metadata));
+                setNodeMetadata((await getComponent(node.type))?.metadata);
         }
     }, [ findNode, getComponent ]);
 

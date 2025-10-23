@@ -15,7 +15,6 @@ import defaultPluginThumbnail from './defaultPlugin.png';
 
 const PluginCard: React.FC<{ plugin: plugin }> = ({ plugin }) => {
     const { togglePlugin, removePlugin } = usePlugins();
-    console.log(plugin);
 
     const onToggle = React.useCallback(async () => {
         if (!togglePlugin) return;

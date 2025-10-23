@@ -40,11 +40,10 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
         return 'Any unsaved changes will be lost.';
     }, [ saveState ]);
 
-    React.useEffect(() => {
-        return;
-        window.addEventListener('beforeunload', onWindowChange);
-        return () => window.removeEventListener('beforeunload', onWindowChange);
-    }, []);
+    // React.useEffect(() => {
+    //     window.addEventListener('beforeunload', onWindowChange);
+    //     return () => window.removeEventListener('beforeunload', onWindowChange);
+    // }, []);
 
     const editorParams = {
         config,

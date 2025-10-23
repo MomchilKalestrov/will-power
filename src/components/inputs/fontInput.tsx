@@ -26,7 +26,6 @@ const FontInput: React.FC<Props> = ({
     onChange: onChangeCallback,
     noVars
 }) => {
-    console.log(initialFont);
     const { config } = useConfig();
     const [ variable, setVariable ] = React.useState<fontVariable | undefined>(undefined);
     const [ variables, setVariables ] = React.useState<fontVariable[]>([]); 
@@ -34,8 +33,6 @@ const FontInput: React.FC<Props> = ({
     const [ font, setFont ] = React.useState<font>();
 
     React.useEffect(() => {
-        if (!config) return;
-
         const variables = config.variables.filter(variable => variable.type === 'font');
         setVariables(variables);
 
@@ -73,7 +70,7 @@ const FontInput: React.FC<Props> = ({
             weight: 'normal',
             fallback: 'sans-serif'
         });
-    }, [ config ]);
+    }, []);
 
     const onVariableChange = React.useCallback((value: string) => {
         const newVariable = variables.find(({ id }) => id === value);
