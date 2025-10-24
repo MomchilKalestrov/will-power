@@ -7,13 +7,9 @@ import z from 'zod';
 import argon2 from 'argon2';
 
 const userSchema = z.object({
-    id: z
-        .string()
-        .length(24),
     username: z
         .string()
-        .refine(validName, { error: 'Username may contain only letters and underscores' })
-        .optional(),
+        .refine(validName, { error: 'Username may contain only letters and underscores' }),
     password: z
         .preprocess(v =>
             (typeof v === 'string' && v.length !== 0)
@@ -22,15 +18,19 @@ const userSchema = z.object({
             z
                 .string()
                 .refine(validPassword, { error: 'Password must be longer than 8 symbols, contain at least 2 characters and 1 special symbol' })
-                .optional()
         ),
     role: z
         .enum([ 'editor', 'admin', 'owner' ])
-        .optional()
+});
+
+const updateUserSchema = userSchema.partial().extend({
+    id: z.string().length(24)
 });
 
 const getAllUsers = async (): Promise<User[]> => {
     try {
+        if (!await getServerSession()) return [];
+
         await connect();
         const users = await User.aggregate([
             { $project: {
@@ -45,14 +45,37 @@ const getAllUsers = async (): Promise<User[]> => {
         ]);
         return JSON.parse(JSON.stringify(users));
     } catch (error) {
-        console.error('[db] getAllUsers error:', error instanceof Error ? error.stack || error.message : error);
+        console.error('[db] getAllUsers error:', error);
         return [];
     };
 };
 
-const updateUser = async (userState: User & { password: string }): Promise<boolean> => {
+const getUser = async (username: string): Promise<User | null> => {
+    if (typeof username !== 'string') return null;
+    
     try {
-        const { id, ...data } = userSchema.parse(userState);
+        if (!await getServerSession()) return null;
+        return await User.findOne<User | null>({ username });
+    } catch (error) {
+        console.error('[db] getUser error:', error);
+        return null;
+    };
+};
+
+const getCurrentUser = async (): Promise<User | null> => {    
+    try {
+        const session = await getServerSession();
+        if (!session) return null;
+        return await User.findOne<User | null>({ username: session.user?.name });
+    } catch (error) {
+        console.error('[db] getCurrentUser error:', error);
+        return null;
+    };
+};
+
+const updateUser = async (userState: z.infer<typeof updateUserSchema>): Promise<boolean> => {
+    try {
+        const { id, ...data } = updateUserSchema.parse(userState);
         const session = await getServerSession();
         if (!session)
             return false;
@@ -88,7 +111,7 @@ const updateUser = async (userState: User & { password: string }): Promise<boole
 
         return true;
     } catch (error) {
-        console.error('[db] updateUser error:', error instanceof Error ? error.stack || error.message : error);
+        console.error('[db] updateUser error:', error);
         return false;
     };
 };
@@ -98,8 +121,7 @@ const deleteUser = async (usernameToDelete: string): Promise<boolean> => {
 
     try {
         const session = await getServerSession();
-        if (!session)
-            return false;
+        if (!session) return false;
 
         const currentUsername = session.user!.name;
         const users = await User.find<{ username: string, role: User[ 'role' ] }>(
@@ -115,13 +137,31 @@ const deleteUser = async (usernameToDelete: string): Promise<boolean> => {
         await User.deleteOne({ username: usernameToDelete });
         return true;
     } catch (error) {
-        console.error('[db] deleteUser error:', error instanceof Error ? error.stack || error.message : error);
+        console.error('[db] deleteUser error:', error);
         return false;
+    };
+};
+
+const createUser = async (userState: z.infer<typeof userSchema>): Promise<string | null> => {
+    try {
+        const user = await getCurrentUser();
+        if (!user || !hasAuthority(user.role, 'owner', 0)) return null;
+
+        const data = userSchema.parse(userState);
+        const result = await new User(data).save();
+
+        return result.id.toString();
+    } catch (error) {
+        console.error('[db] deleteUser error:', error);
+        return null;
     };
 };
 
 export {
     getAllUsers,
+    getUser,
+    getCurrentUser,
+    createUser,
     updateUser,
     deleteUser
 };
