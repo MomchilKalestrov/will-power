@@ -9,7 +9,7 @@ import argon2 from 'argon2';
 const userSchema = z.object({
     username: z
         .string()
-        .refine(validName, { error: 'Username may contain only letters and underscores' }),
+        .refine(validName, { error: 'Username must contain only letters and underscores' }),
     password: z
         .preprocess(v =>
             (typeof v === 'string' && v.length !== 0)
@@ -147,8 +147,11 @@ const createUser = async (userState: z.infer<typeof userSchema>): Promise<string
         const user = await getCurrentUser();
         if (!user || !hasAuthority(user.role, 'owner', 0)) return null;
 
-        const data = userSchema.parse(userState);
-        const result = await new User(data).save();
+        const { password, ...data } = userSchema.parse(userState);
+        const result = await new User({
+            ...data,
+            passwordHash: await argon2.hash(password)
+        }).save();
 
         return result.id.toString();
     } catch (error) {
