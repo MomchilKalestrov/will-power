@@ -46,21 +46,21 @@ const AddPluginDialog: React.FC = () => {
                     <DialogTitle>Upload</DialogTitle>
                     <DialogDescription>
                         Select an <code>.zip</code> archive to upload as a plugin.
-                        The archive must contain a <code>metadata.json</code>{' '}
+                        The archive must contain a <code>metadata.json</code>{ ' ' }
                         and <code>index.js</code> file inside.
                     </DialogDescription>
                 </DialogHeader>
                 <Input
                     type='file'
                     accept='.zip'
-                    multiple={false}
-                    onChange={({ currentTarget: { files } }) =>
+                    multiple={ false }
+                    onChange={ ({ currentTarget: { files } }) =>
                         setFile([...files!][0])
                     }
                 />
                 <Button
-                    onClick={onSend}
-                    disabled={!file || !addPlugin}
+                    onClick={ onSend }
+                    disabled={ !file }
                     variant='outline'
                 >Upload</Button>
             </DialogContent>
