@@ -1,10 +1,10 @@
 'use server';
 import AdmZip from 'adm-zip';
 import z from 'zod';
-import { type plugin, setConfig, getConfig } from './config';
-import { getServerSession } from 'next-auth';
-import { hasAuthority } from './utils';
-import * as actions from './actions';
+import { type plugin, setConfig, getConfig } from '@/lib/config';
+import { hasAuthority } from '@/lib/utils';
+import * as actions from '@/lib/actions';
+import { getCurrentUser } from '@/lib/db/actions';
 
 const metadataSchema = z.object({
     name: z.string(),
@@ -12,10 +12,8 @@ const metadataSchema = z.object({
 });
 
 const isAuthenticated = async (): Promise<boolean> => {
-    const session = await getServerSession();
-    if (hasAuthority('admin', 'editor'))
-        return true;
-    return false;
+    const user = await getCurrentUser();
+    return !!user && hasAuthority(user.role, 'admin', 0);
 };
 
 const addPlugin = async (data: FormData): Promise<plugin | string> => {
