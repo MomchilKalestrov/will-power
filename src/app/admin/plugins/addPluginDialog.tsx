@@ -1,6 +1,6 @@
 'use client';
 import React from "react";
-import { CirclePlus, PlusCircle } from 'lucide-react';
+import { CirclePlus } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,7 @@ const AddPluginDialog: React.FC = () => {
 
     return (
 
-        <Dialog open={dialogOpen} onOpenChange={ setDialogOpen }>
+        <Dialog open={ dialogOpen } onOpenChange={ setDialogOpen }>
             <DialogTrigger asChild>
                 <div className='w-[194px] aspect-[384/284.883] basis-64 grow max-w-96 text-center flex justify-center items-center rounded-xl border-2 border-dashed'>
                     <CirclePlus className='opacity-20' size={ 32 } />
