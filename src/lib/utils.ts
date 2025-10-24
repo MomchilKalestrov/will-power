@@ -154,9 +154,9 @@ const awaitable = <T = unknown>(value: unknown): value is Promise<T> => {
     typeof (value as { then?: unknown }).then === 'function';
 };
 
-const hasAuthority = (requester: User[ 'role' ], target: User[ 'role' ]): boolean => {
+const hasAuthority = (current: User[ 'role' ], minimum: User[ 'role' ], roleOffset: number = 1): boolean => {
     const roleArray: User[ 'role' ][] = [ 'editor', 'admin', 'owner' ];
-    return roleArray.indexOf(requester) > roleArray.indexOf(target);
+    return roleArray.indexOf(current) >= roleArray.indexOf(minimum) + roleOffset;
 };
 
 const validName = (name: string): boolean =>
