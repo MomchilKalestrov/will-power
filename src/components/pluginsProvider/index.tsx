@@ -63,14 +63,14 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         if (typeof response === 'string')
             return `Error: ${ response }.`;
 
-        let { plugins } = JSON.parse(JSON.stringify(config)) as config;
-        const index = plugins.findIndex(plugin => plugin.name === name);
-        plugins[ index ].enabled = !plugins[ index ].enabled;
+        let newPlugins = [ ...config.plugins ];
+        const index = newPlugins.findIndex(plugin => plugin.name === name);
+        newPlugins[ index ].enabled = !newPlugins[ index ].enabled;
 
-        updateConfig({ plugins }, false);
+        updateConfig({ plugins: newPlugins }, false);
 
-        return `${ name } has been toggled ${ plugins[ index ].enabled ? 'on' : 'off' }.`;
-    }, [ updateConfig ]);
+        return `${ name } has been toggled ${ newPlugins[ index ].enabled ? 'on' : 'off' }.`;
+    }, [ config, updateConfig ]);
 
     return (
         <PluginsCTX.Provider value={ { addPlugin, removePlugin, togglePlugin, plugins: config.plugins } }>
