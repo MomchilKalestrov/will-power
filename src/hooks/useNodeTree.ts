@@ -137,16 +137,33 @@ const useNodeTree = (initialTree?: ComponentNode | (() => ComponentNode)) => {
 
     const removeNode = React.useCallback((id: string) => {
         const remove = (node: ComponentNode): ComponentNode | null => {
+            if (node.id === id) return null;
+
             if (Array.isArray(node.children)) {
-                const newChildren = node.children.map(child => remove(child)).filter(Boolean) as ComponentNode[];
-                if (newChildren.length !== node.children.length) {
-                    return { ...node, children: newChildren };
+                const nextChildren: ComponentNode[] = [];
+                let changed = false;
+
+                for (const child of node.children) {
+                    const result = remove(child);
+                    if (result === null) {
+                        changed = true;
+                        continue;
+                    }
+                    nextChildren.push(result);
+                    if (result !== child) changed = true;
                 }
+
+                if (changed) return { ...node, children: nextChildren };
             }
-            return node.id === id ? null : node;
+
+            return node;
         };
-        
-        setTree(currentTree => currentTree ? remove(currentTree) ?? undefined : undefined);
+
+        setTree(currentTree => {
+            if (!currentTree) return undefined;
+            const updated = remove(currentTree);
+            return updated ?? undefined;
+        });
     }, []);
 
     const moveNode = React.useCallback((nodeId: string, newParentId: string, index: number) => {
