@@ -1,6 +1,8 @@
 'use server';
-import connect from './db';
+import connect from '@/lib/db';
+import * as actions from '@/lib/db/actions';
 import Config from '@/models/config';
+import { hasAuthority } from './utils';
 
 declare global {
     var config: config | undefined;
@@ -66,11 +68,23 @@ const getConfig = async (): Promise<config> => {
     return JSON.parse(JSON.stringify(global.config));
 };
 
-const setConfig = async (config: Partial<config>): Promise<void> => {
-    const currentConfig: config = global.config || await getConfig();
-    const newConfig: config = { ...currentConfig, ...config };
-    global.config = newConfig;
-    await Config.updateOne({}, newConfig, { upsert: true });
+const setConfig = async (config: Partial<config>): Promise<boolean> => {
+    try {
+        const user = await actions.getCurrentUser();
+        if (!user) return false;
+
+        if ('plugins' in config && !hasAuthority(user.role, 'admin'))
+            return false;
+
+        const currentConfig: config = global.config || await getConfig();
+        const newConfig: config = { ...currentConfig, ...config };
+        await Config.updateOne({}, newConfig, { upsert: true });
+        global.config = newConfig;
+        return true;
+    } catch (error) {
+        console.error('[sa] setConfig error:', error);
+        return false;
+    }
 };
 
 export { getConfig, setConfig };
