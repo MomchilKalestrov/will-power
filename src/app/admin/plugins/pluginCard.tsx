@@ -33,7 +33,7 @@ const PluginCard: React.FC<{ plugin: plugin }> = ({ plugin }) => {
     return (
         <Card className='py-0 overflow-hidden basis-64 grow max-w-96 gap-0 relative'>
             <CardHeader
-                className='p-4 relative aspect-video'
+                className='p-4 relative aspect-video bg-size-[100%] rounded-xl'
                 style={ {
                     backgroundImage: `url("${ process.env.NEXT_PUBLIC_BLOB_URL }/plugins/${ plugin.name }/thumbnail.png"), url(${ defaultPluginThumbnail.src })`
                 } }
