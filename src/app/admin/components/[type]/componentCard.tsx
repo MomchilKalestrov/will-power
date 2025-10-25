@@ -13,10 +13,10 @@ import { Button } from '@/components/ui/button';
 import { deleteComponent } from '@/lib/db/actions';
 import screenshot from '@/lib/screenshot';
 
-import headerFallback from './header.png';
-import pageFallback from './page.png';
-import footerFallback from './footer.png';
-import componentFallback from './component.png';
+import headerFallback from './defaultHeader.png';
+import pageFallback from './defaultPage.png';
+import footerFallback from './defaultFooter.png';
+import componentFallback from './defaultComponent.png';
 import { storage } from '@/lib/utils';
 
 const fallbacks: Record<componentType, typeof pageFallback> = {
@@ -78,6 +78,11 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
             });
     }, [ name, type ]);
 
+    const filter =
+        document.body.classList.contains('dark') && preview === fallbacks[ type ]
+        ?   'invert(100%)'
+        :   '';
+
     return (
         <Card className='p-0 gap-0 basis-64 grow max-w-96 text-center'>
             <Image
@@ -87,6 +92,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
                 src={ preview }
                 priority={ true }
                 className='w-full rounded-xl'
+                style={ { filter } }
             />
             <CardFooter className='p-4 flex gap-2 justify-between items-center'>
                 <p className='font-medium text-lg grow text-left'>{ name }</p>

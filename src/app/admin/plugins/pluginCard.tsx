@@ -32,12 +32,15 @@ const PluginCard: React.FC<{ plugin: plugin }> = ({ plugin }) => {
 
     return (
         <Card className='py-0 overflow-hidden basis-64 grow max-w-96 gap-0 relative'>
-            <CardHeader
-                className='p-4 relative aspect-video bg-size-[100%] rounded-xl'
-                style={ {
-                    backgroundImage: `url("${ process.env.NEXT_PUBLIC_BLOB_URL }/plugins/${ plugin.name }/thumbnail.png"), url(${ defaultPluginThumbnail.src })`
-                } }
-            >
+            <CardHeader className='p-4 relative aspect-video bg-size-[100%] overflow-hidden rounded-xl'>
+                <div
+                    className='absolute inset-0 bg-center bg-no-repeat bg-cover filter dark:invert'
+                    style={ { backgroundImage: `url(${ defaultPluginThumbnail.src })` } }
+                />
+                <div
+                    className='absolute inset-0 bg-center bg-no-repeat bg-cover'
+                    style={ { backgroundImage: `url("${ process.env.NEXT_PUBLIC_BLOB_URL }/plugins/${ plugin.name }/thumbnail.png")` } }
+                />
             </CardHeader>
             <CardContent className='p-4 flex justify-between items-center gap-2'>
                 <p className='font-medium text-lg grow'>{ plugin.name }</p>
