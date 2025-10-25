@@ -44,7 +44,7 @@ const pages: Record<name, Record<name, path> | path> = {
         'Footer': '/admin/components/footer',
         'Components': '/admin/components/component'
     },
-    'Config': '/admin/config',
+    'Variables': '/admin/variables',
     'Users': '/admin/users',
     'Plugins': '/admin/plugins',
     'Themes': '/admin/themes'
