@@ -45,7 +45,8 @@ const ConfigSchema = new mongoose.Schema({
     theme: { type: String, required: true, default: 'default' },
     fonts: { type: [ fontSchema ], default: [] },
     variables: { type: [ variableSchema ], default: [] },
-    plugins: { type: [ pluginSchema ], default: [] }
+    plugins: { type: [ pluginSchema ], default: [] },
+    themes: { type: [ String ], default: [] }
 });
 
 const db = mongoose.connection;

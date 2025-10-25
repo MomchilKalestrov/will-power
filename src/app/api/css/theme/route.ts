@@ -1,12 +1,16 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { getConfig } from '@/lib/config';
+import { NextResponse } from 'next/server';
 
-const getTheme = () => '';
+const handler = async () =>
+    NextResponse.redirect(
+        process.env.NEXT_PUBLIC_BLOB_URL +
+        '/themes/' +
+        (await getConfig()).theme +
+        '/index.css'
+    );
 
-const GET = () =>
-    new NextResponse(getTheme(), {
-        headers: {
-            'Content-Type': 'text/css'
-        }
-    });
-
-export { GET };
+export {
+    handler as GET,
+    handler as POST,
+    handler as HEAD
+};
