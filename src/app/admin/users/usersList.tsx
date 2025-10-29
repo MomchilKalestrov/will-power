@@ -107,7 +107,7 @@ const UsersList: React.FC<{
                 </TableBody>
                 {
 
-                    (data?.user as any)?.role !== 'owner' &&
+                    (data?.user as any)?.role === 'owner' &&
                     <TableFooter>
                         <TableRow>
                             <TableCell>

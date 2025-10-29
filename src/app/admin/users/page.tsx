@@ -42,9 +42,10 @@ const Page: NextPage = () => {
             <ResizablePanel className='pr-4'>
                 <UsersList
                     users={ users }
-                    onUserSelect={ ({ username }) =>
-                        setSelectedIndex(users.findIndex((u) => username === u.username))
-                    }
+                    onUserSelect={ ({ username }) => {
+                        const newIndex = users.findIndex((u) => username === u.username);
+                        if (newIndex !== -1) setSelectedIndex(newIndex);
+                    } }
                     onUserAdd={ async (newUser) => {
 
                     } }
