@@ -41,7 +41,7 @@ const pages: Record<name, Record<name, path> | path> = {
     'Components': {
         'Headers': '/admin/components/header',
         'Pages': '/admin/components/page',
-        'Footer': '/admin/components/footer',
+        'Footers': '/admin/components/footer',
         'Components': '/admin/components/component'
     },
     'Variables': '/admin/variables',

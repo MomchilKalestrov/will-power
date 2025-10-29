@@ -105,15 +105,19 @@ const UsersList: React.FC<{
                         </TableRow>
                     )) }
                 </TableBody>
-                <TableFooter>
-                    <TableRow>
-                        <TableCell>
-                            <AddUserDialog onUserAdd={ onUserAdd } />
-                        </TableCell>
-                        <TableCell />
-                        <TableCell />
-                    </TableRow>
-                </TableFooter>
+                {
+
+                    (data?.user as any)?.role !== 'owner' &&
+                    <TableFooter>
+                        <TableRow>
+                            <TableCell>
+                                <AddUserDialog onUserAdd={ onUserAdd } />
+                            </TableCell>
+                            <TableCell />
+                            <TableCell />
+                        </TableRow>
+                    </TableFooter>
+                }
             </Table>
         </>
     );

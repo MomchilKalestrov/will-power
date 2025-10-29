@@ -34,10 +34,6 @@ const AddUserDialog: React.FC<{ onUserAdd: (user: User) => void }> = ({ onUserAd
         password: 'password',
         role: 'editor'
     });
-    const { data } = useSession();
-
-    if ((data?.user as any)?.role !== 'owner')
-        return (<></>);
 
     return (
         <Dialog open={ dialogOpen } onOpenChange={ setDialogOpen }>
