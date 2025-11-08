@@ -22,7 +22,7 @@ const TreePanelNode: React.FC<Props> = ({ node, selectedNodeId, onParentChange: 
 
     React.useEffect(() => {
         getComponent(node.type)
-            .then((value) => value?.Icon ? setIcon(value.Icon) : null)
+            .then((value) => value?.Icon ? setIcon(() => value.Icon) : null)
             .catch(() => null);
     }, [ node.type ]);
 
