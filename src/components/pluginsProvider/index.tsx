@@ -82,10 +82,12 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
             const newState = new Map<string, pluginInstance>();
             for (const plugin of config.plugins) {    
                 try {
-                    const module = await import(
-                        /* webpackIgnore: true */
-                        `plugins/${ plugin.name }/index.js`
-                    );
+                    const module = plugins?.has(plugin.name)
+                    ?   plugins.get(plugin.name)!
+                    :   await import(
+                            /* webpackIgnore: true */
+                            `plugins/${ plugin.name }/index.js`
+                        );   
                     var parsedModule = pluginModuleSchema.parse(module) as any;
                 } catch (error) {
                     console.log('Malformed plugin: ' + plugin.name, error);
