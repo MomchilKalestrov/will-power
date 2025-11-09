@@ -43,7 +43,7 @@ const Page: NextPage = () => {
 
     return (
         <div className='p-8 flex flex-wrap justify-center gap-2'>
-            { plugins.values().map(plugin => (
+            { [ ...plugins.values() ].map(plugin => (
                 <PluginCard key={ plugin.name } plugin={ plugin } />
             )) }
             <AddPluginDialog />
