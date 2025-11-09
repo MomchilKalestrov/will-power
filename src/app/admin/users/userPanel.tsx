@@ -21,10 +21,11 @@ const UserPanel: React.FC<{
         setUserState(user ? { ...user, password: '' } : undefined);
     }, [ user ]);
 
-    let canEdit = !!user || status === 'authenticated';
-    if (status === 'authenticated' && user)
-        canEdit = canEdit || hasAuthority((data.user as any).role, user.role);
-
+    let canEdit =
+        !!user &&
+        status === 'authenticated' &&
+        hasAuthority((data.user as any).role, user.role);
+    
     return (
         <div className='flex flex-col gap-2'>
             <Label className={ !canEdit ? 'opacity-50' : undefined } htmlFor='input-username'>
@@ -34,7 +35,12 @@ const UserPanel: React.FC<{
                 name='input-username'
                 value={ userState?.username ?? '' }
                 disabled={ !canEdit }
-                className={ cn('mb-2', userState && !validName(userState.username) && 'border-red-800') }
+                className={ cn(
+                    'mb-2',
+                    userState &&
+                    !validName(userState.username) &&
+                    'border-red-800'
+                ) }
                 onChange={ ({ target: { value } }) => {
                     const username = value.replace(/\s+/g, '_').replace(/[^A-Za-z0-9_]/g, '');
                     setUserState({ ...userState!, username });
@@ -49,7 +55,10 @@ const UserPanel: React.FC<{
                 disabled={ !canEdit }
                 className={ cn(
                     'mb-2',
-                    userState && userState?.password !== '' && !validPassword(userState.password) && 'border-red-800'
+                    userState &&
+                    userState?.password !== '' &&
+                    !validPassword(userState.password) &&
+                    'border-red-800'
                 ) }
                 onChange={ ({ target: { value: password } }) => setUserState({ ...userState!, password }) }
             />
