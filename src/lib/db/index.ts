@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 declare global {
-    var mongoose: any;
+    var mongoose: {
+        conn: mongoose.Mongoose | null;
+        promise: Promise<mongoose.Mongoose> | null;
+    };
 }
 
 let cached = global.mongoose;
