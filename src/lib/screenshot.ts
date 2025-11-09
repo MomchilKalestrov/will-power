@@ -20,7 +20,6 @@ const screenshot = (page: string): Promise<string> =>
             });
             
             iframe.remove();
-            if (!dataUrl) return reject(new Error('Couldn\'t create a screenshot'));
             resolve(dataUrl);
         };
 

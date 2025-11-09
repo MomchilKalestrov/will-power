@@ -38,6 +38,7 @@ const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
                 .filter(({ enabled }) => enabled)
                 .map(({ components }) => components)
                 .flat()
+                .filter(({ metadata }) => metadata.type === 'component')
                 .map((component) => [
                     component.metadata.name,
                     component

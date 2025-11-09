@@ -89,10 +89,10 @@ const canCompleteAction = async (
     const user = await getCurrentUser();
     if (user) return true;
     const document = await collection.findOne({ privilidgesDocument: true });
-    return [ ...document.privilidges ].includes(action);
+    return document.privilidges.includes(action);
 };
 
-const privilidgesSchema = z.set(z.enum([ 'read', 'add', 'update', 'delete' ]));
+const privilidgesSchema = z.array(z.enum([ 'read', 'add', 'update', 'delete' ]));
 
 export const createCollection = async (
     name: string,

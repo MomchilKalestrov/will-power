@@ -14,8 +14,8 @@ import { pluginModuleSchema } from '@/lib/zodSchemas';
 
 type pluginInstance = plugin & {
     components: ({
-        Icon: React.ComponentType;
-        Component: React.ComponentType;
+        Icon: React.ComponentType<any>;
+        Component: React.ComponentType<any>;
         metadata: NodeMetadata & {
             name: string;
             type: 'page' | 'component';
@@ -25,11 +25,13 @@ type pluginInstance = plugin & {
 
 class WP {
     components: typeof componentActions;
+    plugins: typeof actions;
     config: typeof configActions;
     storageURL: URL;
 
     constructor() {
         this.components = componentActions;
+        this.plugins = actions;
         this.config = configActions;
         this.storageURL = new URL(process.env.NEXT_PUBLIC_BLOB_URL!);
     };
@@ -88,7 +90,6 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
                 } catch (error) {
                     console.log('Malformed plugin: ' + plugin.name, error);
                 };
-
                 newState.set(plugin.name, { ...plugin, ...parsedModule });
             }
             setPlugins(newState);

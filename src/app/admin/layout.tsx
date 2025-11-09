@@ -28,8 +28,8 @@ import {
 } from '@/components/ui/sidebar';
 import { Label } from '@/components/ui/label';
 
-import { ConfigProvider } from '@/components/configProvider';
 import { ThemesProvider } from '@/components/themesProvider';
+import { usePlugins } from '@/components/pluginsProvider';
 
 import { cookies } from '@/lib/utils';
 
@@ -54,15 +54,27 @@ const hideNavInRoutes: string[] = [
     '/admin/auth/login',
     '/admin/viewer',
     '/admin/editor',
-    '/admin/logout'
+    '/admin/logout',
+    '/admin/plugin/'
 ];
 
 const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
     children
 }) => {
     const currentPath = usePathname().split('?')[ 0 ];
-
+    const { plugins } = usePlugins();
     const [ darkMode, setDarkMode ] = React.useState<boolean>(false);
+    const pluginPages = React.useMemo<[ string, string ][]>(() =>
+        [ ...plugins.values() ]
+            .filter(({ enabled }) => enabled)
+            .map(({ components }) => components)
+            .flat()
+            .filter(({ metadata }) => metadata.type === 'page')
+            .map<[ string, string ]>(({ metadata }) => [
+                metadata.name,
+                `/admin/plugin/${ encodeURI(metadata.name) }`
+            ] as [ string, string ])
+    , [ plugins ]);
 
     React.useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -74,87 +86,102 @@ const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
 
     if (hideNavInRoutes.some(v => currentPath.startsWith(v)))
         return (
-            <ConfigProvider>
-                <SessionProvider>
-                    { children }
-                </SessionProvider>
-            </ConfigProvider>
+            <SessionProvider>
+                { children }
+            </SessionProvider>
         );
 
     return (
         <ThemesProvider>
-            <ConfigProvider>
-                <SessionProvider>
-                    <SidebarProvider>
-                        <Sidebar className='dark:bg-accent'>
-                            <SidebarHeader className='flex flex-row items-center gap-2'>
-                                <p className='font-bold text-xl grow text-center'>Will-Power</p>
-                            </SidebarHeader>
-                            <SidebarContent className='grid grid-rows-[1fr_auto]'>
-                                <SidebarGroup>
-                                    <SidebarGroupContent>
-                                        <SidebarMenu>
-                                            { Object.entries(pages).map(([ key, value ]) =>
-                                                typeof value === 'object'
-                                                ?   (
-                                                        <SidebarMenuItem key={ key }>
-                                                            <Collapsible className='group/collapsible' defaultOpen={ true }>
-                                                                <CollapsibleTrigger asChild>
-                                                                    <SidebarMenuButton className='flex justify-between'>
-                                                                        { key }
-                                                                        <ChevronRight className='group-data-[state=open]:rotate-90' />
-                                                                    </SidebarMenuButton>
-                                                                </CollapsibleTrigger>
-                                                                <CollapsibleContent>
-                                                                    <SidebarMenuSub>
-                                                                        { Object.entries(value).map(([ key, value ]) => (
-                                                                            <SidebarMenuButton isActive={ value === currentPath } key={ key }>
-                                                                                <Link href={ value }>{ key }</Link>
-                                                                            </SidebarMenuButton>
-                                                                        )) }
-                                                                    </SidebarMenuSub>
-                                                                </CollapsibleContent>
-                                                            </Collapsible>
-                                                        </SidebarMenuItem>
-                                                    )
-                                                : (
-                                                    <SidebarMenuButton isActive={ value === currentPath } key={ key }>
-                                                        <Link href={ value }>{ key }</Link>
-                                                    </SidebarMenuButton>
+            <SessionProvider>
+                <SidebarProvider>
+                    <Sidebar className='dark:bg-accent'>
+                        <SidebarHeader className='flex flex-row items-center gap-2'>
+                            <p className='font-bold text-xl grow text-center'>Will-Power</p>
+                        </SidebarHeader>
+                        <SidebarContent className='grid grid-rows-[1fr_auto]'>
+                            <SidebarGroup>
+                                <SidebarGroupContent>
+                                    <SidebarMenu>
+                                        { Object.entries(pages).map(([ key, value ]) =>
+                                            typeof value === 'object'
+                                            ?   (
+                                                    <SidebarMenuItem key={ key }>
+                                                        <Collapsible className='group/collapsible' defaultOpen={ true }>
+                                                            <CollapsibleTrigger asChild>
+                                                                <SidebarMenuButton className='flex justify-between'>
+                                                                    { key }
+                                                                    <ChevronRight className='group-data-[state=open]:rotate-90' />
+                                                                </SidebarMenuButton>
+                                                            </CollapsibleTrigger>
+                                                            <CollapsibleContent>
+                                                                <SidebarMenuSub>
+                                                                    { Object.entries(value).map(([ key, value ]) => (
+                                                                        <SidebarMenuButton isActive={ value === currentPath } key={ key }>
+                                                                            <Link href={ value }>{ key }</Link>
+                                                                        </SidebarMenuButton>
+                                                                    )) }
+                                                                </SidebarMenuSub>
+                                                            </CollapsibleContent>
+                                                        </Collapsible>
+                                                    </SidebarMenuItem>
                                                 )
-                                            ) }
-                                        </SidebarMenu>
-                                    </SidebarGroupContent>
-                                </SidebarGroup>
-                                    <div className='flex gap-2 p-4'>
-                                        <Switch
-                                            checked={ darkMode }
-                                            name='dark-mode-toggle'
-                                            onClick={ () => {
-                                                const newMode = !darkMode;
-                                                setDarkMode(newMode);
-                                                if (newMode) {
-                                                    cookies.set('darkMode', 'true');
-                                                    document.body.classList.add('dark');
-                                                } else {
-                                                    cookies.set('darkMode', 'false');
-                                                    document.body.classList.remove('dark');
-                                                }
-                                            } }
-                                        />
-                                        <Label htmlFor='dark-mode-toggle'>
-                                            { darkMode ? 'Dark Mode' : 'Light Mode' }
-                                        </Label>
-                                    </div>
-                            </SidebarContent>
-                            <SidebarRail />
-                        </Sidebar>
-                        <SidebarInset>
-                            { children }
-                        </SidebarInset>
-                    </SidebarProvider>
-                </SessionProvider>
-            </ConfigProvider>
+                                            : (
+                                                <SidebarMenuButton isActive={ value === currentPath } key={ key }>
+                                                    <Link href={ value }>{ key }</Link>
+                                                </SidebarMenuButton>
+                                            )
+                                        ) }
+                                        <SidebarMenuItem>
+                                            <Collapsible className='group/collapsible' defaultOpen={ true }>
+                                                <CollapsibleTrigger asChild>
+                                                    <SidebarMenuButton className='flex justify-between'>
+                                                        Plugins Pages
+                                                        <ChevronRight className='group-data-[state=open]:rotate-90' />
+                                                    </SidebarMenuButton>
+                                                </CollapsibleTrigger>
+                                                <CollapsibleContent>
+                                                    <SidebarMenuSub>
+                                                        { pluginPages.map(([ name, path ]) => (
+                                                            <SidebarMenuButton isActive={ path === currentPath } key={ name }>
+                                                                <Link href={ path }>{ name }</Link>
+                                                            </SidebarMenuButton>
+                                                        )) }
+                                                    </SidebarMenuSub>
+                                                </CollapsibleContent>
+                                            </Collapsible>
+                                        </SidebarMenuItem>
+                                    </SidebarMenu>
+                                </SidebarGroupContent>
+                            </SidebarGroup>
+                                <div className='flex gap-2 p-4'>
+                                    <Switch
+                                        checked={ darkMode }
+                                        name='dark-mode-toggle'
+                                        onClick={ () => {
+                                            const newMode = !darkMode;
+                                            setDarkMode(newMode);
+                                            if (newMode) {
+                                                cookies.set('darkMode', 'true');
+                                                document.body.classList.add('dark');
+                                            } else {
+                                                cookies.set('darkMode', 'false');
+                                                document.body.classList.remove('dark');
+                                            }
+                                        } }
+                                    />
+                                    <Label htmlFor='dark-mode-toggle'>
+                                        { darkMode ? 'Dark Mode' : 'Light Mode' }
+                                    </Label>
+                                </div>
+                        </SidebarContent>
+                        <SidebarRail />
+                    </Sidebar>
+                    <SidebarInset>
+                        { children }
+                    </SidebarInset>
+                </SidebarProvider>
+            </SessionProvider>
         </ThemesProvider>
     );
 };
