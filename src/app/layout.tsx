@@ -1,3 +1,4 @@
+import React from 'react';
 import { Toaster } from 'sonner';
 import { ComponentDbProvider } from '@/components/componentDbProvider';
 //@ts-ignore
@@ -8,8 +9,18 @@ import { PluginsProvider } from '@/components/pluginsProvider';
 const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
     <html lang='en'>
         <head>
-            <link rel="stylesheet" href="/api/css/theme" />
-            <link rel="stylesheet" href="/api/css/custom" />
+            <link rel='stylesheet' href='/api/css/theme' />
+            <link rel='stylesheet' href='/api/css/custom' />
+            <script
+                type='importmap'
+                dangerouslySetInnerHTML={ {
+                    __html: JSON.stringify({
+                        imports: {
+                            'plugins/': `${ process.env.NEXT_PUBLIC_BLOB_URL }/plugins/`
+                        }
+                    })
+                } }
+            />
         </head>
         <body>
             <Toaster />

@@ -1,9 +1,23 @@
 'use client';
 import React from 'react';
-import type { config, plugin } from '@/lib/config';
+import ReactDom from 'react-dom';
+import ReactJsxRuntime from 'react/jsx-runtime';
+
+import type { plugin } from '@/lib/config';
 import { useConfig } from '@/components/configProvider';
 import * as actions from '@/lib/plugins';
 
+class WP {
+};
+
+declare global {
+    interface Window {
+        WP: WP;
+        React: typeof React;
+        ReactDom: typeof ReactDom;
+        ReactJsxRuntime: typeof ReactJsxRuntime;
+    }
+};
 
 const PluginsCTX = React.createContext<{
     plugins: plugin[],
@@ -27,6 +41,13 @@ const usePlugins = () => React.useContext(PluginsCTX);
 
 const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const { config, updateConfig } = useConfig();
+
+    React.useEffect(() => {
+        window.WP = Object.freeze(new WP());
+        window.React = React;
+        window.ReactDOM = ReactDom;
+        window.ReactJsxRuntime = ReactJsxRuntime;
+    }, []);
 
     const addPlugin = React.useCallback(async (plugin: Blob): Promise<string> => {
         const data = new FormData();
