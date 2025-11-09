@@ -51,6 +51,18 @@ const ComponentHistoryMenu: React.FC<Props> = ({ currentComponentName, type }) =
     
     const CurrentIcon = icons[ type ];
 
+    if (history.length === 1)
+        return (
+            <Button
+                variant='ghost'
+                className='flex gap-1 flex-nowrap items-center justify-between min-w-32'
+            >
+                <CurrentIcon color={ `var(--color-${ colors[ type ][ document.body.classList.contains('dark') ? 1 : 0 ] })` } />
+                <span className='grow text-center font-semibold'>{ currentComponentName }</span>
+                <ChevronDown className='opacity-0' />
+            </Button>
+        );
+
     return (
         <Popover>
             <PopoverTrigger asChild>
