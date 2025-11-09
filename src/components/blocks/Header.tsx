@@ -108,7 +108,7 @@ type Props = {
     type?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 };
 
-const Header: React.FC<React.PropsWithChildren<Props>> = ({
+const Component: React.FC<React.PropsWithChildren<Props>> = ({
     type: Element = 'h1',
     contents = 'Hello world!',
     children,
@@ -120,6 +120,5 @@ const Header: React.FC<React.PropsWithChildren<Props>> = ({
     </Element>
 );
 
-export default Header;
-export { metadata };
+export { metadata, Component };
 export { Heading as Icon } from 'lucide-react';

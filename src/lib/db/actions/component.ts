@@ -1,62 +1,20 @@
 'use server';
-import z from 'zod';
 import connect from '@/lib/db';
 import Component from '@/models/component';
+import { componentNameSchema, componentSchema, componentTypesSchema } from '@/lib/zodSchemas';
 
 declare global {
     var componentNames: { [ key: string ]: Set<string> | undefined };
 };
 
-const componentName = z.string().min(1).refine(name => name === encodeURIComponent(name));
-
-const componentNodeSchema: z.ZodType<any> = z.lazy(() =>
-    z.object({
-        id: z.string(),
-        type: z.string(),
-        style: z.record(z.string(), z.string()),
-        attributes: z.record(z.string(), z.string()),
-        props: z.looseObject({}),
-        acceptChildren: z.boolean(),
-        children: z.array(componentNodeSchema)
-    })
-);
-
-const componentTypes = z.literal([ 'header', 'page', 'footer', 'component' ]);
-
-const componentSchema = z.union([
-    z.object({
-        type: z.enum([ 'header', 'footer' ]),
-        name: componentName,
-        lastEdited: z.number(),
-        rootNode: componentNodeSchema,
-        displayCondition: z.array(
-            z.union([
-                z.object({
-                    show: z.literal('all'),
-                }),
-                z.object({
-                    show: z.enum([ 'page', 'exclude' ]),
-                    name: z.string()
-                })
-            ])
-        )
-    }),
-    z.object({
-        type: z.enum([ 'page', 'component' ]),
-        name: componentName,
-        lastEdited: z.number(),
-        rootNode: componentNodeSchema
-    }),
-]);
-
-if (!global.componentNames)
-    global.componentNames = {};
+if (!globalThis.componentNames)
+    globalThis.componentNames = {};
 
 const getComponentByName = async (name: string, type?: componentType): Promise<Component | null> => {
     const params: any = { name };
     try {
         try {
-            componentTypes.parse(type);
+            componentTypesSchema.parse(type);
             params.type = type;
         } catch {}
 
@@ -71,7 +29,7 @@ const getComponentByName = async (name: string, type?: componentType): Promise<C
 
 const getAllComponents = async (type: componentType = 'page'): Promise<string[]> => {
     try {
-        componentTypes.parse(type);
+        componentTypesSchema.parse(type);
 
         if (global.componentNames[ type ])
             return [ ...global.componentNames[ type ] ];
@@ -101,7 +59,6 @@ const saveComponent = async (component: Partial<Component>): Promise<boolean> =>
             }
         );
 
-        // Update cache if present
         if (global.componentNames[ model.type as componentType ])
             global.componentNames[ model.type as componentType ]!.add(name);
 
@@ -114,8 +71,8 @@ const saveComponent = async (component: Partial<Component>): Promise<boolean> =>
 
 const createComponent = async (name: string, type: componentType = 'page'): Promise<boolean> => {
     try {
-        componentTypes.parse(type);
-        componentName.parse(name);
+        componentTypesSchema.parse(type);
+        componentNameSchema.parse(name);
     } catch (err) {
         console.error('[db] createComponent validation error:', err instanceof Error ? err.message : err);
         return false;

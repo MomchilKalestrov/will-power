@@ -22,7 +22,7 @@ type Props = {
     component: string;
 };
 
-const Container: React.FC<Props> = ({ component: name }) => {
+const Component: React.FC<Props> = ({ component: name }) => {
     const [ component, setComponent ] = React.useState<Component | undefined>();
 
     React.useEffect(() => {
@@ -33,6 +33,5 @@ const Container: React.FC<Props> = ({ component: name }) => {
     return component ? (<RenderNode node={ component.rootNode } />) : (<></>);
 };
 
-export default Container;
-export { metadata };
+export { metadata, Component };
 export { Puzzle as Icon } from 'lucide-react';

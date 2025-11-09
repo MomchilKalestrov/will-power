@@ -31,13 +31,11 @@ const isVisible = (
     condition: editorVisibilityCondition | undefined,
     key: 'props' | 'styles' | 'attributes'
 ): boolean => {
+    type genericMeta = Record<string, prop | style | attribute>;
     if (!condition) return true;
+    const nodeAccessor: string = ({ props: 'props', styles: 'style', attributes: 'attributes' })[ key ];
 
-    key = (key === 'styles' ? 'style' : key) as typeof key;
-    if (key in node) return false;
-
-    const value = node[ key ][ condition.key ] ?? (metadata as any)[ key ][ condition.key ];
-
+    const value = node[ nodeAccessor ]?.[ condition.key ] ?? (metadata[ key ] as genericMeta)[ condition.key ].default;
     let result = value == condition.value;
     if (condition.comparison === 'different')
         result = !result;

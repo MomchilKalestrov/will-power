@@ -2,20 +2,17 @@
 import AdmZip from 'adm-zip';
 import z from 'zod';
 import { setConfig, getConfig } from '@/lib/config';
-import { hasAuthority, validName } from '@/lib/utils';
+import { hasAuthority } from '@/lib/utils';
 import * as actions from '@/lib/actions';
 import { getCurrentUser } from '@/lib/db/actions';
-
-const metadataSchema = z.object({
-    name: z.string().refine(validName, { error: 'The theme has an invalid filename.' })
-});
+import { themeMetadataSchema } from '@/lib/zodSchemas';
 
 const isAuthenticated = async (): Promise<boolean> => {
     const user = await getCurrentUser();
     return !!user && hasAuthority(user.role, 'admin', 0);
 };
 
-const addTheme = async (data: FormData): Promise<string | z.infer<typeof metadataSchema>> => {
+const addTheme = async (data: FormData): Promise<string | z.infer<typeof themeMetadataSchema>> => {
     if (!await isAuthenticated())
         return 'This user does not have the required priviliges';
 
@@ -27,7 +24,7 @@ const addTheme = async (data: FormData): Promise<string | z.infer<typeof metadat
     if (!indexText) return 'Could not find `index.css`';
 
     const metaText = archive.readAsText('metadata.json');
-    const parseResult = metadataSchema.safeParse(JSON.parse(metaText));
+    const parseResult = themeMetadataSchema.safeParse(JSON.parse(metaText));
     if (!parseResult.success) return 'Could not parse theme metadata';
     const metadata = parseResult.data;
 

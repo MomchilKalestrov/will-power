@@ -199,7 +199,7 @@ type Props = {
     type?: 'div' | 'section' | 'aside' | 'nav' | 'header' | 'footer';
 };
 
-const Container: React.FC<React.PropsWithChildren<Props>> = ({
+const Component: React.FC<React.PropsWithChildren<Props>> = ({
     children,
     type: Element = 'div',
     ...props
@@ -207,6 +207,5 @@ const Container: React.FC<React.PropsWithChildren<Props>> = ({
     <Element className={ defaults.Container } { ...props }>{ children }</Element>
 );
 
-export default Container;
-export { metadata };
+export { metadata, Component };
 export { Box as Icon } from 'lucide-react';

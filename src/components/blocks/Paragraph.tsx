@@ -17,7 +17,7 @@ type Props = {
     contents?: string;
 };
 
-const Paragraph: React.FC<React.PropsWithChildren<Props>> = ({ 
+const Component: React.FC<React.PropsWithChildren<Props>> = ({ 
     contents = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
     children,
     ...props
@@ -28,6 +28,5 @@ const Paragraph: React.FC<React.PropsWithChildren<Props>> = ({
     </p>
 )
 
-export default Paragraph;
-export { metadata };
+export { metadata, Component };
 export { Text as Icon } from 'lucide-react';

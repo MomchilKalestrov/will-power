@@ -5,11 +5,7 @@ import { type plugin, setConfig, getConfig } from '@/lib/config';
 import { hasAuthority, validName } from '@/lib/utils';
 import * as actions from '@/lib/actions';
 import { getCurrentUser } from '@/lib/db/actions';
-
-const metadataSchema = z.object({
-    name: z.string().refine(validName, { error: 'The plugin has an invalid filename.' }),
-    version: z.string().regex(/^\d{2}\.\d{2}\.\d{2}$/, 'Version must me formatted as `XX.XX.XX`.')
-});
+import { pluginMetadataSchema } from '@/lib/zodSchemas';
 
 const isAuthenticated = async (): Promise<boolean> => {
     const user = await getCurrentUser();
@@ -30,7 +26,7 @@ const addPlugin = async (data: FormData): Promise<plugin | string> => {
     if (!indexText) return 'Could not find `index.js`';
     
     const metaText = archive.readAsText('metadata.json');
-    const parseResult = metadataSchema.safeParse(JSON.parse(metaText));
+    const parseResult = pluginMetadataSchema.safeParse(JSON.parse(metaText));
     if (!parseResult.success) return 'Could not parse plugin metadata';
     const metadata = parseResult.data;
 

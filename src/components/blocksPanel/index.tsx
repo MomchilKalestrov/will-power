@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { Type } from 'lucide-react';
 import { useComponentDb, type componentData } from '@/components/componentDbProvider';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -11,23 +10,22 @@ type Props = {
 
 const ComponentButton: React.FC<Props & { type: string }> = ({ type, onNodeAdd }) => {
     const { getComponent } = useComponentDb();
-    const [ { Icon, acceptChildren }, setData ] = React.useState<{ Icon: React.ComponentType<any>, acceptChildren: boolean }>({ Icon: Type, acceptChildren: false });
+    const [ Data, setData ] = React.useState<componentData | null>();
 
     React.useEffect(() => {
         getComponent(type)
-            .then((data) => setData({
-                Icon: data!.Icon,
-                acceptChildren: data!.metadata.acceptChildren
-            }))
+            .then(setData)
     }, [ type ]);
+
+    if (!Data) return (<></>);
 
     return (
         <Button
             variant="outline"
             className='grow basis-24 max-w-32 aspect-square flex flex-col items-center justify-center p-2 m-0 gap-0 h-auto'
-            onClick={() => onNodeAdd(type, acceptChildren) }
+            onClick={() => onNodeAdd(type, Data.metadata.acceptChildren) }
         >
-            <Icon className='size-[50%] opacity-75' />
+            <Data.Icon className='size-[50%] opacity-75' />
             <span className='mt-2 text-sm font-semibold'>{ type }</span>
         </Button>
     );

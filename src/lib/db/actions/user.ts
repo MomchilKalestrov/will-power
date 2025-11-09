@@ -1,31 +1,13 @@
 'use server';
-import { getServerSession } from 'next-auth';
-import connect from '@/lib/db';
-import { hasAuthority, validName, validPassword } from '@/lib/utils';
-import User from '@/models/user';
 import z from 'zod';
 import argon2 from 'argon2';
+import { getServerSession } from 'next-auth';
 
-const userSchema = z.object({
-    username: z
-        .string()
-        .refine(validName, { error: 'Username must contain only letters and underscores' }),
-    password: z
-        .preprocess(v =>
-            (typeof v === 'string' && v.length !== 0)
-            ?   v
-            :   undefined,
-            z
-                .string()
-                .refine(validPassword, { error: 'Password must be longer than 8 symbols, contain at least 2 characters and 1 special symbol' })
-        ),
-    role: z
-        .enum([ 'editor', 'admin', 'owner' ])
-});
+import connect from '@/lib/db';
+import { hasAuthority } from '@/lib/utils';
+import { updateUserSchema, userSchema } from '@/lib/zodSchemas';
 
-const updateUserSchema = userSchema.partial().extend({
-    id: z.string().length(24)
-});
+import User from '@/models/user';
 
 const getAllUsers = async (): Promise<User[]> => {
     try {

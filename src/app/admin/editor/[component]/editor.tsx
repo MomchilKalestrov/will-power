@@ -197,7 +197,10 @@ const Editor: React.FC<Props> = ({ component }) => {
                                     }
                                 } }
                                 hasSelectedNode={ !!selectedNode }
-                                onDelete={ () => removeNode(selectedNode!.id) }
+                                onDelete={ () => {
+                                    setSelectedNode(undefined);
+                                    removeNode(selectedNode!.id);
+                                } }
                                 onMoveUp={ () => moveNodeUp(selectedNode!.id) }
                                 onMoveDown={ () => moveNodeDown(selectedNode!.id) }
                             />

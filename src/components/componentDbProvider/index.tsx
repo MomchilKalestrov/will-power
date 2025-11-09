@@ -1,12 +1,15 @@
 'use client';
 import React from 'react';
 import { awaitable } from '@/lib/utils';
-import { useConfig } from '@/components/configProvider';
+import { usePlugins } from '@/components/pluginsProvider';
 
 type componentData = {
-    metadata: NodeMetadata;
-    Component: React.ComponentType<any>;
     Icon: React.ComponentType<any>;
+    Component: React.ComponentType<any>;
+    metadata: NodeMetadata & {
+        name: string;
+        type: "page" | "component";
+    };
 };
 
 const ComponentDbCTX = React.createContext<{
@@ -28,10 +31,19 @@ const baseComponentNames = [
 
 const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const [ components, setComponents ] = React.useState<Map<string, componentData>>(new Map());
-    const { config } = useConfig();
-    const pluginComponentNames = React.useMemo<Set<string>>(() => 
-        new Set(config.plugins.map(({ name }) => name))
-    , [ config ]);
+    const { plugins } = usePlugins();
+    const pluginComponents = React.useMemo<Map<string, componentData>>(() =>
+        new Map(
+            [ ...plugins.values() ]
+                .filter(({ enabled }) => enabled)
+                .map(({ components }) => components)
+                .flat()
+                .map((component) => [
+                    component.metadata.name,
+                    component
+                ])
+        )
+    , [ plugins ]);
 
     const getComponent = React.useCallback(async (type: string): Promise<componentData | null> => {
         if (!type.match(/^[a-zA-Z]+$/)) return null;
@@ -40,30 +52,27 @@ const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
             return components.get(type)!;
         
         try {
-            var module = pluginComponentNames.has(type)
-            ?   await import(/* webpackIgnore: true */`plugins/${ type }/index.js`)
-            :   require(`@/components/blocks/${ type }`)
+            var module =
+                pluginComponents.get(type) ??
+                require(`@/components/blocks/${ type }`);
         } catch (error) {
             console.log('failed getting the component', error)
             return null;
         };
 
-        console.log(type, module);
-
-        const { metadata, Icon, default: Component } = awaitable(module) ? await module : module;
-        const data: componentData = { metadata, Component, Icon };
+        const data = awaitable(module) ? await module : module;
 
         const newMap = new Map(components);
         newMap.set(type, data);
         setComponents(newMap);
 
         return data;
-    }, [ components, pluginComponentNames ]);
+    }, [ components, pluginComponents ]);
 
     return (
         <ComponentDbCTX.Provider value={ {
             getComponent,
-            components: [ ...baseComponentNames, ...pluginComponentNames || [] ]
+            components: [ ...baseComponentNames, ...pluginComponents.keys() ]
         } }>
             { children }
         </ComponentDbCTX.Provider>

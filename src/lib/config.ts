@@ -1,9 +1,11 @@
 'use server';
 import connect from '@/lib/db';
 import * as actions from '@/lib/db/actions';
+
+import { hasAuthority } from '@/lib/utils';
+import { updateConfigSchema } from '@/lib/zodSchemas';
+
 import Config from '@/models/config';
-import { hasAuthority } from './utils';
-import z from 'zod';
 
 declare global {
     var config: config | undefined;
@@ -54,38 +56,7 @@ const defaultConfig: config = {
     lastEdited: Date.now(),
     plugins: [],
     themes: []
-}; 
-
-const updateConfigSchema = z.object({
-    theme: z.string(),
-    fonts: z.array(
-        z.object({
-            family: z.string(),
-            url: z.string()
-        })
-    ),
-    variables: z.union([
-        z.object({
-            type: z.literal('font'),
-            id: z.string(),
-            name: z.string(),
-            family: z.string(),
-            style: z.enum([ 'normal', 'italic' ]),
-            size: z.string(),
-            weight: z.enum([ 'normal', 'bold', 'lighter', 'bolder' ]),
-            fallback: z.enum([ 'serif', 'sans-serif', 'monospace', 'cursive' ])
-        }),
-        z.object({
-            type: z.literal('color'),
-            id: z.string(),
-            name: z.string(),
-            color: z.string().refine(
-                /^#?([0-9a-f]{8}|[0-9a-f]{6}[0-9a-f]{4}||[0-9a-f]{3})$/gm.test,
-                { error: 'The value is not a valid hex color code.' }
-            )
-        })
-    ])
-}).partial();
+};
 
 const getConfig = async (): Promise<config> => {
     if (global.config) return JSON.parse(JSON.stringify(global.config));

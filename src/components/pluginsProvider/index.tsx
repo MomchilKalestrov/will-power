@@ -2,12 +2,37 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import ReactJsxRuntime from 'react/jsx-runtime';
+import z from 'zod';
+
+import { useConfig } from '@/components/configProvider';
 
 import type { plugin } from '@/lib/config';
-import { useConfig } from '@/components/configProvider';
 import * as actions from '@/lib/plugins';
+import * as componentActions from '@/lib/db/actions/component';
+import * as configActions from '@/lib/config';
+import { pluginModuleSchema } from '@/lib/zodSchemas';
+
+type pluginInstance = plugin & {
+    components: ({
+        Icon: React.ComponentType;
+        Component: React.ComponentType;
+        metadata: NodeMetadata & {
+            name: string;
+            type: 'page' | 'component';
+        };
+    })[];
+};
 
 class WP {
+    components: typeof componentActions;
+    config: typeof configActions;
+    storageURL: URL;
+
+    constructor() {
+        this.components = componentActions;
+        this.config = configActions;
+        this.storageURL = new URL(process.env.NEXT_PUBLIC_BLOB_URL!);
+    };
 };
 
 declare global {
@@ -20,12 +45,12 @@ declare global {
 };
 
 const PluginsCTX = React.createContext<{
-    plugins: plugin[],
+    plugins: Map<string, pluginInstance>,
     addPlugin: ((plugin: Blob) => Promise<string>);
     removePlugin: ((name: string) => Promise<string>);
     togglePlugin: ((name: string) => Promise<string>);
 }>({
-    plugins: [],
+    plugins: new Map(),
     addPlugin: () => {
         throw new Error('There is no plugin Provider!');
     },
@@ -41,6 +66,7 @@ const usePlugins = () => React.useContext(PluginsCTX);
 
 const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const { config, updateConfig } = useConfig();
+    const [ plugins, setPlugins ] = React.useState<Map<string, pluginInstance>>();
 
     React.useEffect(() => {
         window.WP = Object.freeze(new WP());
@@ -48,6 +74,26 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         window.ReactDOM = ReactDom;
         window.ReactJsxRuntime = ReactJsxRuntime;
     }, []);
+
+    React.useEffect(() => {
+        (async () => {
+            const newState = new Map<string, pluginInstance>();
+            for (const plugin of config.plugins) {    
+                try {
+                    const module = await import(
+                        /* webpackIgnore: true */
+                        `plugins/${ plugin.name }/index.js`
+                    );
+                    var parsedModule = pluginModuleSchema.parse(module) as any;
+                } catch (error) {
+                    console.log('Malformed plugin: ' + plugin.name, error);
+                };
+
+                newState.set(plugin.name, { ...plugin, ...parsedModule });
+            }
+            setPlugins(newState);
+        })();
+    }, [ config.plugins ]);
 
     const addPlugin = React.useCallback(async (plugin: Blob): Promise<string> => {
         const data = new FormData();
@@ -58,7 +104,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         if (typeof response === 'string')
             return `Error: ${ response }.`;
 
-        updateConfig({
+        await updateConfig({
             plugins: [ ...config.plugins, response ]
         }, false);
 
@@ -93,8 +139,10 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         return `${ name } has been toggled ${ newPlugins[ index ].enabled ? 'on' : 'off' }.`;
     }, [ config, updateConfig ]);
 
+    if (!plugins) return (<></>);
+
     return (
-        <PluginsCTX.Provider value={ { addPlugin, removePlugin, togglePlugin, plugins: config.plugins } }>
+        <PluginsCTX.Provider value={ { addPlugin, removePlugin, togglePlugin, plugins } }>
             { children }
         </PluginsCTX.Provider>
     );
