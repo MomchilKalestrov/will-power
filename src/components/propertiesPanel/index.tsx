@@ -131,9 +131,26 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                         value={ currentValue }
                                         options={ options }
                                         id={ 'input-' + key }
-                                        onChange={ (newValue) => handleChange(key, newValue, 'props') }
+                                        onChange={ (newValue) =>
+                                            handleChange(key, newValue, 'props')
+                                        }
                                     />
                                 </div>
+                            </div>
+                        );
+                    case 'number':
+                    case 'line':
+                        return (
+                            <div key={ key } className='grid gap-2'>
+                                <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
+                                <Input
+                                    id={ `input-${ key }` }
+                                    value={ currentValue }
+                                    onChange={ ({ target: { value } }) =>
+                                        handleChange(key, value, 'props')
+                                    }
+                                    type={ prop.type === 'line' ? 'string' : prop.type }
+                                />
                             </div>
                         );
                 }

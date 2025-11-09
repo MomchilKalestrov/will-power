@@ -9,6 +9,10 @@ const metadata: NodeMetadata = {
         type: {
             type: 'enum',
             default: 'h1'
+        },
+        className: {
+            type: 'line',
+            default: ''
         }
     },
     attributes: {},

@@ -89,11 +89,11 @@ declare global {
     });
 
     type prop = {
-        type: 'string' | 'number' | 'custom' | 'enum';
+        type: 'string' | 'number' | 'custom' | 'enum' | 'line';
         default?: any;
         condition?: editorVisibilityCondition;
     } & ({
-        type: 'string' | 'number' | 'enum';
+        type: 'string' | 'number' | 'enum' | 'line';
     } | {
         type: 'custom';
         structure: propStructure;

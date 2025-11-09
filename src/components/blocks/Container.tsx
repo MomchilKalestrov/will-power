@@ -6,6 +6,10 @@ const metadata: NodeMetadata = {
         type: {
             type: 'enum',
             default: 'div'
+        },
+        className: {
+            type: 'line',
+            default: ''
         }
     },
     attributes: {},
