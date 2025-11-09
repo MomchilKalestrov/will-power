@@ -39,7 +39,7 @@ const UsersList: React.FC<{
     const sorters = React.useMemo<Record<string, SortFunction>>(
         () => ({
             username: (a, b) => a.username.localeCompare(b.username),
-            role: (a, b) => (hasAuthority(a.role, b.role) ? 1 : -1),
+            role: (a, b) => (hasAuthority(a.role, b.role) ? -1 : 1),
         }),
         []
     );
