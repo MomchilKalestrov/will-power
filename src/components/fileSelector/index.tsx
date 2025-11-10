@@ -3,12 +3,27 @@ import React from 'react';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardTitle,
+    CardFooter,
+    CardHeader,
+    CardContent
+} from '@/components/ui/card';
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator
+} from '@/components/ui/breadcrumb';
 
-import { getBlobList } from '@/lib/actions';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '../ui/breadcrumb';
+import * as blobs from '@/lib/actions';
+import { toast } from 'sonner';
 
 type fileTypes = 'image' | 'video' | 'font';
 type selectFileFunctionType = (fileCount: 'single' | 'multiple', fileType?: fileTypes) => Promise<BlobInformation[]>;
@@ -43,35 +58,48 @@ const toFileSize = (value: number): string => {
 };
 
 type fileNode = {
-  name: string;
-  children?: Record<string, fileNode>;
+    isFile: boolean;
+    children?: Record<string, fileNode>;
 };
 
 const toTree = (paths: string[]): fileNode => {
-    const root: fileNode = { name: 'root', children: {} };
+    const root: Record<string, fileNode> = {};
 
     for (const path of paths) {
-        const parts = path.split('/').filter(Boolean);
+        const parts = path.split("/").filter(Boolean);
         let current = root;
-        
-        for (const part of parts) {
-            if (!current.children) current.children = {};
-            if (!current.children[ part ])
-              current.children[ part ] = { name: part, children: {} };
-            current = current.children[ part ]!;
+
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[ i ];
+            const isLast = i === parts.length - 1;
+
+            if (!current[ part ])
+                current[ part ] = {
+                    isFile: isLast,
+                    children: isLast ? undefined : {},
+                };
+
+            if (!isLast && current[ part ].children) {
+                current = current[ part ].children!;
+            }
         }
-      
-        if (current.children && Object.keys(current.children).length === 0)
-            delete current.children;
     }
 
-    return root;
+    return {
+        isFile: false,
+        children: root
+    };
 };
 
 const FileSidePanel: React.FC<{
     onSelect: () => void;
+    onDelete: () => void;
     file: BlobInformation;
-}> = ({ onSelect, file }) => (
+}> = ({
+    onSelect,
+    onDelete,
+    file
+}) => (
     <section className='flex'>
         <Separator orientation='vertical' className='mx-4' />
         <div className='w-64 grow flex flex-col justify-between'>
@@ -91,13 +119,18 @@ const FileSidePanel: React.FC<{
                     </div>
                 </div>
             </section>
-            <Button onClick={ onSelect }>Select</Button>
+            <div className='grid gap-2'>
+                <Button
+                    variant='destructive'
+                    onClick={ onDelete }
+                >Delete</Button>
+                <Button onClick={ onSelect }>Select</Button>
+            </div>
         </div>
     </section>
 );
 
 const DirectoryViewer: React.FC<{
-    fileType: fileTypes;
     directoryNode: fileNode;
     files: Record<string, BlobInformation>;
     selectedFiles: Set<string>;
@@ -105,7 +138,6 @@ const DirectoryViewer: React.FC<{
     onDirectorySelect: (name: string) => void;
     path: string;
 }> = ({
-    fileType,
     directoryNode,
     files,
     selectedFiles,
@@ -116,8 +148,8 @@ const DirectoryViewer: React.FC<{
     Object.keys(directoryNode.children || {}).length === 0
     ?   <>Path is empty</>
     :   <div className='w-full flex flex-wrap content-start justify-start items-start gap-2'>
-            { Object.values(directoryNode.children!).map(({ name }) => {
-                if (!files[ path + '/' + name ])
+            { Object.entries(directoryNode.children!).map(([ name, { isFile } ]) => {
+                if (!isFile)
                     return (
                         <Button
                             key={ name }
@@ -136,7 +168,7 @@ const DirectoryViewer: React.FC<{
                         onClick={ () => onFileSelect(pathname) }
                     >
                         {
-                            fileType === 'image'
+                            formats.image.includes(pathname.split('.').pop()!)
                             ?   <Image
                                     src={ url }
                                     width={ 96 }
@@ -161,16 +193,18 @@ const FileSelector: React.FC<{
     const [ selectedFiles, setSelectedFiles ] = React.useState<Set<string>>(new Set<string>());
     const [ files, setFiles ] = React.useState<Record<string, BlobInformation> | undefined>(undefined);
     const tree = React.useMemo(() =>
-        files
+        files !== undefined
         ?   toTree(Object.keys(files))
         :   undefined,
         [ files ]
     );
 
+    console.log(files, tree)
+
     const [ cwd, setCwd ] = React.useState<string[]>([ 'assets' ]);
 
     React.useEffect(() => {
-        getBlobList()
+        blobs.getBlobList()
             .then((res) =>
                 setFiles(
                     filterFiles(res, fileType)
@@ -189,7 +223,6 @@ const FileSelector: React.FC<{
     if (directoryNode)
         for (let i = 0; i < cwd.length; i++)
             directoryNode = directoryNode?.children![ cwd[ i ] ];
-
 
     return (
         <div className='fixed p-16 inset-0 z-100 w-dvw h-dvh bg-black/30 backdrop-blur-xs'>
@@ -225,14 +258,12 @@ const FileSelector: React.FC<{
                     {
                         !files || !directoryNode
                         ?   <div className='w-full flex items-center justify-center'>Loading...</div>
-                        :   <DirectoryViewer { ...{
-                                fileCount,
-                                files,
-                                fileType,
-                                directoryNode,
-                                path: cwd.join('/'),
-                                selectedFiles,
-                                onFileSelect: pathname => {
+                        :   <DirectoryViewer
+                                files={ files }
+                                directoryNode={ directoryNode }
+                                path={ cwd.join('/') }
+                                selectedFiles={ selectedFiles }
+                                onFileSelect={ pathname => {
                                     const newSet = new Set<string>(selectedFiles);
                                     if (newSet.has(pathname))
                                         newSet.delete(pathname);
@@ -242,21 +273,63 @@ const FileSelector: React.FC<{
                                         newSet.add(pathname);
                                     }
                                     setSelectedFiles(newSet);
-                                },
-                                onDirectorySelect: name =>
+                                } }
+                                onDirectorySelect={ name =>
                                     setCwd(state => [ ...state, name ])
-                            } } />
+                                }
+                            />
                     }
                     {
                         (lastSelectedFile !== undefined && files !== undefined) &&
                         <FileSidePanel
+                            file={ files[ lastSelectedFile ] }
                             onSelect={ () => onSelected(Object.values(files).filter(({ pathname }) =>
                                 selectedFiles.has(pathname)
                             )) }
-                            file={ files[ lastSelectedFile ] }
+                            onDelete={ () =>
+                                blobs.deleteBlob(lastSelectedFile)
+                                    .then(result => {
+                                        if (!result)
+                                            return toast('Failed to delete the blob.');
+                                        setSelectedFiles(state => {
+                                            const newSet = new Set(state);
+                                            newSet.delete(lastSelectedFile);
+                                            return newSet;
+                                        });
+                                        setFiles(state => {
+                                            const newState = { ...state! };
+                                            delete newState[ lastSelectedFile ];
+                                            return newState;
+                                        });
+                                    })
+                                    .catch(() => toast('Failed to delete the blob.'))
+                            }
                         />
                     }
                 </CardContent>
+                {
+                    selectedFiles.size !== 0 && fileCount === 'multiple' &&
+                    <>
+                        <Separator className='my-4' />
+                        <CardFooter className='px-4'>
+                            { [ ...selectedFiles ].map(file => (
+                                <Badge
+                                    key={ files![ file ].pathname }
+                                    variant='outline'
+                                    className='flex gap-1'
+                                    onClick={ () => {
+                                        const newSet = new Set<string>(selectedFiles);
+                                        newSet.delete(file);
+                                        setSelectedFiles(newSet);
+                                    } }
+                                >
+                                    <X />
+                                    { files![ file ].pathname.split('/').pop() }
+                                </Badge>
+                            )) }
+                        </CardFooter>
+                    </>
+                }
             </Card>
         </div>
     );
