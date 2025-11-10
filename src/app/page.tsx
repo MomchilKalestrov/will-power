@@ -1,6 +1,4 @@
 'use client'
-import dynamic from "next/dynamic";
-import { getAllUsers } from "@/lib/db/actions";
 import React from "react";
 import { useFileSelector } from "@/components/fileSelector";
 
