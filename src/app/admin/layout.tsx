@@ -143,8 +143,8 @@ const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
                                                 <CollapsibleContent>
                                                     <SidebarMenuSub>
                                                         { pluginPages.map(([ name, path ]) => (
-                                                            <SidebarMenuButton isActive={ path === currentPath } key={ name }>
-                                                                <Link href={ path }>{ name }</Link>
+                                                            <SidebarMenuButton className='capitalize' isActive={ path === currentPath } key={ name }>
+                                                                <Link href={ path }>{ name.replace(/([A-Z])/g, ' $1') }</Link>
                                                             </SidebarMenuButton>
                                                         )) }
                                                     </SidebarMenuSub>
