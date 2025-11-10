@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { toast } from 'sonner';
-import { Metadata, NextPage } from 'next';
+import { NextPage } from 'next';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
@@ -9,10 +9,6 @@ import * as actions from '@/lib/db/actions';
 
 import UsersList from './usersList';
 import UserPanel from './userPanel';
-
-export const metadata: Metadata = {
-    title: 'Users'
-};
 
 const Page: NextPage = () => {
     const [ users, setUsers ] = React.useState<User[] | undefined>();

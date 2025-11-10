@@ -32,10 +32,6 @@ import AddPluginDialog from './addPluginDialog';
 // 
 // So far for "you can never do me any wrong"...
 
-export const metadata: Metadata = {
-    title: 'Plugins'
-};
-
 const Page: NextPage = () => {
     const { plugins } = usePlugins();
 

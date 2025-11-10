@@ -1,14 +1,10 @@
 'use client';
-import { Metadata, NextPage } from 'next';
+import { NextPage } from 'next';
 
 import { useThemes } from '@/components/themesProvider';
 
 import AddThemeDialog from './addThemeDialog';
 import ThemeCard from './themeCard';
-
-export const metadata: Metadata = {
-    title: 'Themes'
-};
 
 const Page: NextPage = () => {
     const { themes } = useThemes();
