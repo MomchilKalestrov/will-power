@@ -1,11 +1,13 @@
 'use server';
-import AdmZip from 'adm-zip';
 import z from 'zod';
-import { setConfig, getConfig } from '@/lib/config';
-import { hasAuthority } from '@/lib/utils';
+import AdmZip from 'adm-zip';
+
 import * as actions from '@/lib/actions';
-import { getCurrentUser } from '@/lib/db/actions';
+import { hasAuthority } from '@/lib/utils';
+import { setConfig, getConfig } from '@/lib/config';
 import { themeMetadataSchema } from '@/lib/zodSchemas';
+
+import { getCurrentUser } from '@/lib/db/actions';
 
 const isAuthenticated = async (): Promise<boolean> => {
     const user = await getCurrentUser();
@@ -28,13 +30,14 @@ const addTheme = async (data: FormData): Promise<string | z.infer<typeof themeMe
     if (!parseResult.success) return 'Could not parse theme metadata';
     const metadata = parseResult.data;
 
-    await actions.addBlob(`/themes/${ metadata.name }/index.css`, indexText, {
-        access: 'public'
-    });
-    await actions.addBlob(`/themes/${ metadata.name }/metadata.json`, metaText, {
-        access: 'public'
-    });
-    
+    for (const file of archive.getEntries())
+        if (!file.entryName.endsWith('/')) {
+            const data = archive.readAsText(file);
+            await actions.addBlob(`/themes/${ metadata.name }/${ file.entryName }`, data, {
+                access: 'public'
+            });
+        };
+        
     const { themes } = await getConfig();
     setConfig({ themes: [ ...themes, metadata.name ] });
 

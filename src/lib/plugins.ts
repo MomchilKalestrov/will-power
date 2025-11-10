@@ -28,18 +28,19 @@ export const addPlugin = async (data: FormData): Promise<plugin | string> => {
     const archive = new AdmZip(Buffer.from(await plugin.arrayBuffer()));
     const indexText = archive.readAsText('index.js');
     if (!indexText) return 'Could not find `index.js`';
-    
+
     const metaText = archive.readAsText('metadata.json');
     const parseResult = pluginMetadataSchema.safeParse(JSON.parse(metaText));
     if (!parseResult.success) return 'Could not parse plugin metadata';
     const metadata = parseResult.data;
 
-    await actions.addBlob(`/plugins/${ metadata.name }/metadata.json`, metaText, {
-        access: 'public'
-    });
-    await actions.addBlob(`/plugins/${ metadata.name }/index.js`, indexText, {
-        access: 'public'
-    });
+    for (const file of archive.getEntries())
+        if (!file.entryName.endsWith('/')) {
+            const data = archive.readAsText(file);
+            await actions.addBlob(`/plugins/${ metadata.name }/${ file.entryName }`, data, {
+                access: 'public'
+            });
+        };
     
     const { plugins } = await getConfig();
 
