@@ -1,10 +1,10 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { NextComponentType, NextPageContext } from 'next';
 import { ChevronRight } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { SessionProvider } from 'next-auth/react';
+import { NextComponentType, NextPageContext } from 'next';
 
 import { Switch } from '@/components/ui/switch';
 import {
@@ -32,6 +32,8 @@ import { ThemesProvider } from '@/components/themesProvider';
 import { usePlugins } from '@/components/pluginsProvider';
 
 import { cookies } from '@/lib/utils';
+
+import favicon from './admin.ico';
 
 type name = string;
 type path = string;
@@ -79,10 +81,16 @@ const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
     React.useEffect(() => {
         if (typeof window === 'undefined') return;
         const isDark = cookies.get('darkMode') === 'true';
-        if (!window.location.href.includes('/admin/viewer/') && isDark)
+        if (
+            !window.location.href.includes('/admin/viewer/') &&
+            !window.location.href.includes('/admin/plugin/') &&
+            isDark
+        )
             document.body.classList.add('dark');
+        else
+            document.body.classList.remove('dark');
         setDarkMode(isDark);
-    }, []);
+    }, [ currentPath ]);
 
     if (hideNavInRoutes.some(v => currentPath.startsWith(v)))
         return (
