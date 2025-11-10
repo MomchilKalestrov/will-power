@@ -2,15 +2,16 @@
 import dynamic from "next/dynamic";
 import { getAllUsers } from "@/lib/db/actions";
 import React from "react";
-
-const AdvancedInput = dynamic(() => import('@/components/inputs/advancedTextarea'), { ssr: false })
+import { useFileSelector } from "@/components/fileSelector";
 
 export default () => {
+    const { selectFile } = useFileSelector();
     React.useEffect(() => {
-        getAllUsers().then(console.log);
+        (function a() {
+            selectFile('single').then(a)
+        })()
     },[])
     return (
     <div className="w-lg p-8">
-        <AdvancedInput onChange={ console.log } value={ '<br /><strong>tagtag</strong>tagtag' } />
     </div>
 );}

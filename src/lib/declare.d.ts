@@ -1,3 +1,4 @@
+import type { ListBlobResultBlob } from '@vercel/blob';
 
 declare global {
     type timestamp = number;

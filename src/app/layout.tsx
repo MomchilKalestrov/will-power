@@ -3,8 +3,11 @@ import { Toaster } from 'sonner';
 import { ComponentDbProvider } from '@/components/componentDbProvider';
 //@ts-ignore
 import './globals.css';
+//@ts-ignore
+import './admin/globals.css';
 import { ConfigProvider } from '@/components/configProvider';
 import { PluginsProvider } from '@/components/pluginsProvider';
+import { FileSelectorProvider } from '@/components/fileSelector';
 
 const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
     <html lang='en'>
@@ -24,13 +27,15 @@ const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
         </head>
         <body>
             <Toaster />
-            <ConfigProvider>
-                <PluginsProvider>
-                    <ComponentDbProvider>
-                        { children }
-                    </ComponentDbProvider>
-                </PluginsProvider>
-            </ConfigProvider>
+            <FileSelectorProvider>
+                <ConfigProvider>
+                    <PluginsProvider>
+                        <ComponentDbProvider>
+                            { children }
+                        </ComponentDbProvider>
+                    </PluginsProvider>
+                </ConfigProvider>
+            </FileSelectorProvider>
         </body>
     </html>
 );
