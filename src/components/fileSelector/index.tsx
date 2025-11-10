@@ -195,7 +195,7 @@ const FileSelector: React.FC<{
         <div className='fixed p-16 inset-0 z-100 w-dvw h-dvh bg-black/30 backdrop-blur-xs'>
             <Card className='w-full h-full flex flex-col column gap-0 py-4'>
                 <CardHeader className='flex justify-between items-center px-4'>
-                    <CardTitle className='text-xl'>Select files</CardTitle>
+                    <CardTitle className='text-xl'>Select file{ fileCount === 'multiple' ? 's' : '' }</CardTitle>
                     <Breadcrumb>
                         <BreadcrumbList>
                             { cwd.map((path, index, { length }) => (

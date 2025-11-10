@@ -1,8 +1,12 @@
-import React from 'react';
-import { NextPage } from 'next';
+import { Metadata, NextPage } from 'next';
 import { notFound } from 'next/navigation';
 import RenderNode from '@/components/renderNode';
 import { getComponentByName, getMatchingComponents } from '@/lib/db/actions/';
+
+export const generateMetadata = async ({ params }: PageProps<'/[page]'>): Promise<Metadata> => {
+    const { page } = await params;
+    return { title: page };
+};
 
 const Page: NextPage<PageProps<'/[page]'>> = async ({ params }) => {
     const { page: pageName } = await params;

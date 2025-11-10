@@ -1,5 +1,5 @@
 'use client';
-import { NextPage } from 'next';
+import { Metadata, NextPage } from 'next';
 
 import { usePlugins } from '@/components/pluginsProvider';
 
@@ -31,6 +31,10 @@ import AddPluginDialog from './addPluginDialog';
 // myself not to just out of self respect.
 // 
 // So far for "you can never do me any wrong"...
+
+export const metadata: Metadata = {
+    title: 'Plugins'
+};
 
 const Page: NextPage = () => {
     const { plugins } = usePlugins();

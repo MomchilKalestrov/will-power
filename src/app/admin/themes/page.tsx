@@ -1,14 +1,14 @@
 'use client';
-import { NextPage } from 'next';
-
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Metadata, NextPage } from 'next';
 
 import { useThemes } from '@/components/themesProvider';
 
 import AddThemeDialog from './addThemeDialog';
 import ThemeCard from './themeCard';
 
-import defaultPluginThumbnail from './defaultTheme.png';
+export const metadata: Metadata = {
+    title: 'Themes'
+};
 
 const Page: NextPage = () => {
     const { themes } = useThemes();

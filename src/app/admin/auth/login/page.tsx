@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { NextPage } from 'next';
+import { Metadata, NextPage } from 'next';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +13,10 @@ const errors: Record<string, string> = {
 };
 
 const redirectPage: string = '/admin/components/page';
+
+export const metadata: Metadata = {
+    title: 'Login'
+};
 
 const Page: NextPage = () => {
     const params = useSearchParams();

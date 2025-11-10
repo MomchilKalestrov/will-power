@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import type { NextPage } from 'next';
+import type { Metadata, NextPage } from 'next';
 
 import { getAllComponents } from '@/lib/db/actions';
 
