@@ -26,8 +26,9 @@ import * as blobs from '@/lib/actions';
 
 import DirectoryViewer from './directoryViewer';
 import SelectedFilePanel from './selectedFilePanel';
+import AddFileDialog from './addFileDialog';
 
-type fileTypes = 'image' | 'video' | 'font';
+type fileTypes = 'image' | 'video' | 'font' | 'all';
 type fileCount = 'single' | 'multiple' | 'none';
 
 const formats: Record<string, string[]> = {
@@ -37,9 +38,13 @@ const formats: Record<string, string[]> = {
 };
 
 const filterFiles = (files: BlobInformation[], fileType: fileTypes): BlobInformation[] =>
-    files.filter(({ pathname }) =>
-        formats[ fileType ].find((format) =>
-            pathname.endsWith(format)));
+    fileType === 'all'
+    ?   files
+    :   files.filter(({ pathname }) =>
+            formats[ fileType ].find((format) =>
+                pathname.endsWith(format)
+            )
+        );
 
 type fileNode = {
     isFile: boolean;
@@ -91,8 +96,8 @@ const FileSelector: React.FC<{
         selectedFiles.size > 0
         ?   [ ...selectedFiles ].pop()
         :   undefined,
-        [ files ]
-    )
+        [ files, selectedFiles ]
+    );
     const [ cwd, setCwd ] = React.useState<string[]>([ 'assets' ]);
 
     React.useEffect(() => {
@@ -137,6 +142,23 @@ const FileSelector: React.FC<{
         []
     );
 
+    const onFileAdd = React.useCallback((file: File) => 
+        blobs.addBlob(`${ cwd.join('/') }/${ file.name }`, file, {
+            access: 'public'
+        })
+            .then((result) => {
+                if (!result)
+                    return toast('Failed to upload file.');
+                setFiles(state => {
+                    let newState = { ...state ?? {} };
+                    newState[ (result as BlobInformation).pathname ] = result as BlobInformation;
+                    return newState;
+                });
+            })
+            .catch(() => toast('Failed to upload file.')),
+        []
+    );
+
     let directoryNode: fileNode | undefined = tree;
     if (directoryNode)
         for (let i = 0; i < cwd.length; i++)
@@ -146,7 +168,21 @@ const FileSelector: React.FC<{
         <div className='fixed p-16 inset-0 z-100 w-dvw h-dvh bg-black/30 backdrop-blur-xs'>
             <Card className='w-full h-full flex flex-col column gap-0 py-4'>
                 <CardHeader className='flex justify-between items-center px-4'>
-                    <CardTitle className='text-xl'>Select file{ fileCount === 'multiple' ? 's' : '' }</CardTitle>
+                    <div className='flex gap-2 items-center'>
+                        <AddFileDialog
+                            onSend={ onFileAdd }
+                            accepts={
+                                fileCount !== 'none'
+                                ?   formats[ fileType ]
+                                        .map(format => '.' + format)
+                                        .join(',')
+                                :   undefined
+                            }
+                        />
+                        <CardTitle className='text-xl'>
+                            { fileCount !== 'none' && 'Select file' + (fileCount === 'multiple' ? 's' : '') }
+                        </CardTitle>
+                    </div>
                     <Breadcrumb>
                         <BreadcrumbList>
                             { cwd.map((path, index, { length }) => (
@@ -167,18 +203,20 @@ const FileSelector: React.FC<{
                             )) }
                         </BreadcrumbList>
                     </Breadcrumb>
-                    <Button size='icon' variant='outline' onClick={ () => onSelected(null) }>
-                        <X />
-                    </Button>
+                    <Button
+                        size='icon'
+                        variant='outline'
+                        onClick={ () => onSelected(null) }
+                    ><X /></Button>
                 </CardHeader>
                 <Separator className='my-4' />
                 <CardContent className='flex grow w-full items-stretch px-4'>
                     {
-                        !files || !directoryNode
+                        files === undefined
                         ?   <div className='w-full flex items-center justify-center'>Loading...</div>
                         :   <DirectoryViewer
                                 files={ files }
-                                directoryNode={ directoryNode }
+                                directoryNode={ directoryNode ?? { isFile: false, children: {} } }
                                 path={ cwd.join('/') }
                                 selectedFiles={ selectedFiles }
                                 onFileSelect={ pathname => {

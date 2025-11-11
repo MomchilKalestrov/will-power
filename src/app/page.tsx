@@ -6,7 +6,7 @@ export default () => {
     const { selectFile } = useFileSelector();
     React.useEffect(() => {
         (function a() {
-            selectFile('single').then(a)
+            selectFile('none').then(a)
         })()
     },[])
     return (

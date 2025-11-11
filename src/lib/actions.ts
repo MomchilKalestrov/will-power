@@ -22,19 +22,21 @@ const getBlobList = async (): Promise<BlobInformation[]> => {
     };
 };
 
-const addBlob = async (path: string, body: PutBody, options: PutCommandOptions): Promise<boolean> => {
+const addBlob = async (path: string, body: PutBody, options: PutCommandOptions): Promise<BlobInformation | boolean> => {
     try {
+        const size = body.toString().length;
+        const uploadedAt = new Date();
         let blob = await put(path, body, options);
         
         if (!global.cachedBlobList)
             await getBlobList();
         global.cachedBlobList!.push({
             ...blob,
-            size: body.toString().length,
-            uploadedAt: new Date()
+            size,
+            uploadedAt
         });
 
-        return true;
+        return { ...blob, size, uploadedAt };
     } catch (error) {
         console.error('Error saving blobs: ', error);
         return false;

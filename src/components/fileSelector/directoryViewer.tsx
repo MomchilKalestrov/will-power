@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
+import { Rat } from 'lucide-react';
 
 type Props = {
     directoryNode: fileNode;
@@ -32,7 +33,10 @@ const DirectoryViewer: React.FC<Props> = ({
     path
 }) => (
     Object.keys(directoryNode.children || {}).length === 0
-    ?   <>Path is empty</>
+    ?   <div className='w-full h-full flex justify-center items-center flex-col opacity-30'>
+            <Rat className='size-27' />
+            <p className='text-xl'>No files here...</p>
+        </div>
     :   <div className='w-full flex flex-wrap content-start justify-start items-start gap-2'>
             { Object.entries(directoryNode.children!).map(([ name, { isFile } ]) => {
                 if (!isFile)

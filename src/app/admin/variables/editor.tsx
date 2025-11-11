@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { Plus, RotateCcw, Trash2 } from 'lucide-react';
-import type { font, fontVariable, config } from '@/lib/config';
 
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,7 +16,9 @@ import ColorPicker from '@/components/inputs/colorPicker';
 import CssUnitInput from '@/components/inputs/cssUnitInput';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 
+import type { font, fontVariable, config } from '@/lib/config';
 import { cssToFont, fontToCss, hexToHsl, hslToHex } from '@/lib/utils';
+import { useFileSelector } from '@/components/fileSelector';
 
 type Props = {
     initialConfig: config;
@@ -96,7 +97,7 @@ const ColorEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
                     id: crypto.randomUUID(),
                     type: 'color',
                     name: newColor.name,
-                    color: newColor.color as `#${string}`
+                    color: newColor.color as `#${ string }`
                 }
             ]
         }));
@@ -175,6 +176,7 @@ const ColorEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
 };
 
 const FontfaceEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
+    const { selectFile } = useFileSelector();
     const [ newFont, setNewFont ] = React.useState({ family: '', url: '' });
 
     const handleAddFont = () => {
@@ -185,6 +187,14 @@ const FontfaceEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
 
     const handleRemoveFont = (index: number) =>
         setConfig(prev => ({ ...prev, fonts: prev.fonts.filter((_, i) => i !== index) }));
+
+    const onSelectFile = React.useCallback(() => {
+        selectFile('single', 'font')
+            .then(result => {
+                console.log(result);
+            })
+            .catch(() => null);
+    }, []);
 
     return (
         <section className='space-y-4'>
@@ -203,12 +213,19 @@ const FontfaceEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
                             onChange={ ({ target: { value: family } }) => setNewFont({ ...newFont, family }) }
                         />
                         <Label htmlFor='input-fontface-url'>URL</Label>
-                        <Input
-                            id='input-fontface-url'
-                            placeholder='/fonts/inter.woff2'
-                            defaultValue={ newFont.url }
-                            onChange={ ({ target: { value: url } }) => setNewFont({ ...newFont, url }) }
-                        />
+                        <div className='flex gap-2'>
+                            <Input
+                                id='input-fontface-url'
+                                placeholder='/fonts/inter.woff2'
+                                defaultValue={ newFont.url }
+                                onChange={ ({ target: { value: url } }) => setNewFont({ ...newFont, url }) }
+                            />
+                            <Button
+                                variant='outline'
+                                size='icon'
+                                onClick={ onSelectFile }
+                            ><Plus /></Button>
+                        </div>
                         <Button
                             variant='outline'
                             className='col-span-full'
