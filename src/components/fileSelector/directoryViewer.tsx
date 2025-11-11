@@ -44,7 +44,7 @@ const DirectoryViewer: React.FC<Props> = ({
                         <Button
                             key={ name }
                             variant='ghost'
-                            className='w-full text-left justify-start'
+                            className='w-full text-left justify-start -order-1'
                             onClick={ () => onDirectorySelect(name) }
                         >/{ name }</Button>
                     );
