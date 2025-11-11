@@ -32,9 +32,9 @@ type fileTypes = 'image' | 'video' | 'font' | 'all';
 type fileCount = 'single' | 'multiple' | 'none';
 
 const formats: Record<string, string[]> = {
-    image: [ 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp' ],
-    video: [ 'mp4', 'webm', 'ogg' ],
-    font: [ 'ttf', 'otf', 'woff', 'woff2' ]
+    image: [ 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', '/' ],
+    video: [ 'mp4', 'webm', 'ogg', '/' ],
+    font: [ 'ttf', 'otf', 'woff', 'woff2', '/' ]
 };
 
 const filterFiles = (files: BlobInformation[], fileType: fileTypes): BlobInformation[] =>
@@ -42,7 +42,8 @@ const filterFiles = (files: BlobInformation[], fileType: fileTypes): BlobInforma
     ?   files
     :   files.filter(({ pathname }) =>
             formats[ fileType ].find((format) =>
-                pathname.endsWith(format)
+                pathname.endsWith(format) &&
+                pathname.startsWith('assets/')
             )
         );
 
@@ -54,25 +55,31 @@ type fileNode = {
 const toTree = (paths: string[]): fileNode => {
     const root: Record<string, fileNode> = {};
 
-    for (const path of paths) {
+    for (const rawPath of paths) {
+        const path = rawPath.trim().replace(/\/+/g, '/');
+        const isExplicitDir = path.endsWith('/');
         const parts = path.split('/').filter(Boolean);
+
         let current = root;
 
         for (let i = 0; i < parts.length; i++) {
             const part = parts[ i ];
             const isLast = i === parts.length - 1;
 
-            if (!current[ part ])
-                current[ part ] = {
-                    isFile: isLast,
-                    children: isLast ? undefined : {},
-                };
+            if (!current[ part ]) {
+                const isFile = isLast && !isExplicitDir;
+                current[ part ] = { isFile, children: isFile ? undefined : {} };
+            }
 
-            if (!isLast && current[ part ].children)
+            if (!isLast && current[ part ].isFile) {
+                current[ part ].isFile = false;
+                current[ part ].children = {};
+            }
+
+            if (!isLast)
                 current = current[ part ].children!;
         }
     }
-
     return {
         isFile: false,
         children: root
@@ -165,7 +172,7 @@ const FileSelector: React.FC<{
             directoryNode = directoryNode?.children![ cwd[ i ] ];
 
     return (
-        <div className='fixed p-16 inset-0 z-100 w-dvw h-dvh bg-black/30 backdrop-blur-xs'>
+        <div className='fixed p-16 inset-0 z-49 w-dvw h-dvh bg-black/30 backdrop-blur-xs'>
             <Card className='w-full h-full flex flex-col column gap-0 py-4'>
                 <CardHeader className='flex justify-between items-center px-4'>
                     <div className='flex gap-2 items-center'>

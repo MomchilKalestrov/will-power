@@ -5,11 +5,11 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
     DialogTitle,
-    DialogTrigger
+    DialogHeader,
+    DialogTrigger,
+    DialogContent,
+    DialogDescription
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 
@@ -23,7 +23,6 @@ const AddFileDialog: React.FC<Props> = ({ onSend, accepts }) => {
     const [ dialogOpen, setDialogOpen ] = React.useState<boolean>(false);
 
     return (
-
         <Dialog open={ dialogOpen } onOpenChange={ setDialogOpen }>
             <DialogTrigger asChild>
                 <Button variant='outline' size='icon'><Plus /></Button>

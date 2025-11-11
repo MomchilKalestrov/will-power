@@ -3,7 +3,7 @@ import React from 'react';
 
 import FileSelector from './fileSelector';
 
-type fileTypes = 'image' | 'video' | 'font';
+type fileTypes = 'image' | 'video' | 'font' | 'all';
 type fileCount = 'single' | 'multiple' | 'none';
 type selectFileFunctionType = (fileCount: fileCount, fileType?: fileTypes) => Promise<BlobInformation[]>;
 
@@ -28,7 +28,7 @@ const FileSelectorProvider: React.FC<React.PropsWithChildren> = ({ children }) =
     });
     
 
-    const selectFile = React.useCallback((fileCount: fileCount, fileType: fileTypes = 'image') =>
+    const selectFile = React.useCallback((fileCount: fileCount, fileType: fileTypes = 'all') =>
         new Promise<BlobInformation[]>((resolve, reject) => {
             setVisibility(true);
             setFileCount(fileCount);

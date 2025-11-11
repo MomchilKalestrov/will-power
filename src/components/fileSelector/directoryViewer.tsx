@@ -1,8 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
+import { Rat } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Rat } from 'lucide-react';
+
+import { cn } from '@/lib/utils';
 
 type Props = {
     directoryNode: fileNode;
@@ -51,14 +53,25 @@ const DirectoryViewer: React.FC<Props> = ({
                 
                 const { pathname, url } = files[ path + '/' + name ];
 
+                const isImage = formats.image.includes(pathname.split('.').pop()!);
+
                 return (
                     <button
-                        className={ 'border-2 rounded-sm ' + (selectedFiles.has(pathname) ? 'border-stone-300' : 'border-white') }
+                        className={ cn(
+                            'border-2 rounded-sm',
+                            (
+                                // Kvi sa teq slojni konstrukcii we mamka mu sheeba
+                                selectedFiles.has(pathname)
+                                ?   (!isImage ? 'border-accent bg-accent' : 'border-stone-300')
+                                :   'border-white'
+                            ),
+                            !isImage && 'order-1 w-full'
+                        ) }
                         key={ pathname }
                         onClick={ () => onFileSelect(pathname) }
                     >
                         {
-                            formats.image.includes(pathname.split('.').pop()!)
+                            isImage
                             ?   <Image
                                     src={ url }
                                     width={ 96 }
@@ -67,7 +80,7 @@ const DirectoryViewer: React.FC<Props> = ({
                                     key={ pathname }
                                     className='w-[96] h-[96]'
                                 />
-                            :   <p>{ pathname }</p>
+                            :   <p className='text-start'>{ pathname.split('/').pop() }</p>
                         }
                     </button>
                 );
