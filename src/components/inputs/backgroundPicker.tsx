@@ -44,6 +44,8 @@ const BackgroundPicker: React.FC<Props> = ({
     onChange: onChangeCallback
 }) => {
     const { selectFile } = useFileSelector();
+    const [ fileSelectorOpen, setFileSelectorOpen ] = React.useState<boolean>(false);
+    const [ popoverOpen, setPopoverOpen ] = React.useState<boolean>(false);
     const [ [ url, ...properties ], setBackground ] = React.useState<backgroundType>([
         undefined,
         repeat[ 0 ],
@@ -69,22 +71,27 @@ const BackgroundPicker: React.FC<Props> = ({
     }, [ properties ]);
 
     return (
-        <Popover>
+        <Popover open={ popoverOpen || fileSelectorOpen } onOpenChange={ setPopoverOpen }>
             <PopoverTrigger asChild>
                 <Button variant={ selected ? 'outline' : 'ghost' } size='icon'>
                     <ImageIcon />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent
-                className='grid gap-2'
-                onInteractOutside={ (e) => e.preventDefault() }
-            >
+            <PopoverContent className='grid gap-2 z-48'>
                 <button
                     className='rounded-sm overflow-hidden'
                     onClick={ () => {
+                        setFileSelectorOpen(true);
                         selectFile('single', 'image')
-                            .then(([ value ]) => onChange(`url("${ value.url }")`, 0))
-                            .catch(() => null);
+                            .then(([ value ]) => {
+                                onChange(`url("${ value.url }")`, 0);
+                                setFileSelectorOpen(false);
+                                setPopoverOpen(true);
+                            })
+                            .catch(() => {
+                                setFileSelectorOpen(false);
+                                setPopoverOpen(true);
+                            });
                     } }
                 >
                     {
@@ -94,9 +101,9 @@ const BackgroundPicker: React.FC<Props> = ({
                                 alt='background image'
                                 width={ 256 }
                                 height={ 128 }
-                                className='aspect-2/1 w-[100%]'
+                                className='aspect-2/1 w-full'
                             />
-                        :   <div className='aspect-2/1 w-[100%] bg-stone-100 dark:bg-zinc-800 flex justify-center content-center'>
+                        :   <div className='aspect-2/1 w-full bg-stone-100 dark:bg-zinc-800 flex justify-center content-center'>
                                 <CirclePlus />
                             </div>
                     }
@@ -105,7 +112,7 @@ const BackgroundPicker: React.FC<Props> = ({
                     { Object.entries(propertiesValues).map(([ key, value ], index) => (
                         <React.Fragment key={ key }>
                             <Label htmlFor={ 'input-bg-' + key } className='capitalize w-32'>{ key }</Label>
-                            <div className='flex-grow'>
+                            <div className='grow'>
                                 <CssKeywordInput
                                     value={ properties[ index ]! }
                                     options={ value }
