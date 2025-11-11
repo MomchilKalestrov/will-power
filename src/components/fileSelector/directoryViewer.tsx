@@ -4,8 +4,6 @@ import { Rat } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
-import { cn } from '@/lib/utils';
-
 type Props = {
     directoryNode: fileNode;
     files: Record<string, BlobInformation>;
@@ -55,34 +53,29 @@ const DirectoryViewer: React.FC<Props> = ({
 
                 const isImage = formats.image.includes(pathname.split('.').pop()!);
 
+                if (isImage)
+                    return (
+                        <Button
+                            variant={ selectedFiles.has(pathname) ? 'outline' : 'ghost' }
+                            className='p-1 overflow-hidden h-[unset]'
+                            onClick={ () => onFileSelect(pathname) }
+                        >
+                            <Image
+                                src={ url }
+                                width={ 96 }
+                                height={ 96 }
+                                alt={ pathname }
+                                key={ pathname }
+                                className='w-[96] h-[96]'
+                            />
+                        </Button>
+                    );
                 return (
-                    <button
-                        className={ cn(
-                            'border-2 rounded-sm',
-                            (
-                                // Kvi sa teq slojni konstrukcii we mamka mu sheeba
-                                selectedFiles.has(pathname)
-                                ?   (!isImage ? 'border-accent bg-accent' : 'border-stone-300')
-                                :   'border-white'
-                            ),
-                            !isImage && 'order-1 w-full'
-                        ) }
-                        key={ pathname }
+                    <Button
+                        variant={ selectedFiles.has(pathname) ? 'outline' : 'ghost' }
+                        className='w-full order-1 text-left justify-start'
                         onClick={ () => onFileSelect(pathname) }
-                    >
-                        {
-                            isImage
-                            ?   <Image
-                                    src={ url }
-                                    width={ 96 }
-                                    height={ 96 }
-                                    alt={ pathname }
-                                    key={ pathname }
-                                    className='w-[96] h-[96]'
-                                />
-                            :   <p className='text-start'>{ pathname.split('/').pop() }</p>
-                        }
-                    </button>
+                    >{ pathname.split('/').pop() }</Button>
                 );
             }) }
         </div>
