@@ -37,7 +37,7 @@ const DirectoryViewer: React.FC<Props> = ({
             <Rat className='size-27' />
             <p className='text-xl'>No files here...</p>
         </div>
-    :   <div className='w-full flex flex-wrap content-start justify-start items-start gap-2'>
+    :   <div className='h-full w-full min-h-0 flex flex-wrap content-start justify-start items-start gap-2 overflow-auto'>
             { Object.entries(directoryNode.children!).map(([ name, { isFile } ]) => {
                 if (!isFile)
                     return (
@@ -56,6 +56,7 @@ const DirectoryViewer: React.FC<Props> = ({
                 if (isImage)
                     return (
                         <Button
+                            key={ pathname }
                             variant={ selectedFiles.has(pathname) ? 'outline' : 'ghost' }
                             className='p-1 overflow-hidden h-[unset]'
                             onClick={ () => onFileSelect(pathname) }
@@ -72,6 +73,7 @@ const DirectoryViewer: React.FC<Props> = ({
                     );
                 return (
                     <Button
+                        key={ pathname }
                         variant={ selectedFiles.has(pathname) ? 'outline' : 'ghost' }
                         className='w-full order-1 text-left justify-start'
                         onClick={ () => onFileSelect(pathname) }

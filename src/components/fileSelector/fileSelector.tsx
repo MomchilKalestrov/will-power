@@ -173,7 +173,7 @@ const FileSelector: React.FC<{
 
     return (
         <div className='fixed p-16 inset-0 z-49 w-dvw h-dvh bg-black/30 backdrop-blur-xs'>
-            <Card className='w-full h-full flex flex-col column gap-0 py-4'>
+            <Card className='w-full h-full min-h-0 flex flex-col gap-0 py-4'>
                 <CardHeader className='flex justify-between items-center px-4'>
                     <div className='flex gap-2 items-center'>
                         <AddFileDialog
@@ -217,7 +217,7 @@ const FileSelector: React.FC<{
                     ><X /></Button>
                 </CardHeader>
                 <Separator className='my-4' />
-                <CardContent className='flex grow w-full items-stretch px-4'>
+                <CardContent className='flex-1 min-h-0 grid grid-cols-[1fr_auto] px-4 overflow-hidden'>
                     {
                         files === undefined
                         ?   <div className='w-full flex items-center justify-center'>Loading...</div>
