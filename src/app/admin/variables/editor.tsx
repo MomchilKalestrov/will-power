@@ -13,12 +13,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/u
 import FontInput from '@/components/inputs/fontInput';
 import { useConfig } from '@/components/configProvider';
 import ColorPicker from '@/components/inputs/colorPicker';
+import { useFileSelector } from '@/components/fileSelector';
 import CssUnitInput from '@/components/inputs/cssUnitInput';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 
 import type { font, fontVariable, config } from '@/lib/config';
 import { cssToFont, fontToCss, hexToHsl, hslToHex } from '@/lib/utils';
-import { useFileSelector } from '@/components/fileSelector';
 
 type Props = {
     initialConfig: config;
@@ -64,7 +64,10 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
                     disabled={ saveState }
                     onClick={ () => {
                         setSaveState(true);
-                        updateConfig?.(config);
+                        let copy: Partial<config> = { ...config };
+                        delete copy.plugins;
+                        delete copy.themes;
+                        updateConfig?.(copy);
                     } }
                 >Save</Button>
             </header>
@@ -178,6 +181,8 @@ const ColorEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
 const FontfaceEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
     const { selectFile } = useFileSelector();
     const [ newFont, setNewFont ] = React.useState({ family: '', url: '' });
+    const [ fileSelectorOpen, setFileSelectorOpen ] = React.useState<boolean>(false);
+    const [ popoverOpen, setPopoverOpen ] = React.useState<boolean>(false);
 
     const handleAddFont = () => {
         if (!newFont.family || !newFont.url) return;
@@ -190,21 +195,26 @@ const FontfaceEditor: React.FC<EditorProps> = ({ config, setConfig }) => {
 
     const onSelectFile = React.useCallback(() => {
         selectFile('single', 'font')
-            .then(result => {
-                console.log(result);
+            .then(([ { pathname } ]) => {
+                setNewFont(state => ({ ...state, url: pathname }));
+                setFileSelectorOpen(false);
+                setPopoverOpen(true);
             })
-            .catch(() => null);
+            .catch(() => {
+                setFileSelectorOpen(false);
+                setPopoverOpen(true);
+            });
     }, []);
 
     return (
         <section className='space-y-4'>
             <div className='flex items-center justify-between'>
                 <h2 className='text-xl font-bold h-min'>Font Families</h2>
-                <Popover>
+                <Popover open={ popoverOpen || fileSelectorOpen } onOpenChange={ setPopoverOpen }>
                     <PopoverTrigger asChild>
                         <Button variant='outline' size='icon'><Plus /></Button>
                     </PopoverTrigger>
-                    <PopoverContent align='end' className='grid grid-cols-[auto_1fr] gap-2 gap-x-4 p-4'>
+                    <PopoverContent align='end' className='grid grid-cols-[auto_1fr] gap-2 gap-x-4 p-4 z-48'>
                         <Label htmlFor='input-fontface-family'>Family</Label>
                         <Input
                             id='input-fontface-family'

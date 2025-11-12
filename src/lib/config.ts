@@ -29,7 +29,7 @@ export type colorVariable = {
     type: 'color';
     id: string;
     name: string;
-    color: `#${string}`;
+    color: `#${ string }`;
 };
 
 export type variable = fontVariable | colorVariable;
@@ -76,16 +76,15 @@ const getConfig = async (): Promise<config> => {
 const setConfig = async (config: Partial<config>): Promise<boolean> => {
     try {
         const data = updateConfigSchema.parse(config) as Partial<config>;
-
         const user = await actions.getCurrentUser();
         if (!user) return false;
 
-        if (('plugins' in config || 'themes' in config) && !hasAuthority(user.role, 'admin'))
+        if (('plugins' in config || 'themes' in config) && !hasAuthority(user.role, 'admin', 0))
             return false;
 
         const currentConfig: config = global.config || await getConfig();
         const newConfig: config = { ...currentConfig, ...data };
-        await Config.updateOne({}, newConfig, { upsert: true });
+        const a = await Config.findOneAndUpdate({}, newConfig, { upsert: true });
         global.config = newConfig;
         return true;
     } catch (error) {
