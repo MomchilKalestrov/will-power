@@ -12,6 +12,8 @@ import {
     DialogDescription
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '../ui/checkbox';
+import { Label } from '../ui/label';
 
 type Props = {
     onSend: (file: File) => void;
@@ -21,6 +23,9 @@ type Props = {
 const AddFileDialog: React.FC<Props> = ({ onSend, accepts }) => {
     const [ file, setFile ] = React.useState<File | undefined>();
     const [ dialogOpen, setDialogOpen ] = React.useState<boolean>(false);
+    
+    const [ isDirectory, setIsDirectory ] = React.useState<boolean>(false);
+    const [ directoryName, setDirectoryName ] = React.useState<string>('');
 
     return (
         <Dialog open={ dialogOpen } onOpenChange={ setDialogOpen }>
@@ -29,27 +34,54 @@ const AddFileDialog: React.FC<Props> = ({ onSend, accepts }) => {
             </DialogTrigger>
             <DialogContent className='z-101'>
                 <DialogHeader>
-                    <DialogTitle>Upload</DialogTitle>
+                    <DialogTitle>{ isDirectory ? 'Create' : 'Upload' }</DialogTitle>
                     <DialogDescription>
-                        Select a file to add to the assets.
+                        {
+                            isDirectory
+                            ?   'Give the new directory a name.'
+                            :   'Select a file to add to the assets.'
+                        }
                     </DialogDescription>
                 </DialogHeader>
-                <Input
-                    type='file'
-                    multiple={ false }
-                    accept={ accepts }
-                    onChange={ ({ currentTarget: { files } }) =>
-                        setFile([ ...files! ][0])
-                    }
-                />
+                {
+                    isDirectory
+                    ?   <Input
+                            value={ directoryName }
+                            onChange={ ({ currentTarget: { value } }) =>
+                                setDirectoryName(value)
+                            }
+                        />
+                    :   <Input
+                            type='file'
+                            multiple={ false }
+                            accept={ accepts }
+                            onChange={ ({ currentTarget: { files } }) =>
+                                setFile([ ...files! ][0])
+                            }
+                        />
+                }
+                <div className='flex gap-1'>
+                    <Checkbox
+                        checked={ isDirectory }
+                        onCheckedChange={ checked =>
+                            setIsDirectory(checked === true)
+                        }
+                        name='is-directory-checkbox'
+                        id='is-directory-checkbox'
+                    />
+                    <Label htmlFor='is-directory-checkbox'>Create directory</Label>
+                </div>
                 <Button
                     onClick={ () => {
                         setDialogOpen(false);
-                        onSend(file!);
+                        if (isDirectory)
+                            onSend(new File([], directoryName + '/'));
+                        else
+                            onSend(file!);
                     } }
-                    disabled={ !file }
+                    disabled={ isDirectory ? !directoryName : !file }
                     variant='outline'
-                >Upload</Button>
+                >{ isDirectory ? 'Create' : 'Upload' }</Button>
             </DialogContent>
         </Dialog>
     );
