@@ -4,7 +4,7 @@ import displayCondition from './displayCondition';
 
 const componentSchema = new mongoose.Schema<Component>({
     name: { type: String,  required: true },
-    lastEdited: { type: Number, required: true, default: Date.now() },
+    lastEdited: { type: Number, required: true, default: Date.now },
     rootNode: {
         type: componentNodeSchema,
         required: true,
@@ -19,7 +19,32 @@ const componentSchema = new mongoose.Schema<Component>({
         }
     },
     type: { type: String, required: true, enum: [ 'header', 'page', 'footer', 'component' ] },
-    displayCondition: { type: [ displayCondition ], required: false }
+    title: {
+        type: String,
+        required: function (this: any) { return this.type === 'page'; },
+        validate: {
+            validator: function (this: any, v: unknown) {
+                if (this.type !== 'page') return v === undefined || v === null;
+                return typeof v === 'string' && v.length > 0;
+            },
+            message: 'title is only allowed for type "page" and must be a non-empty string.'
+        }
+    },
+    description: {
+        type: String,
+        required: function (this: any) { return this.type === 'page'; },
+        validate: {
+            validator: function (this: any, v: unknown) {
+                if (this.type !== 'page') return v === undefined || v === null;
+                return typeof v === 'string';
+            },
+            message: 'description is only allowed for type "page".'
+        }
+    },
+    displayCondition: {
+        type: [ displayCondition ],
+        required: function (this: any) { return this.type === 'header' || this.type === 'footer'; }
+    }
 });
 
 const db = mongoose.connection;

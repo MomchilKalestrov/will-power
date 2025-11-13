@@ -225,12 +225,19 @@ export const componentSchema = z.union([
                     name: z.string()
                 })
             ])
-        )
+        ).min(1)
     }),
     z.object({
-        type: z.enum([ 'page', 'component' ]),
+        type: z.enum([ 'component' ]),
         name: componentNameSchema,
         lastEdited: z.number(),
         rootNode: componentNodeSchema
     }),
+    z.object({
+        type: z.enum([ 'page' ]),
+        name: componentNameSchema,
+        title: z.string(),
+        description: z.string(),
+        rootNode: componentNodeSchema
+    })
 ]);

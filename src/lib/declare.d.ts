@@ -15,13 +15,21 @@ declare global {
         [ key: string ]: any;
     };
 
-    interface Component {
-        type: componentType;
+    type Component = {
+        type: 'header' | 'page' | 'footer' | 'component';
         name: string;
         lastEdited: timestamp;
         rootNode: ComponentNode;
-        displayCondition?: [ displayCondition, ...displayCondition[] ];
-    }
+    } & ({
+        type: 'page'
+        title: string;
+        description: string;
+    } | {
+        type: 'header' | 'footer';
+        displayCondition: [ displayCondition, ...displayCondition[] ];
+    } | {
+        type: 'component';
+    });
 
     interface User {
         id: string;

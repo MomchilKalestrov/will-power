@@ -1,20 +1,26 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { Plus, RotateCcw } from 'lucide-react';
+import { toast } from 'sonner';
 import { del } from 'idb-keyval';
+import { Plus, RotateCcw, Settings } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import PropertiesPanel from '@/components/propertiesPanel';
-import TreePanel from '@/components/treePanel';
-import { saveComponent } from '@/lib/db/actions/';
-import useNodeTree from '@/hooks/useNodeTree';
-import BlockPanel from '@/components/blocksPanel';
-import ComponentHistoryMenu from './componentHistoryMenu';
-import { toast } from 'sonner';
-import { storage } from '@/lib/utils';
+
 import Logo from '@/components/icons/logo';
+import TreePanel from '@/components/treePanel';
+import BlockPanel from '@/components/blocksPanel';
+import PropertiesPanel from '@/components/propertiesPanel';
 import { useComponentDb } from '@/components/componentDbProvider';
+
+import { storage } from '@/lib/utils';
+import { saveComponent } from '@/lib/db/actions';
+
+import useNodeTree from '@/hooks/useNodeTree';
+
+import ComponentHistoryMenu from './componentHistoryMenu';
+import SettingsEditor from './settingsEditor';
 
 type Props = {
     component: Component;
@@ -39,7 +45,8 @@ const newNode = (type: string, acceptChildren: boolean): ComponentNode => ({
     acceptChildren
 });
 
-const Editor: React.FC<Props> = ({ component }) => {
+const Editor: React.FC<Props> = ({ component: initialComponent }) => {
+    const [ component, setComponent ] = React.useState<Component>(initialComponent);
     const {
         tree,
         setTree,
@@ -63,6 +70,7 @@ const Editor: React.FC<Props> = ({ component }) => {
     });
     const [ selectedNode, setSelectedNode ] = React.useState<ComponentNode | undefined>();
     const [ nodeMetadata, setNodeMetadata ] = React.useState<NodeMetadata | undefined>();
+    const [ settingsOpen, setSettingsOpen ] = React.useState<boolean>(false);
     const { getComponent } = useComponentDb();
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
@@ -70,7 +78,7 @@ const Editor: React.FC<Props> = ({ component }) => {
         if (!iframeRef.current || !tree) return;
 
         storage.set(component.name, {
-            ...storage.parse<Component>(component.name),
+            ...component,
             rootNode: tree,
             lastEdited: Date.now()
         });
@@ -78,7 +86,7 @@ const Editor: React.FC<Props> = ({ component }) => {
         iframeRef.current.contentWindow?.postMessage({
             type: 'update-tree'
         }, '*');
-    }, [ tree ]);
+    }, [ tree, component ]);
 
     const onMessage = React.useCallback(async (event: MessageEvent) => {
         switch (event.data.type) {
@@ -92,6 +100,7 @@ const Editor: React.FC<Props> = ({ component }) => {
     const onReset = React.useCallback(async () => {
         setTree(component.rootNode);
         storage.set(component.name, component);
+        setComponent(component);
     }, [ component.name ]);
     
     React.useEffect(() => {
@@ -120,9 +129,17 @@ const Editor: React.FC<Props> = ({ component }) => {
                     <Button size='icon'>
                         <Link href='/admin/components/page'><Logo /></Link>
                     </Button>
-                    <Button size='icon' variant='outline' onClick={ () => setSelectedNode(undefined) }>
-                        <Plus />
-                    </Button>
+                    <Button size='icon' variant='outline' onClick={ () => {
+                        setSelectedNode(undefined);
+                        setSettingsOpen(false);
+                    } }><Plus /></Button>
+                    {
+                        component.type !== 'component' &&
+                        <Button size='icon' variant='outline' onClick={ () => {
+                            setSelectedNode(undefined);
+                            setSettingsOpen(true);
+                        } }><Settings /></Button>
+                    }
                 </section>
                 <section>
                     <ComponentHistoryMenu
@@ -138,11 +155,11 @@ const Editor: React.FC<Props> = ({ component }) => {
                         button.disabled = true;
                         del(`preview-${ component.name }`);
                         saveComponent({
-                            ...storage.parse<Component>(component.name),
+                            ...component,
                             rootNode: tree
-                        }).then(() => {
+                        }).then((result) => {
                             button.disabled = false;
-                            toast('Saved!');
+                            toast(result ? 'Saved.' : 'Failed saving.');
                         }).catch(() => {
                             button.disabled = false;
                             toast('Failed saving.');
@@ -166,10 +183,17 @@ const Editor: React.FC<Props> = ({ component }) => {
                                         updateNode(id, data);
                                     } }
                                 />
-                            :   <BlockPanel onNodeAdd={
-                                    (type, acceptChildren) =>
-                                        addNode(tree.id, newNode(type, acceptChildren))
-                                } />
+                            :   settingsOpen
+                                ?   <SettingsEditor
+                                        component={ component }
+                                        onChange={ props => {
+                                            setComponent(state => ({ ...state, ...props } as Component))
+                                        } }
+                                    />
+                                :   <BlockPanel onNodeAdd={
+                                        (type, acceptChildren) =>
+                                            addNode(tree.id, newNode(type, acceptChildren))
+                                    } />
                         }
                     </Card>
                     

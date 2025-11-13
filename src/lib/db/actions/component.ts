@@ -1,11 +1,34 @@
 'use server';
 import connect from '@/lib/db';
 import Component from '@/models/component';
-import { componentNameSchema, componentSchema, componentTypesSchema } from '@/lib/zodSchemas';
+import {
+    componentNameSchema,
+    componentSchema,
+    componentTypesSchema
+} from '@/lib/zodSchemas';
 
 declare global {
     var componentNames: { [ key: string ]: Set<string> | undefined };
 };
+
+const newComponentPresets = (name: string, type: componentType) => ({
+    page: {
+        name, type,
+        title: name,
+        description: `${ name } page.`
+    },
+    component: {
+        name, type,
+    },
+    header: {
+        name, type,
+        displayCondition: [ { type: 'all' } ]
+    },
+    footer: {
+        name, type,
+        displayCondition: [ { type: 'all' } ]
+    }
+})[ type ];
 
 if (!globalThis.componentNames)
     globalThis.componentNames = {};
@@ -24,7 +47,7 @@ const getComponentByName = async (name: string, type?: componentType): Promise<C
     } catch (error) {
         console.error('[db] getComponentByName error:', error instanceof Error ? error.stack || error.message : error);
         return null;
-    }
+    };
 };
 
 const getAllComponents = async (type: componentType = 'page'): Promise<string[]> => {
@@ -41,7 +64,7 @@ const getAllComponents = async (type: componentType = 'page'): Promise<string[]>
     } catch (error) {
         console.error('[db] getAllComponents error:', error instanceof Error ? error.stack || error.message : error);
         return [];
-    }
+    };
 };
 
 const saveComponent = async (component: Partial<Component>): Promise<boolean> => {
@@ -66,7 +89,7 @@ const saveComponent = async (component: Partial<Component>): Promise<boolean> =>
     } catch (error) {
         console.error('[db] saveComponent error:', error instanceof Error ? error.stack || error.message : error);
         return false;
-    }
+    };
 };
 
 const createComponent = async (name: string, type: componentType = 'page'): Promise<boolean> => {
@@ -76,7 +99,7 @@ const createComponent = async (name: string, type: componentType = 'page'): Prom
     } catch (err) {
         console.error('[db] createComponent validation error:', err instanceof Error ? err.message : err);
         return false;
-    }
+    };
 
     try {
         if (!global.componentNames[ type ])
@@ -91,14 +114,7 @@ const createComponent = async (name: string, type: componentType = 'page'): Prom
         const exists = await Component.findOne({ name, type }).lean();
         if (exists) return false;
 
-        await new Component({
-            name,
-            type,
-            displayCondition:
-                type === 'header' || type === 'footer'
-                ?   []
-                :   undefined
-        }).save();
+        await new Component(newComponentPresets(name, type)).save();
 
         if (!global.componentNames[ type ]) global.componentNames[ type ] = new Set();
         global.componentNames[ type ]!.add(name);
@@ -106,7 +122,7 @@ const createComponent = async (name: string, type: componentType = 'page'): Prom
     } catch (error) {
         console.error('[db] createComponent error:', error instanceof Error ? error.stack || error.message : error);
         return false;
-    }
+    };
 };
 
 const deleteComponent = async (name: string): Promise<boolean> => {
@@ -120,7 +136,7 @@ const deleteComponent = async (name: string): Promise<boolean> => {
     } catch (error) {
         console.error('[db] deleteComponent error:', error instanceof Error ? error.stack || error.message : error);
         return false;
-    }
+    };
 };
 
 const getMatchingComponents = async (name: string, type: 'header' | 'footer'): Promise<Component[]> => {
@@ -142,7 +158,7 @@ const getMatchingComponents = async (name: string, type: 'header' | 'footer'): P
     } catch (error) {
         console.error('[db] getMatchingComponents error:', error instanceof Error ? error.stack || error.message : error);
         return [];
-    }
+    };
 };
 
 export {
