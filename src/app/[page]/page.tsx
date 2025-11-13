@@ -5,7 +5,8 @@ import { getComponentByName, getMatchingComponents } from '@/lib/db/actions/';
 
 export const generateMetadata = async ({ params }: PageProps<'/[page]'>): Promise<Metadata> => {
     const { page } = await params;
-    return { title: page };
+    const { title, description } = await getComponentByName(page, 'page') as Component & { type: 'page' };
+    return { title, description };
 };
 
 const Page: NextPage<PageProps<'/[page]'>> = async ({ params }) => {
