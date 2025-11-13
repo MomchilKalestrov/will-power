@@ -21,25 +21,11 @@ const componentSchema = new mongoose.Schema<Component>({
     type: { type: String, required: true, enum: [ 'header', 'page', 'footer', 'component' ] },
     title: {
         type: String,
-        required: function (this: any) { return this.type === 'page'; },
-        validate: {
-            validator: function (this: any, v: unknown) {
-                if (this.type !== 'page') return v === undefined || v === null;
-                return typeof v === 'string' && v.length > 0;
-            },
-            message: 'title is only allowed for type "page" and must be a non-empty string.'
-        }
+        required: function (this: any) { return this.type === 'page'; }
     },
     description: {
         type: String,
-        required: function (this: any) { return this.type === 'page'; },
-        validate: {
-            validator: function (this: any, v: unknown) {
-                if (this.type !== 'page') return v === undefined || v === null;
-                return typeof v === 'string';
-            },
-            message: 'description is only allowed for type "page".'
-        }
+        required: function (this: any) { return this.type === 'page'; }
     },
     displayCondition: {
         type: [ displayCondition ],
