@@ -92,7 +92,7 @@ const CssUnitInput: React.FC<{
                 }
             </div>
             <Select value={ currentUnit } onValueChange={ handleUnitChange }>
-                <SelectTrigger className='w-[80px]'>
+                <SelectTrigger className='w-20'>
                     <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

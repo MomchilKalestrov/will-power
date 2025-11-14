@@ -23,7 +23,7 @@ const CssKeywordInput: React.FC<CssKeywordInputProps> = ({
     id
 }) => (
     <Select onValueChange={ onChange } value={ value }>
-        <SelectTrigger id={ id } className='w-[100%]'>
+        <SelectTrigger id={ id } className='w-full'>
             <SelectValue />
         </SelectTrigger>
         <SelectContent>

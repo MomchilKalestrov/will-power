@@ -86,10 +86,7 @@ const GradientPicker: React.FC<Props> = ({
                     </svg>
                 </Button>
             </PopoverTrigger>
-            <PopoverContent
-                className='grid grid-cols-2 gap-2'
-                onInteractOutside={ (e) => e.preventDefault() }
-            >
+            <PopoverContent className='grid grid-cols-2 gap-2'>
                 <Label htmlFor='input-gradient-type' className='capitalize w-32'>Type</Label>
                 <CssKeywordInput
                     value={ gradientType }

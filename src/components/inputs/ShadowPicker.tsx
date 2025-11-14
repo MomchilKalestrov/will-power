@@ -65,11 +65,7 @@ const ShadowPicker: React.FC<Props> = ({
                     <SquircleDashed />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent
-                className='grid grid-cols-2 gap-2'
-                style={ { gridTemplateColumns: 'min-content 1fr' } }
-                onInteractOutside={ (e) => e.preventDefault() }
-            >
+            <PopoverContent className='grid gap-2 grid-cols-[min-content_1fr]'>
                 <Label htmlFor='input-shadow-inset' className='capitalize w-16'>Inset</Label>
                 <Checkbox
                     className='justify-self-end'
