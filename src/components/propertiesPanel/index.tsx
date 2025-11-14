@@ -1,7 +1,9 @@
 'use client';
 import React from 'react';
 import { Ban } from 'lucide-react';
+import MonacoEditor from '@monaco-editor/react';
 
+import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -14,8 +16,8 @@ import CssUnitInput from '@/components/inputs/cssUnitInput';
 import GradientPicker from '@/components/inputs/gradientPicker';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 import BackgroundPicker from '@/components/inputs/backgroundPicker';
-import AdvancedTextarea from '../inputs/advancedTextarea';
-import FontInput from '../inputs/fontInput';
+import AdvancedTextarea from '@/components/inputs/advancedTextarea';
+import FontInput from '@/components/inputs/fontInput';
 
 type PropertiesPanelProps = {
     node: ComponentNode;
@@ -153,6 +155,27 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                 />
                             </div>
                         );
+                    case 'code':
+                        return (
+                            <div key={ key } className='grid gap-2'>
+                                <Label className='capitalize'>{ name }</Label>
+                                <Card className='py-0 overflow-hidden'>
+                                    <MonacoEditor
+                                        defaultValue={ currentValue }
+                                        language='html'
+                                        theme={
+                                            document.body.classList.contains('dark')
+                                            ?   'vs-dark'
+                                            :   'light'
+                                        }
+                                        onChange={ text => {
+                                            handleChange(key, text || '', 'props');
+                                        } }
+                                        className='h-64'
+                                    />
+                                </Card>
+                            </div>
+                        )
                 }
 
                 return null;

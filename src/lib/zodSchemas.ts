@@ -91,7 +91,7 @@ const propStructure: z.ZodType<any> = z.lazy(() =>
 
 const propSchema = z.discriminatedUnion('type', [
     z.object({
-        type: z.enum([ 'string', 'number', 'enum', 'line' ]),
+        type: z.enum([ 'string', 'number', 'enum', 'line', 'code' ]),
         default: z.any().optional(),
         condition: editorVisibilityCondition.optional()
     }),

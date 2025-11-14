@@ -98,11 +98,11 @@ declare global {
     });
 
     type prop = {
-        type: 'string' | 'number' | 'custom' | 'enum' | 'line';
+        type: 'string' | 'number' | 'custom' | 'enum' | 'line' | 'code';
         default?: any;
         condition?: editorVisibilityCondition;
     } & ({
-        type: 'string' | 'number' | 'enum' | 'line';
+        type: 'string' | 'number' | 'enum' | 'line' | 'code';
     } | {
         type: 'custom';
         structure: propStructure;
