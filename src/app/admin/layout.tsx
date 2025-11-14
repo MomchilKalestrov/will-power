@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { SessionProvider } from 'next-auth/react';
 import { NextComponentType, NextPageContext } from 'next';
@@ -126,11 +126,11 @@ const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
                                                 typeof value === 'object'
                                                 ?   (
                                                         <SidebarMenuItem key={ key }>
-                                                            <Collapsible className='group/collapsible' defaultOpen={ true }>
+                                                            <Collapsible defaultOpen={ true }>
                                                                 <CollapsibleTrigger asChild>
                                                                     <SidebarMenuButton className='flex justify-between'>
                                                                         { key }
-                                                                        <ChevronRight className='group-data-[state=open]:rotate-90' />
+                                                                        <ChevronDown />
                                                                     </SidebarMenuButton>
                                                                 </CollapsibleTrigger>
                                                                 <CollapsibleContent>
@@ -153,11 +153,11 @@ const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
                                             ) }
                                             <FilesButton />
                                             <SidebarMenuItem>
-                                                <Collapsible className='group/collapsible' defaultOpen={ true }>
+                                                <Collapsible defaultOpen={ true }>
                                                     <CollapsibleTrigger asChild>
                                                         <SidebarMenuButton className='flex justify-between'>
                                                             Plugins Pages
-                                                            <ChevronRight className='group-data-[state=open]:rotate-90' />
+                                                            <ChevronDown />
                                                         </SidebarMenuButton>
                                                     </CollapsibleTrigger>
                                                     <CollapsibleContent>

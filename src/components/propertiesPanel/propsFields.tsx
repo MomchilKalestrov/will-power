@@ -116,10 +116,10 @@ const ObjectProperty: React.FC<{
                     <CollapsibleTrigger asChild>
                         <Button
                             variant='ghost'
-                            className='capitalize w-full mb-2 justify-between group'
+                            className='capitalize w-full mb-2 justify-between'
                         >
                             { name }
-                            <ChevronDown className='transition text-muted-foreground group-data-[state=open]:rotate-180' />
+                            <ChevronDown className='text-muted-foreground' />
                         </Button>
                     </CollapsibleTrigger>
                     <CollapsibleContent className='ml-2 pl-2 border-l'>
