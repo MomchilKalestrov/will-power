@@ -172,7 +172,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                 style={ { '--primary': colors[ component.type ] } as React.CSSProperties }
             >
                 <div className='flex flex-1 overflow-hidden'>
-                    <Card className='bg-background min-w-32 w-80 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-0 border-r p-4'>
+                    <Card className='bg-background min-w-32 w-80 max-w-[33%] overflow-x-hidden overflow-y-scroll resize-x h-full rounded-none border-0 border-r p-4'>
                         { 
                             (selectedNode && nodeMetadata)
                             ?   <PropertiesPanel
@@ -205,7 +205,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                     />
 
                     <Card
-                        className='bg-background min-w-48 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-l border-r-0 border-t-0 border-b-0 p-4 shadow-none'    
+                        className='bg-background min-w-48 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-l border-r-0 border-t-0 border-b-0 p-4 shadow-none overflow-y-scroll'    
                         style={ { direction: 'rtl' } }
                     >
                         <div style={ { direction: 'ltr' } } className='h-full'>
