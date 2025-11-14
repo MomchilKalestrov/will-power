@@ -1,9 +1,9 @@
 'use client';
 import React from 'react';
-import { ChevronDown, ChevronRight, ChevronUp, Trash2, Type } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronUp, SquareDashed, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useComponentDb } from '@/components/componentDbProvider';
 import { cn } from '@/lib/utils';
-import { Button } from '../ui/button';
 
 type Props = {
     node: ComponentNode;
@@ -18,7 +18,7 @@ const TreePanelNode: React.FC<Props> = ({ node, selectedNodeId, onParentChange: 
     const reference = React.useRef<HTMLDivElement>(null);
     const onParentChange = React.useContext(DragCTX);
     const [ isExpanded, setIsExpanded ] = React.useState<boolean>(true);
-    const [ Icon, setIcon ] = React.useState<React.ComponentType<any>>(Type);
+    const [ Icon, setIcon ] = React.useState<React.ComponentType<any>>(SquareDashed);
 
     React.useEffect(() => {
         getComponent(node.type)
