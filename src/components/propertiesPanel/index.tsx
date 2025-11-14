@@ -57,10 +57,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
         setEditableId(node.id);
     }, [ node.id ]);
 
-    const handleIdUpdate = () => {
-        if (editableId && editableId !== node.id)
-            onNodeUpdate(node.id, { id: editableId });
-    };
+    const handleIdUpdate = React.useCallback(() =>
+        editableId && editableId !== node.id &&
+        onNodeUpdate(node.id, { id: editableId }),
+        [ onNodeUpdate, node.id, editableId ]
+    );
 
     const groupedStyles = React.useMemo<groupedProps<style>> (() => {
         let buckets: groupedProps<style> = {};
@@ -77,14 +78,15 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
         return buckets;
     }, [ node.type ]);
 
-    const handleChange = (key: string, value: string, property: 'style' | 'props' | 'attributes') => {
+    const handleChange = React.useCallback((key: string, value: string, property: 'style' | 'props' | 'attributes') =>
         onNodeUpdate(node.id, {
             [ property ]: {
-                ...(node.style || {}),
+                ...(node[ property ] || {}),
                 [ key ]: value,
             },
-        });
-    };
+        }),
+        [ onNodeUpdate, node ]
+    );
 
     return (
         <div className='space-y-4'>
@@ -98,10 +100,10 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                         value={ editableId }
                         onChange={ (e) => setEditableId(e.target.value) }
                         onBlur={ handleIdUpdate }
-                        onKeyDown={(e) => {
+                        onKeyDown={ e => {
                             if (e.key === 'Enter')
                                 handleIdUpdate();
-                        }}
+                        } }
                     />
                 </div>
             </div>
@@ -148,10 +150,10 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
                                 <Input
                                     id={ `input-${ key }` }
                                     value={ currentValue }
+                                    type={ prop.type === 'line' ? 'text' : prop.type }
                                     onChange={ ({ target: { value } }) =>
                                         handleChange(key, value, 'props')
                                     }
-                                    type={ prop.type === 'line' ? 'string' : prop.type }
                                 />
                             </div>
                         );
