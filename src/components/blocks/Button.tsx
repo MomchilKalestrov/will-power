@@ -1,6 +1,5 @@
 import React from 'react';
 import defaults from './defaults.module.css';
-import { connectReactDebugChannelForHtmlRequest } from 'next/dist/server/dev/debug-channel';
 
 const metadata: NodeMetadata = {
     props: {
@@ -11,6 +10,47 @@ const metadata: NodeMetadata = {
         onClick: {
             type: 'code',
             default: 'console.log("Hello, world!");'
+        },
+        test: {
+            type: 'custom',
+            default: {},
+            structure: {
+                key: 'test',
+                type: 'object',
+                structure: [
+                    {
+                        type: 'enum',
+                        key: 'display',
+                        default: 'grid'
+                    },
+                    {
+                        type: 'number',
+                        key: 'nnn',
+                        default: 10
+                    },
+                    {
+                        type: 'string',
+                        key: 'str',
+                        default: 'asdasd'
+                    },
+                    {
+                        type: 'object',
+                        key: 'obj',
+                        structure: [
+                            {
+                                type: 'number',
+                                key: 'nn',
+                                default: 10
+                            },
+                            {
+                                type: 'string',
+                                key: 'str',
+                                default: 'asasd'
+                            }
+                        ]
+                    }
+                ],
+            }
         }
     },
     attributes: {},

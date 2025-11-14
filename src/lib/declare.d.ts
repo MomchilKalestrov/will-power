@@ -84,17 +84,15 @@ declare global {
         in: string;
     };
 
-    type propStructure = {
+    type objectProperty = {
         type: 'string' | 'enum' | 'number' | 'object' | 'array';
         key: string;
     } & ({
         type: 'number' | 'string' | 'enum';
+        default: any;
     } | {
         type: 'object';
-        structure: propStructure[];
-    } | {
-        type: 'array';
-        structure: Omit<propStructure, 'key'>[];
+        structure: objectProperty[];
     });
 
     type prop = {
@@ -105,7 +103,7 @@ declare global {
         type: 'string' | 'number' | 'enum' | 'line' | 'code';
     } | {
         type: 'custom';
-        structure: propStructure;
+        structure: objectProperty;
     });
     
     type BlobInformation = ListBlobResultBlob;
