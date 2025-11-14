@@ -169,7 +169,6 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
             </header>
             <main
                 className='w-screen h-[calc(100dvh-var(--spacing)*16)] flex flex-col overflow-hidden'
-                style={ { '--primary': colors[ component.type ] } as React.CSSProperties }
             >
                 <div className='flex flex-1 overflow-hidden'>
                     <Card className='bg-background min-w-32 w-80 max-w-[33%] overflow-x-hidden overflow-y-scroll resize-x h-full rounded-none border-0 border-r p-4'>

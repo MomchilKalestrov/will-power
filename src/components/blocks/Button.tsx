@@ -10,47 +10,6 @@ const metadata: NodeMetadata = {
         onClick: {
             type: 'code',
             default: 'console.log("Hello, world!");'
-        },
-        test: {
-            type: 'custom',
-            default: {},
-            structure: {
-                key: 'test',
-                type: 'object',
-                structure: [
-                    {
-                        type: 'enum',
-                        key: 'display',
-                        default: 'grid'
-                    },
-                    {
-                        type: 'number',
-                        key: 'nnn',
-                        default: 10
-                    },
-                    {
-                        type: 'string',
-                        key: 'str',
-                        default: 'asdasd'
-                    },
-                    {
-                        type: 'object',
-                        key: 'obj',
-                        structure: [
-                            {
-                                type: 'number',
-                                key: 'nn',
-                                default: 10
-                            },
-                            {
-                                type: 'string',
-                                key: 'str',
-                                default: 'asasd'
-                            }
-                        ]
-                    }
-                ],
-            }
         }
     },
     attributes: {},

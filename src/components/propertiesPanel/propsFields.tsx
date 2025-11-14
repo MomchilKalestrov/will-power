@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import MonacoEditor from '@monaco-editor/react';
+import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -15,17 +16,6 @@ import {
 
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 import AdvancedTextarea from '@/components/inputs/advancedTextarea';
-import { ChevronDown } from 'lucide-react';
-
-const propertyToDefault = (structure: objectProperty[]): any => {
-    structure.reduce<any>((acc, property) => {
-        acc[ property.key ] =
-            property.type === 'object'
-            ?   propertyToDefault((property as objectProperty & { type: 'object' }).structure)
-            :   property.default;
-        return acc;
-    }, {});
-};
 
 type Props = {
     metadata: NodeMetadata;
@@ -48,12 +38,11 @@ const ObjectProperty: React.FC<{
     handleChange
 }) => {
     const name = property.key.replace(/([A-Z])/g, ' $1');
-    const currentValue =
-        value?.[ property.key ] ??
-        property.type === 'object'
-        ?   propertyToDefault((property as objectProperty & { type: 'object' }).structure)
-        :   property.default;
-
+    let currentValue = 
+        (property.type === 'object' || property.type === 'array')
+        ?   value
+        :   value?.[ property.key ] ?? property.default;
+    
     switch (property.type) {
         case 'enum':
                 const options = enumerators[ property.key ]?.values;
@@ -68,10 +57,7 @@ const ObjectProperty: React.FC<{
                                 options={ options }
                                 id={ 'input-' + property.key }
                                 onChange={ (newValue) =>
-                                    handleChange(property.key, {
-                                        ...value,
-                                        [ property.key ]: newValue
-                                    })
+                                    handleChange(property.key, newValue)
                                 }
                             />
                         </div>
@@ -86,10 +72,7 @@ const ObjectProperty: React.FC<{
                         value={ currentValue }
                         type='number'
                         onChange={ ({ target: { value: newValue } }) =>
-                            handleChange(property.key, {
-                                ...value,
-                                [ property.key ]: newValue
-                            })
+                            handleChange(property.key, Number(newValue) ?? 0)
                         }
                     />
                 </div>
@@ -102,10 +85,7 @@ const ObjectProperty: React.FC<{
                         id={ `input-${ property.key }` }
                         value={ currentValue }
                         onChange={ ({ target: { value: newValue } }) =>
-                            handleChange(property.key, {
-                                ...value,
-                                [ property.key ]: newValue
-                            })
+                            handleChange(property.key, newValue)
                         }
                     />
                 </div>
@@ -123,8 +103,9 @@ const ObjectProperty: React.FC<{
                         </Button>
                     </CollapsibleTrigger>
                     <CollapsibleContent className='ml-2 pl-2 border-l'>
-                        { property.structure.map((property) => (
+                        { property.structure.map((property, index) => (
                             <ObjectProperty
+                                key={ index }
                                 property={ property }
                                 enumerators={ enumerators }
                                 value={ currentValue }
@@ -139,6 +120,46 @@ const ObjectProperty: React.FC<{
                     </CollapsibleContent>
                 </Collapsible>
             );
+            case 'array':
+                return (
+                    <div className='grid gap-2 mb-2'>
+                        <Label className='capitalize'>{ name }</Label>
+                        { ((currentValue as any[]) ?? []).map((v, index) => (
+                            <React.Fragment key={ index }>
+                                <ObjectProperty
+                                    property={ property.structure }
+                                    enumerators={ enumerators }
+                                    value={ v }
+                                    handleChange={ (key, value) => {
+                                        const newArray = [ ...currentValue ];
+                                        newArray[ index ][ key ] = value[ key ];
+                                        handleChange(property.key, newArray);
+                                    } }
+                                />
+                            </React.Fragment>
+                        )) }
+                        <div className='flex gap-2'>
+                            <Button
+                                className='grow'
+                                onClick={ () =>
+                                    handleChange(property.key, [
+                                        ...currentValue || [],
+                                        {}
+                                    ])
+                                }
+                            ><Plus /></Button>
+                            <Button
+                                variant='destructive'
+                                className='grow'
+                                onClick={ () =>
+                                    handleChange(property.key, [
+                                        ...(currentValue as any[] || []).slice(0, -1)
+                                    ])
+                                }
+                            ><Trash2 /></Button>
+                        </div>
+                    </div>
+                );
     };
 };
 
@@ -252,7 +273,9 @@ const PropsFields: React.FC<Props> = ({
                                     property={ prop.structure }
                                     enumerators={ metadata.enumerators }
                                     value={ currentValue }
-                                    handleChange={ console.log }
+                                    handleChange={ (_, value) =>
+                                        handleChange(key, value, 'props')
+                                    }
                                 />
                             </div>
                         );

@@ -93,6 +93,9 @@ declare global {
     } | {
         type: 'object';
         structure: objectProperty[];
+    } | {
+        type: 'array';
+        structure: objectProperty;
     });
 
     type prop = {
