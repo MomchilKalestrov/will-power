@@ -27,7 +27,8 @@ const baseComponentNames = [
     'Header',
     'Paragraph',
     'Component',
-    'CustomHTML'
+    'CustomHTML',
+    'Button'
 ];
 
 const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
