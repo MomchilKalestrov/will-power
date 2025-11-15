@@ -78,7 +78,7 @@ const cssFromConfig = (config: config): string =>
         config.variables.reduce<string>((acc: string, curr: config[ 'variables' ][ number ]) =>
             curr.type === 'font'
             ?   acc + `\t--${ curr.id }: ${ fontToCss(curr) };\n`
-            :   acc + `\t--${ curr.name }: ${ curr.color };\n`
+            :   acc + `\t--${ curr.id }: ${ curr.color };\n`
         , '') +
     '}\n' +
     '\n' +

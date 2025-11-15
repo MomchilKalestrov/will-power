@@ -35,3 +35,36 @@
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
 }
+
+.AccordionContainer {
+    margin: 0px;
+    
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+}
+
+.AccordionWrapper {
+    /* gotta have something here so vscode doesn't complain :/ */
+    --sosa-maji: 'mazna';
+}
+
+.AccordionHeader {
+    padding: 1rem;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: 2px solid black;
+}
+
+.AccordionWrapper[data-open="true"] > .AccordionContents {
+    height: auto;
+}
+
+.AccordionWrapper[data-open="false"] > .AccordionContents {
+    height: 0px;
+    overflow: hidden;
+}
