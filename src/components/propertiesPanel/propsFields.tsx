@@ -48,13 +48,9 @@ const ObjectProperty: React.FC<{
     );
 
     let currentValue = value ?? defaultValue;
-    if (property.type !== 'object')
+    console.log(currentValue, value, defaultValue)
+    if (property.type !== 'object' && typeof currentValue === 'object')
         currentValue = currentValue[ property.key ] ?? defaultValue[ property.key ];
-    
-    console.log(property.type !== 'object', property.key, 'default', JSON.stringify(defaultValue, null, '\t'))
-    console.log(property.type !== 'object', property.key, 'value', value)
-    console.log(property.type !== 'object', property.key, 'current', JSON.stringify(currentValue, null, '\t'))
-    console.log('-----')
 
     switch (property.type) {
         case 'enum':
@@ -104,16 +100,17 @@ const ObjectProperty: React.FC<{
                         <Label htmlFor={ `input-${ property.key }` } className='capitalize'>{ name }</Label>
                     }
                     <Textarea
+                        className='min-h-[38px]'
                         id={ `input-${ property.key }` }
                         value={ currentValue }
                         onChange={ ({ target: { value: newValue } }) =>
                             handleChange(property.key, newValue)
                         }
+                        rows={ 1 }
                     />
                 </div>
             );
         case 'object':
-            console.log('diff',value, currentValue)
             const contents = property.structure.map((property, index) => (
                 <ObjectProperty
                     key={ index }
