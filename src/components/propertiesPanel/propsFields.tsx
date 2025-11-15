@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import {
     Collapsible,
@@ -16,41 +17,56 @@ import {
 
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 import AdvancedTextarea from '@/components/inputs/advancedTextarea';
+import { getObjectPropertyDefault } from '@/lib/propsFiller';
 
 type Props = {
     metadata: NodeMetadata;
     node: ComponentNode;
     nodeId: string;
-    handleChange: (key: string, value: string, property: 'props') => void;
+    handleChange: (key: string, value: any, property: 'props') => void;
     onIdChange: (id: string) => void;
 };
 
 const ObjectProperty: React.FC<{
     enumerators: NodeMetadata[ 'enumerators' ];
     property: objectProperty;
-    value: { [ key: string ]: any | undefined };
+    value: any;
     handleChange: (key: string, value: any) => void;
     showName?: boolean;
 }> = ({
     property,
     value,
     enumerators,
-    handleChange
+    handleChange,
+    showName = true
 }) => {
     const name = property.key.replace(/([A-Z])/g, ' $1');
-    let currentValue = 
-        (property.type === 'object' || property.type === 'array')
-        ?   value
-        :   value?.[ property.key ] ?? property.default;
     
+    const defaultValue = React.useMemo(() =>
+        getObjectPropertyDefault(property),
+        [ property ]
+    );
+
+    let currentValue = value ?? defaultValue;
+    if (property.type !== 'object')
+        currentValue = currentValue[ property.key ] ?? defaultValue[ property.key ];
+    
+    console.log(property.type !== 'object', property.key, 'default', JSON.stringify(defaultValue, null, '\t'))
+    console.log(property.type !== 'object', property.key, 'value', value)
+    console.log(property.type !== 'object', property.key, 'current', JSON.stringify(currentValue, null, '\t'))
+    console.log('-----')
+
     switch (property.type) {
         case 'enum':
                 const options = enumerators[ property.key ]?.values;
-                if (!options || options.length === 0) return null;
+                if (!options || options.length === 0) return (<></>);
 
                 return (
                     <div className='flex items-center flex-wrap justify-between gap-2 mb-2'>
-                        <Label htmlFor={ `input-${ property.key }` } className='capitalize'>{ name }</Label>
+                        {
+                            showName &&
+                            <Label htmlFor={ `input-${ property.key }` } className='capitalize'>{ name }</Label>
+                        }
                         <div className='grow'>
                             <CssKeywordInput
                                 value={ currentValue }
@@ -66,7 +82,10 @@ const ObjectProperty: React.FC<{
         case 'number':
             return (
                 <div className='flex items-center flex-wrap justify-between gap-2 mb-2'>
-                    <Label htmlFor={ `input-${ property.key }` } className='capitalize'>{ name }</Label>
+                    {
+                        showName &&
+                        <Label htmlFor={ `input-${ property.key }` } className='capitalize'>{ name }</Label>
+                    }
                     <Input
                         id={ `input-${ property.key }` }
                         value={ currentValue }
@@ -80,7 +99,10 @@ const ObjectProperty: React.FC<{
         case 'string':
             return (
                 <div className='grid gap-2 mb-2'>
-                    <Label htmlFor={ `input-${ property.key }` } className='capitalize'>{ name }</Label>
+                    {
+                        showName &&
+                        <Label htmlFor={ `input-${ property.key }` } className='capitalize'>{ name }</Label>
+                    }
                     <Textarea
                         id={ `input-${ property.key }` }
                         value={ currentValue }
@@ -91,6 +113,24 @@ const ObjectProperty: React.FC<{
                 </div>
             );
         case 'object':
+            console.log('diff',value, currentValue)
+            const contents = property.structure.map((property, index) => (
+                <ObjectProperty
+                    key={ index }
+                    property={ property }
+                    enumerators={ enumerators }
+                    value={ currentValue }
+                    handleChange={ (key, newValue) =>
+                        handleChange(property.key, {
+                            ...currentValue,
+                            [ key ]: newValue
+                        })
+                    }
+                />
+            ));
+
+            if (!showName) return contents;
+
             return (
                 <Collapsible>
                     <CollapsibleTrigger asChild>
@@ -102,61 +142,59 @@ const ObjectProperty: React.FC<{
                             <ChevronDown className='text-muted-foreground' />
                         </Button>
                     </CollapsibleTrigger>
-                    <CollapsibleContent className='ml-2 pl-2 border-l'>
-                        { property.structure.map((property, index) => (
-                            <ObjectProperty
-                                key={ index }
-                                property={ property }
-                                enumerators={ enumerators }
-                                value={ currentValue }
-                                handleChange={ (key, newValue) =>
-                                    handleChange(property.key, {
-                                        ...value,
-                                        [ key ]: newValue
-                                    })
-                                }
-                            />
-                        )) }
+                    <CollapsibleContent className='pl-2 border-l'>
+                        { contents }
                     </CollapsibleContent>
                 </Collapsible>
             );
             case 'array':
                 return (
-                    <div className='grid gap-2 mb-2'>
-                        <Label className='capitalize'>{ name }</Label>
-                        { ((currentValue as any[]) ?? []).map((v, index) => (
-                            <React.Fragment key={ index }>
-                                <ObjectProperty
-                                    property={ property.structure }
-                                    enumerators={ enumerators }
-                                    value={ v }
-                                    handleChange={ (key, value) => {
-                                        const newArray = [ ...currentValue ];
-                                        newArray[ index ][ key ] = value[ key ];
-                                        handleChange(property.key, newArray);
-                                    } }
-                                />
-                            </React.Fragment>
-                        )) }
-                        <div className='flex gap-2'>
-                            <Button
-                                className='grow'
-                                onClick={ () =>
-                                    handleChange(property.key, [
-                                        ...currentValue || [],
-                                        {}
-                                    ])
-                                }
-                            ><Plus /></Button>
-                            <Button
-                                variant='destructive'
-                                className='grow'
-                                onClick={ () =>
-                                    handleChange(property.key, [
-                                        ...(currentValue as any[] || []).slice(0, -1)
-                                    ])
-                                }
-                            ><Trash2 /></Button>
+                    <div className='space-y-2 mb-2'>
+                        {
+                            showName &&
+                            <Label className='capitalize'>{ name }</Label>
+                        }
+                        <div className='pl-2 border-l'>
+                            { (currentValue as any[]).map((v, index) => (
+                                <React.Fragment key={ index }>
+                                    <ObjectProperty
+                                        property={ property.structure }
+                                        enumerators={ enumerators }
+                                        value={ v }
+                                        showName={ false }
+                                        handleChange={ (_, value) => {
+                                            const newArray = [ ...currentValue ];
+                                            newArray[ index ] = value;
+                                            handleChange(property.key, newArray);
+                                        } }
+                                    />
+                                    {
+                                        (property.structure.type === 'object' ||
+                                        property.structure.type === 'array') &&
+                                        <Separator className='my-2' />
+                                    }
+                                </React.Fragment>
+                            )) }
+                            <div className='flex gap-2'>
+                                <Button
+                                    className='grow'
+                                    onClick={ () =>
+                                        handleChange(property.key, [
+                                            ...currentValue || [],
+                                            defaultValue[ property.key ][ 0 ]
+                                        ])
+                                    }
+                                ><Plus /></Button>
+                                <Button
+                                    variant='destructive'
+                                    className='grow'
+                                    onClick={ () =>
+                                        handleChange(property.key, [
+                                            ...(currentValue as any[] ?? []).slice(0, -1)
+                                        ])
+                                    }
+                                ><Trash2 /></Button>
+                            </div>
                         </div>
                     </div>
                 );
@@ -272,10 +310,12 @@ const PropsFields: React.FC<Props> = ({
                                 <ObjectProperty
                                     property={ prop.structure }
                                     enumerators={ metadata.enumerators }
-                                    value={ currentValue }
-                                    handleChange={ (_, value) =>
+                                    value={ {
+                                        [ prop.structure.key ]: currentValue
+                                    } }
+                                    handleChange={ (_, value) =>{
                                         handleChange(key, value, 'props')
-                                    }
+                                    }}
                                 />
                             </div>
                         );

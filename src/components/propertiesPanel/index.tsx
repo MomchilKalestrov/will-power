@@ -30,7 +30,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
         return buckets;
     }, [ node.type ]);
 
-    const handleChange = React.useCallback((key: string, value: string, property: 'style' | 'props' | 'attributes') =>
+    const handleChange = React.useCallback((key: string, value: any, property: 'style' | 'props' | 'attributes') =>
         onNodeUpdate(node.id, {
             [ property ]: {
                 ...(node[ property ] || {}),
