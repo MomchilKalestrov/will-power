@@ -23,7 +23,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
             .forEach(([ key, value ]) => {
                 if (!(value.in in buckets))
                     buckets[ value.in ] = [];
-                const name = key.replace(/([A-Z])/g, ' $1');
+                const name = key.split('-').pop()!.replace(/([A-Z])/g, ' $1');
                 buckets[ value.in ].push({ key, name, ...value });
             });
 

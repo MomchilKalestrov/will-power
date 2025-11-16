@@ -48,7 +48,6 @@ const ObjectProperty: React.FC<{
     );
 
     let currentValue = value ?? defaultValue;
-    console.log(currentValue, value, defaultValue)
     if (property.type !== 'object' && typeof currentValue === 'object')
         currentValue = currentValue[ property.key ] ?? defaultValue[ property.key ];
 
