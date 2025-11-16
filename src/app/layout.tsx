@@ -3,7 +3,6 @@ import { Toaster } from 'sonner';
 import { ComponentDbProvider } from '@/components/componentDbProvider';
 //@ts-ignore
 import './globals.css';
-//@ts-ignore
 import { ConfigProvider } from '@/components/configProvider';
 import { PluginsProvider } from '@/components/pluginsProvider';
 import { FileSelectorProvider } from '@/components/fileSelector';
@@ -11,7 +10,7 @@ import { FileSelectorProvider } from '@/components/fileSelector';
 const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
     <html lang='en'>
         <head>
-            <link rel='stylesheet' href='/api/css/theme' />
+            <link rel='stylesheet' href='/api/css/theme' crossOrigin='anonymous' />
             <link rel='stylesheet' href='/api/css/custom' />
             <script
                 type='importmap'
