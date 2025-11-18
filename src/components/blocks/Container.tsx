@@ -10,9 +10,19 @@ const metadata: NodeMetadata = {
     },
     attributes: {},
     styles: {
+        color: {
+            type: 'color',
+            default: '#000000',
+            in: 'Styling'
+        },
         background: {
             type: 'background',
             default: '#ffffff',
+            in: 'Styling'
+        },
+        font: {
+            type: 'font',
+            default: 'normal normal 1rem "Times New Roman", sans-serif',
             in: 'Styling'
         },
         boxShadow: {

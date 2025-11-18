@@ -79,7 +79,7 @@ const metadata: NodeMetadata = {
         },
         height: {
             type: 'css-units',
-            default: '100%',
+            default: 'auto',
             units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
             in: 'Sizing',
         },

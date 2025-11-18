@@ -14,6 +14,11 @@ const metadata: NodeMetadata = {
     },
     attributes: {},
     styles: {
+        color: {
+            type: 'color',
+            default: '#000000',
+            in: 'Styling'
+        },
         background: {
             type: 'background',
             default: '#ffffff',
@@ -29,6 +34,11 @@ const metadata: NodeMetadata = {
             default: '0px 0px 0px 0px',
             units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
             count: 4,
+            in: 'Styling'
+        },
+        font: {
+            type: 'font',
+            default: 'normal normal 1rem "Times New Roman", sans-serif',
             in: 'Styling'
         },
         width: {
