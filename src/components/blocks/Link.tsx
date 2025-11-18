@@ -4,22 +4,24 @@ import { getAllComponents } from '@/lib/db/actions';
 import { metadata as buttonMetadata } from './Button';
 import defaults from './defaults.module.css';
 
+let filteredButtonMetadata = JSON.parse(JSON.stringify(buttonMetadata));
 
+delete filteredButtonMetadata.props.onClick;
 
 const metadata: NodeMetadata = {
-    ...buttonMetadata,
+    ...filteredButtonMetadata,
     props: {
-        ...buttonMetadata.props,
-        title: {
-            ...buttonMetadata.props.title,
-            default: 'Link'
-        },
+        ...filteredButtonMetadata.props,
         page: {
             type: 'enum'
+        },
+        title: {
+            ...filteredButtonMetadata.props.title,
+            default: 'Link'
         }
     },
     enumerators: {
-        ...buttonMetadata.enumerators,
+        ...filteredButtonMetadata.enumerators,
         page: {
             values: await getAllComponents('page')
         }

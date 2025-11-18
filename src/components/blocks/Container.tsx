@@ -17,7 +17,7 @@ const metadata: NodeMetadata = {
         },
         background: {
             type: 'background',
-            default: '#ffffff',
+            default: 'unset',
             in: 'Styling'
         },
         font: {
