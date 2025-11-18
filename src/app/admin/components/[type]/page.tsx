@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
-import type { Metadata, NextPage } from 'next';
+import type { NextPage } from 'next';
+import { notFound } from 'next/navigation';
 
 import { getAllComponents } from '@/lib/db/actions';
 
@@ -10,6 +11,9 @@ import CreatePageDialog from './createComponentDialog';
 const Page: NextPage<PageProps<'/admin/components/[type]'>> = ({ params }) => {
     const { type } = React.use(params) as { type: componentType };
     const [ components, setComponents ] = React.useState<string[]>([]);
+
+    if (![ 'header', 'page', 'footer', 'component' ].includes(type))
+        return notFound();
 
     React.useEffect(() => {
         if (!type) return;
