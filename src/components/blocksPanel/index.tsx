@@ -22,7 +22,7 @@ const ComponentButton: React.FC<Props & { type: string }> = ({ type, onNodeAdd }
     return (
         <Button
             variant="outline"
-            className='grow basis-24 max-w-32 aspect-square flex flex-col items-center justify-center p-2 m-0 gap-0 h-auto'
+            className='aspect-square flex flex-col items-center justify-center p-2 m-0 gap-0 h-auto'
             onClick={() => onNodeAdd(type, Data.metadata.acceptChildren) }
         >
             <Data.Icon className='size-[50%] opacity-75' />
@@ -39,7 +39,7 @@ const BlockPanel: React.FC<Props> = ({ onNodeAdd }) => {
             <h3 className='text-lg font-bold'>Add</h3>
             <Separator/>
             <div className='overflow-y-scroll'>
-                <div className='flex flex-wrap gap-2 justify-center'>
+                <div className='grid gap-2 grid-cols-[repeat(auto-fit,minmax(calc(var(--spacing)*26),1fr))]'>
                     { components.map((componentType) => (
                     <ComponentButton
                         key={ componentType }
