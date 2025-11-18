@@ -29,7 +29,8 @@ const baseComponentNames = [
     'Component',
     'CustomHTML',
     'Button',
-    'Accordion'
+    'Accordion',
+    'Link'
 ];
 
 const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) => {

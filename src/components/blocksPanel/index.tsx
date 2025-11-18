@@ -23,7 +23,7 @@ const ComponentButton: React.FC<Props & { type: string }> = ({ type, onNodeAdd }
         <Button
             variant="outline"
             className='aspect-square flex flex-col items-center justify-center p-2 m-0 gap-0 h-auto'
-            onClick={() => onNodeAdd(type, Data.metadata.acceptChildren) }
+            onClick={ () => onNodeAdd(type, Data.metadata.acceptChildren) }
         >
             <Data.Icon className='size-[50%] opacity-75' />
             <span className='mt-2 text-sm font-semibold'>{ type }</span>
