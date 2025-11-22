@@ -5,7 +5,6 @@ import { metadata as buttonMetadata } from './Button';
 import defaults from './defaults.module.css';
 
 let filteredButtonMetadata = JSON.parse(JSON.stringify(buttonMetadata));
-
 delete filteredButtonMetadata.props.onClick;
 
 const metadata: NodeMetadata = {
