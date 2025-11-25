@@ -196,7 +196,9 @@ const FileSelector: React.FC<{
                                 <React.Fragment key={ 'path-' + index }>
                                     <BreadcrumbItem>
                                         <BreadcrumbLink onClick={ () => {
-                                            setCwd(state => state.slice(0, index + 1))
+                                            setCwd(state => state.slice(0, index + 1));
+                                            if (fileCount === 'none')
+                                                setSelectedFiles(new Set());
                                         } }>
                                             {
                                                 length - 1 === index
@@ -237,9 +239,11 @@ const FileSelector: React.FC<{
                                     }
                                     setSelectedFiles(newSet);
                                 } }
-                                onDirectorySelect={ name =>
-                                    setCwd(state => [ ...state, name ])
-                                }
+                                onDirectorySelect={ name => {
+                                    setCwd(state => [ ...state, name ]);
+                                    if (fileCount === 'none')
+                                        setSelectedFiles(new Set());
+                                } }
                             />
                     }
                     {
