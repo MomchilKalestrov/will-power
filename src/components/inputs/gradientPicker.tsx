@@ -75,12 +75,12 @@ const GradientPicker: React.FC<Props> = ({
         <Popover>
             <PopoverTrigger asChild>
                 <Button variant={ selected ? 'outline' : 'ghost' } size='icon'>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="16" height="16" rx="2" fill="url(#paint0_linear_335_2)"/>
+                    <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                        <rect width='16' height='16' rx='2' fill='url(#paint0_linear_335_2)'/>
                         <defs>
-                            <linearGradient id="paint0_linear_335_2" x1="8" y1="0" x2="8" y2="16" gradientUnits="userSpaceOnUse">
-                                <stop stopOpacity="0"/>
-                                <stop offset="1" stopColor="#09090B"/>
+                            <linearGradient id='paint0_linear_335_2' x1='8' y1='0' x2='8' y2='16' gradientUnits='userSpaceOnUse'>
+                                <stop stopOpacity='0'/>
+                                <stop offset='1' stopColor='currentColor'/>
                             </linearGradient>
                         </defs>
                     </svg>

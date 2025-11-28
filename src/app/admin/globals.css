@@ -135,7 +135,6 @@
 	animation: slideDown 300ms ease-out;
 }
 
-
 *[data-slot="collapsible-content"][data-state="closed"] {
 	animation: slideUp 300ms ease-out;
 }
