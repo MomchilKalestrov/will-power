@@ -1,13 +1,144 @@
 'use client';
 import React from 'react';
 import { PaintbrushVertical } from 'lucide-react';
-import { HexAlphaColorPicker } from 'react-colorful';
-import type { config } from '@/lib/config';
+
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+
 import { useConfig } from '@/components/configProvider';
+
+import type { config } from '@/lib/config';
+import { hexToHsv, hsvToHex } from '@/lib/color';
+
+const BaseColorPicker: React.FC<{
+    value: string;
+    onChange: (value: string) => void;
+}> = ({ value, onChange }) => {
+    const [ h, s, v, a ] = React.useMemo(() => {
+            const hsv = hexToHsv(value);
+            const opacity = parseInt(value.slice(7, 9), 16)
+            return [ ...hsv, isNaN(opacity) ? 100 : opacity / 255 * 100 ]
+        },
+        [ value ]
+    );
+    console.log('a', a)
+    
+    const onColorChange = React.useCallback((event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if (!event.currentTarget) return;
+        
+        const rect = event.currentTarget.getBoundingClientRect();
+        const x = event.clientX - rect.x;
+        const y = event.clientY - rect.y;
+        const { width, height } = rect;
+
+        const relativeX = Math.min(1, Math.max(0, x / width));
+        const relativeY = Math.min(1, Math.max(0, 1 - y / height));
+
+        const hSector = (((h % 360) + 360) % 360) / 60;
+        const alpha = Math.round((a / 100 * 255)).toString(16);
+        onChange(hsvToHex(hSector, relativeX, relativeY) + alpha);
+    }, [ onChange, h, a ]);
+
+    const onOpacityChange = React.useCallback((event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if (!event.currentTarget) return;
+
+        const rect = event.currentTarget.getBoundingClientRect();
+        const x = event.clientX - rect.x;
+        const { width } = rect;
+
+        const alpha = Math.round(x / width * 255).toString(16).padStart(2, '0');
+        onChange(value.substring(0, value.length - 2) + alpha)
+    }, [ onChange, value ]);
+
+    const onHueChange = React.useCallback((event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if (!event.currentTarget) return;
+
+        const rect = event.currentTarget.getBoundingClientRect();
+        const x = event.clientX - rect.x;
+        const { width } = rect;
+        const relativeX = Math.min(1, Math.max(0, x / width));
+
+        const hSector = relativeX * 6;
+        const alpha = Math.round((a / 100 * 255)).toString(16);
+        
+        console.log(hsvToHex(hSector, s / 100, v / 100) + alpha)
+        onChange(hsvToHex(hSector, s / 100, v / 100) + alpha);
+    }, [ onChange, s, v, a ]);
+
+    return (
+        <div className='w-full col-span-full'>
+            <div
+                className='aspect-3/2 rounded-t-sm'
+                style={ {
+                    background:
+                        'linear-gradient(transparent, black),' +
+                        `linear-gradient(to right, white 0%, hsl(${ h }deg 100% 50%) 100%)`
+                } }
+                onClick={ onColorChange }
+            >
+                <Card
+                    className='relative size-4 p-0'
+                    style={ {
+                        top: `${ 100 - v }%`,
+                        left: `${ s }%`,
+                        transform: 'translate(-50%, -50%)'
+                    } }
+                />
+            </div>
+            <div
+                className='h-4'
+                style={ {
+                    background:
+                        'linear-gradient(to right, transparent, black),' +
+                        'repeating-conic-gradient(#a0a0a0 0 25%, white 0 50%) 50% / 8px 8px'
+                } }
+                onClick={ onOpacityChange }
+            >
+                <Card
+                    className='relative size-4 p-0'
+                    style={ {
+                        top: '50%',
+                        left: `${ a }%`,
+                        transform: 'translate(-50%, -50%)'
+                    } }
+                />
+            </div>
+            <div
+                className='h-4 rounded-b-sm'
+                style={ {
+                    background:
+                        'linear-gradient(' +
+                        '   90deg,' +
+                        '   rgba(255, 0, 0, 1) 0%,' +
+                        '   rgba(255, 154, 0, 1) 10%,' +
+                        '   rgba(208, 222, 33, 1) 20%,' +
+                        '   rgba(79, 220, 74, 1) 30%,' +
+                        '   rgba(63, 218, 216, 1) 40%,' +
+                        '   rgba(47, 201, 226, 1) 50%,' +
+                        '   rgba(28, 127, 238, 1) 60%,' +
+                        '   rgba(95, 21, 242, 1) 70%,' +
+                        '   rgba(186, 12, 248, 1) 80%,' +
+                        '   rgba(251, 7, 217, 1) 90%,' +
+                        '   rgba(255, 0, 0, 1) 100%' +
+                        ')'
+                } }
+                onClick={ onHueChange }
+            >
+                <Card
+                    className='relative size-4 p-0'
+                    style={ {
+                        top: '50%',
+                        left: `${ (h / 360) * 100 }%`,
+                        transform: 'translate(-50%, -50%)'
+                    } }
+                />
+            </div>
+        </div>
+    );
+};
 
 type Props = {
     value: string;
@@ -84,11 +215,9 @@ const ColorPicker: React.FC<Props> = ({
                 }
             </PopoverTrigger>
             <PopoverContent className={ `grid ${ showVars ? 'grid-cols-[1fr_9ch]' : 'grid-cols-1' } gap-2` }>
-                <HexAlphaColorPicker
-                    color={ color }
+                <BaseColorPicker
+                    value={ color || '#ff0000ff' }
                     onChange={ onColorChange }
-                    className='col-span-full'
-                    style={ { width: '100%' } }
                 />
                 {
                     showVars &&

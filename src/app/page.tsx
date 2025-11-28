@@ -1,7 +1,8 @@
 'use client'
 
+
 export default () => {
     return (
-    <div className="w-lg p-8">
+    <div className="w-48 p-4">
     </div>
 );}

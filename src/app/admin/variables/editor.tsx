@@ -18,7 +18,8 @@ import CssUnitInput from '@/components/inputs/cssUnitInput';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 
 import type { font, fontVariable, config } from '@/lib/config';
-import { cssToFont, fontToCss, hexToHsl, hslToHex } from '@/lib/utils';
+import { cssToFont, fontToCss } from '@/lib/utils';
+import { hexToHsl, hslToHex } from '@/lib/color';
 
 type Props = {
     initialConfig: config;
