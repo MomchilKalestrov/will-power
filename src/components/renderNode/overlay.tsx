@@ -20,18 +20,26 @@ const Overlay: React.FC<Props> = ({ id, zIndex }) => {
             event.dataTransfer.effectAllowed = 'move';
     }, [ id ]);
 
+    const onDragEnter = React.useCallback((e: React.DragEvent<HTMLSpanElement>) => {
+        e.preventDefault();
+        e.currentTarget.classList.add(styles.ForceOverlay);
+    }, []);
     const onDragOver = React.useCallback((e: React.DragEvent<HTMLSpanElement>) => e.preventDefault(), []);
+    const onDragLeave = React.useCallback((e: React.DragEvent<HTMLSpanElement>) => {
+        e.preventDefault();
+        e.currentTarget.classList.remove(styles.ForceOverlay);
+    }, []);
 
-    const onDrop = React.useCallback((e: React.DragEvent<HTMLSpanElement>) =>
+    const onDrop = React.useCallback((e: React.DragEvent<HTMLSpanElement>) => {
+        e.currentTarget.classList.remove(styles.ForceOverlay);
         window.top?.postMessage({
             type: 'reparent',
             payload: {
                 child: e.dataTransfer?.getData('text/plain')!,
                 parent: id
             }
-        }),
-        [ id ]
-    );
+        })
+    }, [ id ]);
 
     return (
         <span
@@ -40,7 +48,9 @@ const Overlay: React.FC<Props> = ({ id, zIndex }) => {
             className={ styles.Overlay }
             draggable={ true }
             onDragStart={ onDragStart }
+            onDragEnter={ onDragEnter }
             onDragOver={ onDragOver }
+            onDragLeave={ onDragLeave }
             onDrop={ onDrop }
         ></span>
     );
