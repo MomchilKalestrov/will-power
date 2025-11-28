@@ -23,7 +23,7 @@ const ShadowPicker: React.FC<Props> = ({
     const [ shadowOffset, setOffset ] = React.useState<string>('0px 0px');
     const [ shadowBlur,   setBlur   ] = React.useState<string>('0px');
     const [ shadowSpread, setSpread ] = React.useState<string>('0px');
-    const [ shadowColor,  setColor  ] = React.useState<string>('#ffffff');
+    const [ shadowColor,  setColor  ] = React.useState<string>('#ffffffff');
 
     React.useEffect(() => {
         if (initialShadow === 'unset' || initialShadow === 'none') return;

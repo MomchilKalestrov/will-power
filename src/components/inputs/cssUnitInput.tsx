@@ -41,10 +41,9 @@ const CssUnitInput: React.FC<{
         }
     }, [ value, units, count ]);
 
-    // Reconstruct the full value when either part changes
-    const triggerChange = (newValues: string[], newUnit: string) => {
+    const triggerChange = React.useCallback((newValues: string[], newUnit: string) => {
         if (newUnit === 'custom') {
-            onChange(newValues[ 0 ] || ''); // For custom, only use the first input
+            onChange(newValues[ 0 ] || '');
         } else {
             const combined = newValues
                 .slice(0, count)
@@ -52,19 +51,19 @@ const CssUnitInput: React.FC<{
                 .join(' ');
             onChange(combined);
         }
-    };
+    }, []);
 
-    const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const handleValueChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const newValues = [ ...currentValues ];
         newValues[ index ] = e.target.value;
         setCurrentValues(newValues);
         triggerChange(newValues, currentUnit);
-    };
+    }, [ currentValues, currentUnit ]);
 
-    const handleUnitChange = (newUnit: string) => {
+    const handleUnitChange = React.useCallback((newUnit: string) => {
         setCurrentUnit(newUnit);
         triggerChange(currentValues, newUnit);
-    };
+    }, [ currentValues ]);
 
     return (
         <div className='flex items-center gap-2'>
@@ -75,7 +74,7 @@ const CssUnitInput: React.FC<{
                         <Input
                             type='text'
                             value={ currentValues[ 0 ] || '' }
-                            onChange={(e) => handleValueChange(e, 0)}
+                            onChange={ e => handleValueChange(e, 0) }
                         />
                     )
                     :   (
@@ -84,7 +83,7 @@ const CssUnitInput: React.FC<{
                                 key={index}
                                 type='number'
                                 value={ currentValues[ index ] || '0' }
-                                onChange={(e) => handleValueChange(e, index) }
+                                onChange={ e => handleValueChange(e, index) }
                                 className='[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
                             />
                         ))

@@ -64,12 +64,12 @@ const GradientPicker: React.FC<Props> = ({
     }: GradientChangeParams) =>
         onChangeCallback(`${ type }-gradient(${ type === 'linear' ? rotation + 'deg' : 'at ' + position }, ${ colors.join(', ') })`);
 
-    const updateColors = (newColor: string, index: number) => {
+    const updateColors = React.useCallback((newColor: string, index: number) => {
         const newColors = [ ...gradientColors ];
         newColors[ index ] = newColor;
         setColors(newColors);
         onChange({ colors: newColors });
-    };
+    }, [ gradientColors ]);
 
     return (
         <Popover>

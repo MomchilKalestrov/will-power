@@ -179,20 +179,20 @@ const ColorPicker: React.FC<Props> = ({
         setColor(variable.color);
     }, []);
 
-    const onVariableChange = (variableId: string) => {
+    const onVariableChange = React.useCallback((variableId: string) => {
         const newVariable = variables.find(({ id }) => id === variableId);
         if (!newVariable) return;
         setVariable(newVariable);
         const color = (newVariable as typeof newVariable & { color: string }).color;
         setColor(color);
         onChangeCallback(`var(--${ newVariable.id })`);
-    };
+    }, [ variables, onChangeCallback ]);
 
-    const onColorChange = (newColor: string) => {
+    const onColorChange = React.useCallback((newColor: string) => {
         setVariable(undefined);
         setColor(newColor);
         onChangeCallback(newColor);
-    };
+    }, [ onChangeCallback ]);
 
     const showVars = (variables.length !== 0) || !noVars;
     

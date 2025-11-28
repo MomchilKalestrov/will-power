@@ -24,7 +24,9 @@ const Overlay: React.FC<Props> = ({ id, zIndex }) => {
         e.preventDefault();
         e.currentTarget.classList.add(styles.ForceOverlay);
     }, []);
+    
     const onDragOver = React.useCallback((e: React.DragEvent<HTMLSpanElement>) => e.preventDefault(), []);
+
     const onDragLeave = React.useCallback((e: React.DragEvent<HTMLSpanElement>) => {
         e.preventDefault();
         e.currentTarget.classList.remove(styles.ForceOverlay);
