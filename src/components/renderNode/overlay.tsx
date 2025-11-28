@@ -20,24 +20,25 @@ const Overlay: React.FC<Props> = ({ id, zIndex }) => {
             event.dataTransfer.effectAllowed = 'move';
     }, [ id ]);
 
-    const onDragEnter = React.useCallback((e: React.DragEvent<HTMLSpanElement>) => {
-        e.preventDefault();
-        e.currentTarget.classList.add(styles.ForceOverlay);
-    }, []);
+    const onDragEnter = React.useCallback((event: React.DragEvent<HTMLSpanElement>) => {
+        event.preventDefault();
+        if (event.dataTransfer?.getData('text/plain') !== id)
+            event.currentTarget.setAttribute('data-dragged-over', 'true');
+    }, [ id ]);
     
-    const onDragOver = React.useCallback((e: React.DragEvent<HTMLSpanElement>) => e.preventDefault(), []);
+    const onDragOver = React.useCallback((event: React.DragEvent<HTMLSpanElement>) => event.preventDefault(), []);
 
-    const onDragLeave = React.useCallback((e: React.DragEvent<HTMLSpanElement>) => {
-        e.preventDefault();
-        e.currentTarget.classList.remove(styles.ForceOverlay);
+    const onDragLeave = React.useCallback((event: React.DragEvent<HTMLSpanElement>) => {
+        event.preventDefault();
+        event.currentTarget.setAttribute('data-dragged-over', 'false');
     }, []);
 
-    const onDrop = React.useCallback((e: React.DragEvent<HTMLSpanElement>) => {
-        e.currentTarget.classList.remove(styles.ForceOverlay);
+    const onDrop = React.useCallback((event: React.DragEvent<HTMLSpanElement>) => {
+        event.currentTarget.setAttribute('data-dragged-over', 'false');
         window.top?.postMessage({
             type: 'reparent',
             payload: {
-                child: e.dataTransfer?.getData('text/plain')!,
+                child: event.dataTransfer?.getData('text/plain')!,
                 parent: id
             }
         })
