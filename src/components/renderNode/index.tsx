@@ -27,7 +27,7 @@ const RenderNode: React.FC<Props> = ({
 }) => {
     const { getComponent } = useComponentDb();
     const [ loadedCount, setLoadedCount ] = React.useState<number>(0);
-    const [ componentData, setComponentData ] = React.useState<componentData | null | undefined>();
+    const [ Component, setComponent ] = React.useState<React.ComponentType<any> | null | undefined>();
 
     const onTreeLoaded = React.useCallback(() => {
         setLoadedCount(loadedCount + 1);
@@ -37,8 +37,8 @@ const RenderNode: React.FC<Props> = ({
 
     React.useEffect(() => {
         getComponent(type)
-            .then(value => setComponentData(() => value))
-            .catch(() => setComponentData(null));
+            .then((value) => setComponent(() => (value ? value.Component : null)))
+            .catch(() => setComponent(null));
     }, [ type ]);
 
     React.useEffect(() => {
@@ -46,12 +46,12 @@ const RenderNode: React.FC<Props> = ({
             onTreeLoadedCallback?.();
     }, []);
 
-    if (componentData === null) {
+    if (Component === null) {
         console.warn("Unknown node type: " + type);
         return null;
     };
 
-    if (componentData === undefined) return null;
+    if (Component === undefined) return null;
 
     let newStyle: React.CSSProperties = {
         ...style,
@@ -63,8 +63,6 @@ const RenderNode: React.FC<Props> = ({
             right: 'unset'
         })
     };
-
-    const { Component } = componentData!;
     
     return (
         <Component { ...{ ...attributes, ...props, style: newStyle, id } }>
@@ -79,11 +77,7 @@ const RenderNode: React.FC<Props> = ({
             )) }
             {
                 (editor && !root) &&
-                <Overlay
-                    id={ id }
-                    zIndex={ depth + 1 }
-                    acceptChildren={ componentData.metadata.acceptChildren }
-                />
+                <Overlay id={ id } zIndex={ depth + 1 } />
             }
         </Component>
     );

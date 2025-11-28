@@ -4,10 +4,9 @@ import styles from './overlay.module.css';
 type Props = {
     id: string;
     zIndex: number;
-    acceptChildren: boolean;
 };
 
-const Overlay: React.FC<Props> = ({ id, zIndex, acceptChildren }) => {
+const Overlay: React.FC<Props> = ({ id, zIndex }) => {
     const select = React.useCallback(() =>
         window.top?.postMessage({
             type: 'select',
