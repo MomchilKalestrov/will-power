@@ -26,16 +26,18 @@ const TreePanelNode: React.FC<Props> = ({ node, selectedNodeId, onParentChange: 
             .catch(() => null);
     }, [ node.type ]);
 
-    const onDragStart = (e: DragEvent) => {
+    const onDragStart = React.useCallback((e: DragEvent) => {
         e.dataTransfer?.setData('text/plain', node.id);
         if (e.dataTransfer)
             e.dataTransfer.effectAllowed = 'move';
-    };
+    }, [ node ]);
 
-    const onDragOver = (e: DragEvent) => e.preventDefault();
+    const onDragOver = React.useCallback((e: DragEvent) => e.preventDefault(), []);
 
-    const onDrop = (e: DragEvent) =>
-        onParentChange(e.dataTransfer?.getData('text/plain')!, node.id);
+    const onDrop = React.useCallback((e: DragEvent) =>
+        onParentChange(e.dataTransfer?.getData('text/plain')!, node.id),
+        []
+    );
     
     React.useEffect(() => {
         const currentRef = reference.current;

@@ -94,6 +94,10 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                 const node = findNode(event.data.payload)!;
                 setSelectedNode(node);
                 setNodeMetadata((await getComponent(node.type))?.metadata);
+                break;
+            case 'reparent':
+                reparentNode(event.data.payload.child, event.data.payload.parent);
+                break;
         }
     }, [ findNode, getComponent ]);
 

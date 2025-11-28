@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
+import { componentData, useComponentDb } from '@/components/componentDbProvider';
 import Overlay from './overlay';
-import { useComponentDb } from '@/components/componentDbProvider';
 
 type Props = {
     node: ComponentNode;
@@ -27,7 +27,7 @@ const RenderNode: React.FC<Props> = ({
 }) => {
     const { getComponent } = useComponentDb();
     const [ loadedCount, setLoadedCount ] = React.useState<number>(0);
-    const [ Component, setComponent ] = React.useState<React.ComponentType<any> | null | undefined>();
+    const [ componentData, setComponentData ] = React.useState<componentData | null | undefined>();
 
     const onTreeLoaded = React.useCallback(() => {
         setLoadedCount(loadedCount + 1);
@@ -37,8 +37,8 @@ const RenderNode: React.FC<Props> = ({
 
     React.useEffect(() => {
         getComponent(type)
-            .then((value) => setComponent(() => (value ? value.Component : null)))
-            .catch(() => setComponent(null));
+            .then(value => setComponentData(() => value))
+            .catch(() => setComponentData(null));
     }, [ type ]);
 
     React.useEffect(() => {
@@ -46,12 +46,12 @@ const RenderNode: React.FC<Props> = ({
             onTreeLoadedCallback?.();
     }, []);
 
-    if (Component === null) {
+    if (componentData === null) {
         console.warn("Unknown node type: " + type);
         return null;
     };
 
-    if (Component === undefined) return null;
+    if (componentData === undefined) return null;
 
     let newStyle: React.CSSProperties = {
         ...style,
@@ -63,6 +63,8 @@ const RenderNode: React.FC<Props> = ({
             right: 'unset'
         })
     };
+
+    const { Component } = componentData!;
     
     return (
         <Component { ...{ ...attributes, ...props, style: newStyle, id } }>
@@ -75,7 +77,14 @@ const RenderNode: React.FC<Props> = ({
                     onTreeLoaded={ onTreeLoaded }
                 />
             )) }
-            { (editor && !root) && <Overlay { ...{ id, zIndex: depth + 1 } } /> }
+            {
+                (editor && !root) &&
+                <Overlay
+                    id={ id }
+                    zIndex={ depth + 1 }
+                    acceptChildren={ componentData.metadata.acceptChildren }
+                />
+            }
         </Component>
     );
 };
