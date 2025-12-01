@@ -12,7 +12,7 @@ const metadata: NodeMetadata = {
     styles: {},
     enumerators: {
         component: {
-            values: await getAllComponents('component')
+            values: (await getAllComponents('component')) ?? [ 'ERROR!' ]
         }
     },
     acceptChildren: false

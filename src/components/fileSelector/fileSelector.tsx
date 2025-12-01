@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { toast } from 'sonner';
-import { X } from 'lucide-react';
+import { ServerCrash, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -92,9 +92,9 @@ const FileSelector: React.FC<{
     fileCount: fileCount
 }> = ({ onSelected, fileType, fileCount }) => {
     const [ selectedFiles, setSelectedFiles ] = React.useState<Set<string>>(new Set<string>());
-    const [ files, setFiles ] = React.useState<Record<string, BlobInformation> | undefined>(undefined);
+    const [ files, setFiles ] = React.useState<Record<string, BlobInformation> | null | undefined>();
     const tree = React.useMemo(() =>
-        files !== undefined
+        files !== undefined && files !== null
         ?   toTree(Object.keys(files))
         :   undefined,
         [ files ]
@@ -109,14 +109,16 @@ const FileSelector: React.FC<{
 
     React.useEffect(() => {
         blobs.getBlobList()
-            .then((res) =>
+            .then(response =>
                 setFiles(
-                    filterFiles(res, fileType)
-                        .reduce<Record<string, BlobInformation>>((acc, curr) => {
-                            acc[ curr.pathname ] = curr;
-                            return acc;
-                        }, {})
-                )
+                    response === null
+                    ?   null
+                    :   filterFiles(response, fileType)
+                            .reduce<Record<string, BlobInformation>>((acc, curr) => {
+                                acc[ curr.pathname ] = curr;
+                                return acc;
+                            }, {})
+                    )
             );
     }, []);
 
@@ -165,6 +167,28 @@ const FileSelector: React.FC<{
             .catch(() => toast('Failed to upload file.')),
         []
     );
+
+
+    
+    if (files === null)
+        return (
+            <div className='fixed p-16 inset-0 z-49 w-dvw h-dvh bg-black/30 backdrop-blur-xs'>
+                <Card className='w-full h-full min-h-0 flex flex-col gap-0 py-4'>
+                    <CardHeader className='flex justify-end items-center px-4'>
+                        <Button
+                            size='icon'
+                            variant='outline'
+                            onClick={ () => onSelected(null) }
+                        ><X /></Button>
+                    </CardHeader>
+                    <Separator className='my-4' />
+                    <CardContent className='w-full h-full flex justify-center items-center flex-col opacity-30'>
+                        <ServerCrash className='size-27' />
+                        <p className='text-xl'>Failed to get files...</p>
+                    </CardContent>
+                </Card>
+            </div>
+        );
 
     let directoryNode: fileNode | undefined = tree;
     if (directoryNode)

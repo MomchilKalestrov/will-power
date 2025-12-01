@@ -1,6 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
-//@ts-expect-error only because vscode requires this :/
+//@ts-ignore
 import '../globals.css';
 
 export const metadata: Metadata = {

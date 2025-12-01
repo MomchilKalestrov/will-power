@@ -8,7 +8,7 @@ declare global {
 
 type PutBody = string | Readable | Buffer | Blob | ArrayBuffer | ReadableStream | File;
 
-const getBlobList = async (): Promise<BlobInformation[]> => {
+const getBlobList = async (): Promise<BlobInformation[] | null> => {
     if (global.cachedBlobList)
         return global.cachedBlobList;
     
@@ -17,8 +17,8 @@ const getBlobList = async (): Promise<BlobInformation[]> => {
         global.cachedBlobList = blobs;
         return blobs;
     } catch (error) {
-        console.error('Error listing blobs:', error);
-        return [];
+        console.error('[blobs] getBlobList error:', error);
+        return null;
     };
 };
 
@@ -38,7 +38,7 @@ const addBlob = async (path: string, body: PutBody, options: PutCommandOptions):
 
         return { ...blob, size, uploadedAt };
     } catch (error) {
-        console.error('Error saving blobs: ', error);
+        console.error('[blobs] addBlob error: ', error);
         return false;
     };
 };
@@ -46,6 +46,7 @@ const addBlob = async (path: string, body: PutBody, options: PutCommandOptions):
 const existsBlob = async (path: string): Promise<boolean> => {
     try {
         const blobs = await getBlobList();
+        if (blobs === null) throw new Error('');
         if (path.endsWith('/'))
             return blobs.some(b => b.pathname.startsWith(path));
         return blobs.some(b => b.pathname === path || b.pathname.startsWith(path + '/'));
@@ -58,12 +59,13 @@ const existsBlob = async (path: string): Promise<boolean> => {
 const deleteBlob = async (path: string): Promise<boolean> => {
     try {
         const blobs = await getBlobList();
+        if (blobs === null) throw new Error('');
         const toDelete = blobs.filter(b => b.pathname === path || b.pathname.startsWith(path));
         if (toDelete.length === 0) return true;
 
         await del(toDelete.map(blob => blob.pathname));
 
-        global.cachedBlobList = (await getBlobList()).filter(b => !toDelete.some(d => d.pathname === b.pathname));
+        global.cachedBlobList = blobs.filter(b => !toDelete.some(d => d.pathname === b.pathname));
         return true;
     } catch (error) {
         console.error('[blobs] deleteBlob error:', error);

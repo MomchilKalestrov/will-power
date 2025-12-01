@@ -1,9 +1,9 @@
 import React from 'react';
 import { Toaster } from 'sonner';
 import { ComponentDbProvider } from '@/components/componentDbProvider';
-//@ts-expect-error needed because of vscode
+//@ts-ignore
 import './globals.css';
-//@ts-expect-error needed because of vscode
+//@ts-ignore
 import './admin/globals.css';
 import { ConfigProvider } from '@/components/configProvider';
 import { PluginsProvider } from '@/components/pluginsProvider';
