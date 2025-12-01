@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { toast } from 'sonner';
-import { useSession } from 'next-auth/react';
 import { PlusCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import * as actions from '@/lib/db/actions';
-import z from 'zod';
 import { validName, validPassword } from '@/lib/utils';
 
 const AddUserDialog: React.FC<{ onUserAdd: (user: User) => void }> = ({ onUserAdd }) => {

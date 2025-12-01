@@ -70,9 +70,9 @@ class storage {
 
 class cookies {
     static get = (key: string): string | null => {
-        let name = key + '=';
-        let decodedCookie = decodeURIComponent(document.cookie);
-        for (let pair of decodedCookie.split(';').map(v => v.trim()))
+        const name = key + '=';
+        const decodedCookie = decodeURIComponent(document.cookie);
+        for (const pair of decodedCookie.split(';').map(v => v.trim()))
             if (pair.startsWith(name))
                 return pair.substring(name.length);
         return null;

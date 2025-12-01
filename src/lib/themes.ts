@@ -62,7 +62,7 @@ const selectTheme = async (name: string): Promise<string | boolean> => {
     if (!await isAuthenticated())
         return 'This user does not have the required priviliges';
 
-    let { themes } = await getConfig();
+    const { themes } = await getConfig();
     if (!themes.includes(name))
         return 'There is no theme with the given name';
 

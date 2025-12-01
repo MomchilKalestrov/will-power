@@ -26,7 +26,7 @@ const addBlob = async (path: string, body: PutBody, options: PutCommandOptions):
     try {
         const size = body.toString().length;
         const uploadedAt = new Date();
-        let blob = await put(path, body, options);
+        const blob = await put(path, body, options);
         
         if (!global.cachedBlobList)
             await getBlobList();

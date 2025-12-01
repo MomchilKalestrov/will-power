@@ -52,7 +52,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
             .then((value: string | undefined) => {
                 if (!value) return createPreview();
                 
-                let timestamp: string | null = storage.get('screenshot-timestamp'); 
+                const timestamp: string | null = storage.get('screenshot-timestamp'); 
                 if (!timestamp)
                     storage.set('screenshot-timestamp', Date.now());
                 else if (Date.now() - Number(timestamp) > 1000 * 60 * 60 * 24 * 7)

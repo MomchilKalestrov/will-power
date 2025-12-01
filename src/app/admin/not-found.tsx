@@ -1,2 +1,5 @@
 import { redirect } from 'next/navigation';
-export default () => redirect('admin/home');
+
+const NotFound = () => redirect('admin/home');
+
+export default NotFound;

@@ -22,7 +22,7 @@ const screenshot = (page: string): Promise<string> => {
     return new Promise<string>(async resolve => {
         const iframe = document.createElement('iframe') as HTMLIFrameElement;
 
-        const onReady = async (event: MessageEvent) => {
+        const onReady = async (event: MessageEvent): Promise<void> => {
             await sleep(500); // lmao
             if (event.source !== iframe.contentWindow) return;
             if (!(event.data.type === 'status' && event.data.payload === 'ready')) return;

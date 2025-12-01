@@ -16,7 +16,7 @@ type groupedProps<T> = Record<string, (Omit<T & { name: string, key: string }, '
 
 const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNodeUpdate }) => {
     const groupedStyles = React.useMemo<groupedProps<style>> (() => {
-        let buckets: groupedProps<style> = {};
+        const buckets: groupedProps<style> = {};
 
         Object
             .entries(metadata.styles)

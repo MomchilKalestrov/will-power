@@ -84,7 +84,7 @@ const setConfig = async (config: Partial<config>): Promise<boolean> => {
 
         const currentConfig: config = global.config || await getConfig();
         const newConfig: config = { ...currentConfig, ...data };
-        const a = await Config.findOneAndUpdate({}, newConfig, { upsert: true });
+        await Config.findOneAndUpdate({}, newConfig, { upsert: true });
         global.config = newConfig;
         return true;
     } catch (error) {

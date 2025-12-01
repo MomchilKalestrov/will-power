@@ -53,7 +53,7 @@ const RenderNode: React.FC<Props> = ({
 
     if (Component === undefined) return null;
 
-    let newStyle: React.CSSProperties = {
+    const newStyle: React.CSSProperties = {
         ...style,
         ...(editor && (style.position === 'static' || style.position === undefined) && {
             position: 'relative',

@@ -2,6 +2,7 @@
 import React from 'react';
 import { toast } from 'sonner';
 import { NextPage } from 'next';
+import { ServerCrash } from 'lucide-react';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
@@ -11,7 +12,7 @@ import UsersList from './usersList';
 import UserPanel from './userPanel';
 
 const Page: NextPage = () => {
-    const [ users, setUsers ] = React.useState<User[] | undefined>();
+    const [ users, setUsers ] = React.useState<User[] | null | undefined>();
     const [ selectedIndex, setSelectedIndex ] = React.useState<number | undefined>();
 
     React.useEffect(() => {
@@ -27,7 +28,7 @@ const Page: NextPage = () => {
         
         setUsers((state) => {
             if (!state || selectedIndex === undefined ) return;
-            let newState = [ ...state ];
+            const newState = [ ...state ];
             newState[ selectedIndex ] = {
                 id: user.id,
                 username: user.username,
@@ -36,6 +37,14 @@ const Page: NextPage = () => {
             return newState;
         });
     }, [ users, selectedIndex ]);
+
+    if (users === null)
+        return (
+            <div className='w-full h-full flex justify-center items-center flex-col opacity-30'>
+                <ServerCrash className='size-27' />
+                <p className='text-xl'>Failed to get users...</p>
+            </div>
+        );
 
     if (!users)
         return (<></>);
@@ -50,7 +59,6 @@ const Page: NextPage = () => {
                         if (newIndex !== -1) setSelectedIndex(newIndex);
                     } }
                     onUserAdd={ async (newUser) => {
-
                     } }
                 /> 
             </ResizablePanel>

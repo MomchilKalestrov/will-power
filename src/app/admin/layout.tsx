@@ -68,7 +68,7 @@ const FilesButton: React.FC = () => {
     )
 };
 
-const Layout: NextComponentType<NextPageContext, {}, LayoutProps<'/admin'>> = ({
+const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin'>> = ({
     children
 }) => {
     const currentPath = usePathname().split('?')[ 0 ];

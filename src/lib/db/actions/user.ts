@@ -9,7 +9,7 @@ import { updateUserSchema, userSchema } from '@/lib/zodSchemas';
 
 import User from '@/models/user';
 
-const getAllUsers = async (): Promise<User[]> => {
+const getAllUsers = async (): Promise<User[] | null> => {
     try {
         if (!await getServerSession()) return [];
 
@@ -28,7 +28,7 @@ const getAllUsers = async (): Promise<User[]> => {
         return JSON.parse(JSON.stringify(users));
     } catch (error) {
         console.error('[db] getAllUsers error:', error);
-        return [];
+        return null;
     };
 };
 
@@ -71,8 +71,8 @@ const updateUser = async (userState: z.infer<typeof updateUserSchema>): Promise<
             { username: 1, role: 1 }
         ).lean();
         
-        let currentUserRole = users.find(u => u.username === session.user!.name)!.role as User[ 'role' ];
-        let targetUserRole = users.find(u => u._id!.toString() === id)!.role as User[ 'role' ];
+        const currentUserRole = users.find(u => u.username === session.user!.name)!.role as User[ 'role' ];
+        const targetUserRole = users.find(u => u._id!.toString() === id)!.role as User[ 'role' ];
 
         if (
             !hasAuthority(currentUserRole, targetUserRole) ||

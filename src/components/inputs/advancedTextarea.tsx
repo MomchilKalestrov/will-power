@@ -1,15 +1,25 @@
 
 'use client';
 import React from 'react';
-import { Bold, Italic, Redo, Strikethrough, Underline, Undo } from 'lucide-react';
-import { type InitialConfigType, LexicalComposer } from '@lexical/react/LexicalComposer';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { EditorState, FORMAT_TEXT_COMMAND, UNDO_COMMAND, REDO_COMMAND, TextFormatType, LexicalEditor, $getRoot } from 'lexical';
-import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
-import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { Bold, Italic, Redo, Strikethrough, Undo } from 'lucide-react';
+import {
+    EditorState,
+    FORMAT_TEXT_COMMAND,
+    UNDO_COMMAND,
+    REDO_COMMAND,
+    TextFormatType,
+    LexicalEditor,
+    $getRoot
+} from 'lexical';
+
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { type InitialConfigType, LexicalComposer } from '@lexical/react/LexicalComposer';
+
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 

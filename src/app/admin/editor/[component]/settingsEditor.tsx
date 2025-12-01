@@ -25,7 +25,7 @@ const SettingsEditor: React.FC<Props> = ({ component, onChange }) => {
     const onEntryChanged = React.useCallback((key: string, value: any) =>
         onChange({ [ key ]: value })
     , [ onChange ]);
-    const [ pageNames, setPageNames ] = React.useState<string[] | undefined>();
+    const [ pageNames, setPageNames ] = React.useState<string[] | null | undefined>();
 
     React.useEffect(() => {
         if (component.type !== 'page' && pageNames === undefined)
@@ -33,13 +33,13 @@ const SettingsEditor: React.FC<Props> = ({ component, onChange }) => {
     }, [ component ]);
 
     const onDisplayConditionChange = React.useCallback((condition: displayCondition, index: number) => {
-        let newConditions = [ ...(component as Component & { type: 'header' }).displayCondition ];
+        const newConditions = [ ...(component as Component & { type: 'header' }).displayCondition ];
         newConditions[ index ] = condition;
         onEntryChanged('displayCondition', newConditions);
     }, [ component ]);
 
     const onDisplayConditionDelete = React.useCallback((index: number) => {
-        let newConditions = [ ...(component as Component & { type: 'header' }).displayCondition ];
+        const newConditions = [ ...(component as Component & { type: 'header' }).displayCondition ];
         if (newConditions.length === 1) return;
         newConditions.splice(index, 1);
         onEntryChanged('displayCondition', newConditions);
@@ -100,31 +100,32 @@ const SettingsEditor: React.FC<Props> = ({ component, onChange }) => {
                                     <SelectItem disabled={ !pageNames } value='Exclude'>Exclude</SelectItem>
                                 </SelectContent>
                             </Select>
-                            {
-                                show !== 'all' &&
-                                <Select
-                                    value={ name }
-                                    onValueChange={ page =>
-                                        onDisplayConditionChange({
-                                            show,
-                                            name: page
-                                        }, index)
-                                    }
-                                >
-                                    <SelectTrigger className='flex-1'>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                    {
-                                        pageNames === undefined
-                                        ?   <Loader className='size-4 my-4 animate-spin mx-auto' />
-                                        :   pageNames.map(name => (
-                                                <SelectItem key={ name } value={ name }>{ name }</SelectItem>
-                                            ))
-                                    }
-                                    </SelectContent>
-                                </Select>
-                            }
+                            { show !== 'all' && (
+                                pageNames !== null
+                                ?    <Select
+                                        value={ name }
+                                        onValueChange={ page =>
+                                            onDisplayConditionChange({
+                                                show,
+                                                name: page
+                                            }, index)
+                                        }
+                                    >
+                                        <SelectTrigger className='flex-1'>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                        {
+                                            pageNames === undefined
+                                            ?   <Loader className='size-4 my-4 animate-spin mx-auto' />
+                                            :   pageNames.map(name => (
+                                                    <SelectItem key={ name } value={ name }>{ name }</SelectItem>
+                                                ))
+                                        }
+                                        </SelectContent>
+                                    </Select>
+                                :   <Label>ERROR!</Label>
+                            ) }
                             <Button
                                 variant='destructive'
                                 size='icon'

@@ -50,7 +50,7 @@ const getComponentByName = async (name: string, type?: componentType): Promise<C
     };
 };
 
-const getAllComponents = async (type: componentType = 'page'): Promise<string[]> => {
+const getAllComponents = async (type: componentType = 'page'): Promise<string[] | null> => {
     try {
         componentTypesSchema.parse(type);
 
@@ -63,7 +63,7 @@ const getAllComponents = async (type: componentType = 'page'): Promise<string[]>
         return [ ...global.componentNames[ type ] ];
     } catch (error) {
         console.error('[db] getAllComponents error:', error instanceof Error ? error.stack || error.message : error);
-        return [];
+        return null;
     };
 };
 
@@ -139,7 +139,7 @@ const deleteComponent = async (name: string): Promise<boolean> => {
     };
 };
 
-const getMatchingComponents = async (name: string, type: 'header' | 'footer'): Promise<Component[]> => {
+const getMatchingComponents = async (name: string, type: 'header' | 'footer'): Promise<Component[] | null> => {
     try {
         await connect();
 
@@ -157,7 +157,7 @@ const getMatchingComponents = async (name: string, type: 'header' | 'footer'): P
         return JSON.parse(JSON.stringify(components || []));
     } catch (error) {
         console.error('[db] getMatchingComponents error:', error instanceof Error ? error.stack || error.message : error);
-        return [];
+        return null;
     };
 };
 

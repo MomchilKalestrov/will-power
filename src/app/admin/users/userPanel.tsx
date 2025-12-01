@@ -21,7 +21,7 @@ const UserPanel: React.FC<{
         setUserState(user ? { ...user, password: '' } : undefined);
     }, [ user ]);
 
-    let canEdit =
+    const canEdit =
         !!user &&
         status === 'authenticated' &&
         hasAuthority((data.user as any).role, user.role);

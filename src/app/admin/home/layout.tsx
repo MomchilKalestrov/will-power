@@ -1,4 +1,7 @@
 import React from 'react';
-//@ts-ignore
+//@ts-expect-error only because vscode requires this :/
 import '../globals.css';
-export default ({ children }: { children: React.ReactNode }) => children;
+
+const Layout = ({ children }: { children: React.ReactNode }) => children;
+
+export default Layout;

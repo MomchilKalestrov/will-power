@@ -74,7 +74,7 @@ export const togglePlugin = async (name: string): Promise<string | boolean> => {
     if (!await isAuthenticated())
         return 'This user does not have the required priviliges';
 
-    let { plugins } = await getConfig();
+    const { plugins } = await getConfig();
     const index = plugins.findIndex(plugin => plugin.name === name);
     plugins[ index ].enabled = !plugins[ index ].enabled;
 

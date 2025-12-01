@@ -8,7 +8,8 @@ export const hexToHsl = (hex: string): [ number, number, number ] => {
 
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
-    let h = 0, s = 0, l = (max + min) / 2;
+    let h = 0, s = 0;
+    const l = (max + min) / 2;
 
     if (max !== min) {
         const d = max - min;
@@ -78,12 +79,12 @@ export const hsvToHex = (h: number, s: number, v: number): string => {
         b = v * (1 - s),
         c = v * (1 - (h - hh) * s),
         d = v * (1 - (1 - h + hh) * s),
-        module = hh % 6;
+        mod = hh % 6;
 
     const 
-        red = [ v, c, b, b, d, v ][ module ],
-        green = [ d, v, v, c, b, b ][ module ],
-        blue = [ b, b, d, v, v, c ][ module ];
+        red = [ v, c, b, b, d, v ][ mod ],
+        green = [ d, v, v, c, b, b ][ mod ],
+        blue = [ b, b, d, v, v, c ][ mod ];
 
     return `#${ toHex(red) }${ toHex(green) }${ toHex(blue) }`;
 };

@@ -1,5 +1,5 @@
 'use client';
-import { Metadata, NextPage } from 'next';
+import { NextPage } from 'next';
 
 import { usePlugins } from '@/components/pluginsProvider';
 

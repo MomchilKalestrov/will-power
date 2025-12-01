@@ -1,7 +1,7 @@
 import React from 'react';
-//@ts-ignore
-import '../globals.css';
 import { Metadata } from 'next';
+//@ts-expect-error only because vscode requires this :/
+import '../globals.css';
 
 export const metadata: Metadata = {
     title: {
@@ -10,4 +10,6 @@ export const metadata: Metadata = {
     }
 };
 
-export default ({ children }: { children: React.ReactNode }) => children;
+const Layout = ({ children }: { children: React.ReactNode }) => children;
+
+export default Layout;

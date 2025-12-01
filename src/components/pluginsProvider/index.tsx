@@ -2,7 +2,6 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import ReactJsxRuntime from 'react/jsx-runtime';
-import z from 'zod';
 
 import { useConfig } from '@/components/configProvider';
 
@@ -133,7 +132,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         if (typeof response === 'string')
             return `Error: ${ response }.`;
 
-        let newPlugins = [ ...config.plugins ];
+        const newPlugins = [ ...config.plugins ];
         const index = newPlugins.findIndex(plugin => plugin.name === name);
         newPlugins[ index ].enabled = !newPlugins[ index ].enabled;
 

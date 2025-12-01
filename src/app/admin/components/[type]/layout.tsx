@@ -5,4 +5,6 @@ export const generateMetadata = async ({ params }: PageProps<'/admin/components/
     return { title: type.charAt(0).toUpperCase() + type.substring(1) + 's' };
 };
 
-export default ({ children }: { children: React.ReactNode }) => children;
+const Layout = ({ children }: { children: React.ReactNode }) => children;
+
+export default Layout;

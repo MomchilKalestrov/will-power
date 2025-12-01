@@ -157,7 +157,7 @@ const FileSelector: React.FC<{
                 if (!result)
                     return toast('Failed to upload file.');
                 setFiles(state => {
-                    let newState = { ...state ?? {} };
+                    const newState = { ...state ?? {} };
                     newState[ (result as BlobInformation).pathname ] = result as BlobInformation;
                     return newState;
                 });

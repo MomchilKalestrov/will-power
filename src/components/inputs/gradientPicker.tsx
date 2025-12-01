@@ -140,7 +140,7 @@ const GradientPicker: React.FC<Props> = ({
                 <Button
                     variant='outline'
                     onClick={ () => {
-                        let colors = [ ...gradientColors ];
+                        const colors = [ ...gradientColors ];
                         colors.push('#ffffffff');
                         setColors(colors);
                         onChange({ colors });
@@ -150,7 +150,7 @@ const GradientPicker: React.FC<Props> = ({
                     variant='outline'
                     onClick={ () => {
                         if (gradientColors.length === 2) return;
-                        let colors = [ ...gradientColors ];
+                        const colors = [ ...gradientColors ];
                         colors.pop();
                         setColors(colors);
                         onChange({ colors });

@@ -35,18 +35,6 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
     const [ config, setConfig ] = React.useState<config>(initialConfig);
     const [ saveState, setSaveState ] = React.useState<boolean>(true);
 
-    const onWindowChange = React.useCallback((e: Event) => {
-        e.preventDefault();
-        if (saveState) return;
-        ((e as any || (window as any).event)).returnValue = 'Any unsaved changes will be lost.';
-        return 'Any unsaved changes will be lost.';
-    }, [ saveState ]);
-
-    // React.useEffect(() => {
-    //     window.addEventListener('beforeunload', onWindowChange);
-    //     return () => window.removeEventListener('beforeunload', onWindowChange);
-    // }, []);
-
     const editorParams = {
         config,
         setConfig: (e: React.SetStateAction<config>) => {
@@ -65,7 +53,7 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
                     disabled={ saveState }
                     onClick={ () => {
                         setSaveState(true);
-                        let copy: Partial<config> = { ...config };
+                        const copy: Partial<config> = { ...config };
                         delete copy.plugins;
                         delete copy.themes;
                         updateConfig?.(copy);
@@ -405,7 +393,7 @@ const ColorPreview: React.FC<{ config: config }> = ({ config }) => {
     return (
         <div className='flex flex-wrap gap-4'>
             { colorVariables.map(({ id, color, name }) => {
-                let [ h, s, l ] = hexToHsl(color);
+                const [ h, s, l ] = hexToHsl(color);
                 const foregroundHex = hslToHex(h, s / 2, l > 50 ? 20 : 80);
 
                 return(

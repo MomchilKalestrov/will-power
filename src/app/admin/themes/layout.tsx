@@ -1,10 +1,12 @@
 import React from 'react';
 import { Metadata } from 'next';
-//@ts-ignore
+//@ts-expect-error only because vscode requires this :/
 import '../globals.css';
 
 export const metadata: Metadata = {
     title: 'Themes'
 };
 
-export default ({ children }: { children: React.ReactNode }) => children;
+const Layout = ({ children }: { children: React.ReactNode }) => children;
+
+export default Layout;

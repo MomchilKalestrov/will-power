@@ -118,13 +118,13 @@ const Component: React.FC<React.PropsWithChildren<Props>> = ({
     style = {},
     ...props
 }) => {
-    let iterableChildren = React.Children.toArray(children);
+    const iterableChildren = React.Children.toArray(children);
     const {
         container,
         header,
         contents
     } = React.useMemo(() => {
-        let buckets: Record<string, Record<string, string | number>> = {
+        const buckets: Record<string, Record<string, string | number>> = {
             container: {},
             header: {},
             contents: {}

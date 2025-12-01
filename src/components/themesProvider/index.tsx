@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import type { config } from '@/lib/config';
 import { useConfig } from '@/components/configProvider';
 import * as actions from '@/lib/themes';
 

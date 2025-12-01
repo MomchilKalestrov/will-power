@@ -57,14 +57,14 @@ const BackgroundPicker: React.FC<Props> = ({
     React.useEffect(() => {
         if (!initialBackground.includes('url')) return;
         
-        let backgroundParts = initialBackground.split(' ').filter(part => part !== '/');
+        const backgroundParts = initialBackground.split(' ').filter(part => part !== '/');
         backgroundParts[ 3 ] = backgroundParts[ 3 ] + ' ' + backgroundParts[ 4 ];
         backgroundParts.splice(4, 1);
         setBackground(backgroundParts as backgroundType);
     }, []);
 
     const onChange = React.useCallback((newValue: string, index: number) => {
-        let newState: backgroundType = [ url, ...properties ];
+        const newState: backgroundType = [ url, ...properties ];
         newState[ index ] = newValue;
         setBackground(newState);
         onChangeCallback(newState.slice(undefined, -1).join(' ') + ' / ' + newState[ newState.length - 1 ]);
