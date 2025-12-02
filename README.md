@@ -13,3 +13,6 @@ to run properly add the `MONGODB_URI`, `BLOB_READ_WRITE_TOKEN`, `NEXTAUTH_URL` a
 why is it called willpower?
 - because it's the same acronym as WordPress (WP)
 - because recently it's been taking me quite a lot of willpower to go on with my days
+
+
+![stats](https://gcloc.vercel.app/api/get?owner=MomchilKalestrov&repo=will-power&rootDir=src&width=300&height=116)

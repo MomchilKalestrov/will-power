@@ -16,13 +16,19 @@ const Page: NextPage = () => {
     const [ selectedIndex, setSelectedIndex ] = React.useState<number | undefined>();
 
     React.useEffect(() => {
-        actions.getAllUsers().then(setUsers);
+        actions
+            .getAllUsers()
+                .then(response => {
+                    if (!response.success)
+                        return toast(response.reason);
+                    return setUsers(response.value);
+                });
     }, []);
 
-    const onUserUpdate = React.useCallback(async (user: User & { password: string }) => {
+    const onUserUpdate = React.useCallback(async (user: User & { password?: string; }) => {
         const result = await actions.updateUser(user);
 
-        if (!result)
+        if (!result.success)
             return toast('Failed updating user.');
         toast('Updated user successfully.');
         

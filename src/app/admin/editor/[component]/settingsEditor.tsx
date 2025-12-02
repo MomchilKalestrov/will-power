@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { toast } from 'sonner';
 import { Loader, Plus, Trash2 } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
@@ -29,7 +30,12 @@ const SettingsEditor: React.FC<Props> = ({ component, onChange }) => {
 
     React.useEffect(() => {
         if (component.type !== 'page' && pageNames === undefined)
-            getAllComponents('page').then(setPageNames);
+            getAllComponents('page')
+                .then(response => {
+                    if (!response.success)
+                        return toast('Failed fetching page names: ' + response.reason);
+                    setPageNames(response.value);
+                });
     }, [ component ]);
 
     const onDisplayConditionChange = React.useCallback((condition: displayCondition, index: number) => {

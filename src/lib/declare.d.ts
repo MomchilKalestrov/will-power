@@ -3,6 +3,14 @@ import type { ListBlobResultBlob } from '@vercel/blob';
 declare global {
     type timestamp = number;
     type componentType = 'header' | 'page' | 'footer' | 'component';
+
+    type serverActionResponse<T = undefined> = Promise<{
+        success: false;
+        reason: string;
+    } | {
+        success: true;
+        value: T;
+    }>;
     
     interface ComponentNode {
         id: string;

@@ -15,12 +15,12 @@ export const generateMetadata = async ({ params }: PageProps<'/admin/editor/[com
 const Page: NextPage<PageProps<'/admin/editor/[component]'>> = async ({ params }) => {
     const component = await getComponentByName((await params).component);
 
-    if (!component)
+    if (!component.success)
         return notFound();
     
     return (
         <FileSelectorProvider>
-            <Editor component={ component } />
+            <Editor component={ component.value } />
         </FileSelectorProvider>
     );
 };

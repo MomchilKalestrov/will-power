@@ -22,7 +22,12 @@ const metadata: NodeMetadata = {
     enumerators: {
         ...filteredButtonMetadata.enumerators,
         page: {
-            values: await getAllComponents('page')
+            values: await (async () => {
+                const response = await getAllComponents('page');
+                return response.success
+                ?   response.value
+                :   [ 'ERROR: ' + response.reason ];
+            })()
         }
     }
 };

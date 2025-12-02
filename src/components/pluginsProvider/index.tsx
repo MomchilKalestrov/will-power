@@ -5,10 +5,10 @@ import ReactJsxRuntime from 'react/jsx-runtime';
 
 import { useConfig } from '@/components/configProvider';
 
-import type { plugin } from '@/lib/config';
 import * as actions from '@/lib/plugins';
-import * as componentActions from '@/lib/db/actions/component';
+import type { plugin } from '@/lib/config';
 import * as configActions from '@/lib/config';
+import * as componentActions from '@/lib/db/actions/component';
 import { pluginModuleSchema } from '@/lib/zodSchemas';
 
 type pluginInstance = plugin & {

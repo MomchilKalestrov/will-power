@@ -27,8 +27,9 @@ const CreateComponentDialog: React.FC<{
     const [ name, setName ] = React.useState<string>('');
 
     const onPageCreated = React.useCallback(async () => {
-        if(!(await createComponent(name, type)))
-            return toast('Couldn\'t create a page with that name');
+        const response = await createComponent(name, type);
+        if(!response.success)
+            return toast('Couldn\'t create a page with that name: ' + response.reason);
         router.push('/admin/editor/' + name);
     }, [ name, type ]);
 

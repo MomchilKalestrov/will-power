@@ -12,7 +12,12 @@ const metadata: NodeMetadata = {
     styles: {},
     enumerators: {
         component: {
-            values: (await getAllComponents('component')) ?? [ 'ERROR!' ]
+            values: await (async () => {
+                const response = await getAllComponents('component');
+                return response.success
+                ?   response.value
+                :   [ 'ERROR: ' + response.reason ];
+            })()
         }
     },
     acceptChildren: false
@@ -27,7 +32,11 @@ const Component: React.FC<Props> = ({ component: name }) => {
 
     React.useEffect(() => {
         getComponentByName(name)
-            .then((value) => setComponent(value!));
+            .then(response => {
+                if (!response.success)
+                    throw new Error('Failed getting the component: ' + response.reason);
+                setComponent(response.value)
+            });
     }, [ name ]);
 
     return component ? (<RenderNode node={ component.rootNode } />) : (<></>);

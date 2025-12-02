@@ -78,15 +78,15 @@ const AddUserDialog: React.FC<{ onUserAdd: (user: User) => void }> = ({ onUserAd
                 <Button
                     disabled={ !validName(user.username) || !validPassword(user.password) }
                     onClick={ async () => {
-                        const result = await actions.createUser(user);
+                        const response = await actions.createUser(user);
                     
                         setDialogOpen(false);
 
-                        if (!result)
-                            return toast('Failed to create new user.');
+                        if (!response.success)
+                            return toast('Failed to create new user: ' + response.reason);
 
                         onUserAdd({
-                            id: result,
+                            id: response.value,
                             username: user.username,
                             role: user.role
                         });

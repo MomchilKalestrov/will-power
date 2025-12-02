@@ -12,13 +12,13 @@ import { cn, hasAuthority, validName, validPassword } from '@/lib/utils';
 
 const UserPanel: React.FC<{
     user?: User | undefined;
-    onChange: (user: User & { password: string }) => void;
+    onChange: (user: User & { password?: string; }) => void;
 }> = ({ user, onChange }) => {
     const { status, data } = useSession();
-    const [ userState, setUserState ] = React.useState<User & { password: string } | undefined>();
+    const [ userState, setUserState ] = React.useState<User & { password?: string } | undefined>();
 
     React.useEffect(() => {
-        setUserState(user ? { ...user, password: '' } : undefined);
+        setUserState(user ? { ...user, password: undefined } : undefined);
     }, [ user ]);
 
     const canEdit =
@@ -55,7 +55,8 @@ const UserPanel: React.FC<{
                 disabled={ !canEdit }
                 className={ cn(
                     'mb-2',
-                    userState &&
+                    canEdit &&
+                    userState?.password !== undefined &&
                     userState?.password !== '' &&
                     !validPassword(userState.password) &&
                     'border-red-800'

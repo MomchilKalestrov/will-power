@@ -71,10 +71,10 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
         button.disabled = true;
 
         deleteComponent(name)
-            .then(success => {
+            .then(response => {
                 button.disabled = false;
-                if (!success)
-                    return toast(`Failed deleting the ${ type }.`);
+                if (!response.success)
+                    return toast(`Failed deleting the ${ type }: ` + response.reason);
                 removeComponent(name);
             });
     }, [ name, type ]);

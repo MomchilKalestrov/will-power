@@ -105,7 +105,20 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
         setTree(component.rootNode);
         storage.set(component.name, component);
         setComponent(component);
-    }, [ component.name ]);
+    }, [ component ]);
+
+    const onSave = React.useCallback(async ({ currentTarget: button }: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        button.disabled = true;
+        
+        del(`preview-${ component.name }`);
+        const response = await saveComponent({
+            ...component,
+            rootNode: tree
+        })
+
+        button.disabled = false;
+        toast(response.success ? 'Saved.' : ('Failed saving: ' + response.reason));
+    }, [ component, tree ]);
     
     React.useEffect(() => {
         window.addEventListener('message', onMessage);
@@ -155,20 +168,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                     <Button variant='outline' size='icon' onClick={ onReset }>
                         <RotateCcw />
                     </Button>
-                    <Button onClick={ ({ currentTarget: button }) => {
-                        button.disabled = true;
-                        del(`preview-${ component.name }`);
-                        saveComponent({
-                            ...component,
-                            rootNode: tree
-                        }).then((result) => {
-                            button.disabled = false;
-                            toast(result ? 'Saved.' : 'Failed saving.');
-                        }).catch(() => {
-                            button.disabled = false;
-                            toast('Failed saving.');
-                        })
-                    } }>Save</Button>
+                    <Button onClick={ onSave }>Save</Button>
                 </section>
             </header>
             <main

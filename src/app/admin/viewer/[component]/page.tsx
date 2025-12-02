@@ -41,10 +41,12 @@ const Page: NextPage<PageProps<'/admin/viewer/[component]'>> = ({ params }) => {
         const localRevision: ComponentNode | undefined = storage.tryParse<Component | any>(component, {}).rootNode;
         
         if (!localRevision)
-            getComponentByName(component).then((component) => {
-                if (!component) return notFound();
-                setTree(component.rootNode);
-            });
+            getComponentByName(component)
+                .then(response => {
+                    if (!response.success)
+                        throw new Error('Failed loading the viewer: ' + response.reason);
+                    setTree(response.value.rootNode);
+                });
         else
             setTree(localRevision);
 

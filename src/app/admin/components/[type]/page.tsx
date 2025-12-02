@@ -17,9 +17,9 @@ const Page: NextPage<PageProps<'/admin/components/[type]'>> = ({ params }) => {
         if (!type) return;
         getAllComponents(type)
             .then(result => {
-                if (result === null)
-                    return toast(`Failed getting ${ type }s.`);
-                setComponents(result);
+                if (!result.success)
+                    return toast(`Failed getting ${ type }s: ` + result.reason);
+                setComponents(result.value);
             });
     }, [ type ]);
 

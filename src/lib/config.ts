@@ -1,6 +1,6 @@
 'use server';
 import connect from '@/lib/db';
-import * as actions from '@/lib/db/actions';
+import { getCurrentUser } from '@/lib/db/actions';
 
 import { hasAuthority } from '@/lib/utils';
 import { updateConfigSchema } from '@/lib/zodSchemas';
@@ -76,7 +76,7 @@ const getConfig = async (): Promise<config> => {
 const setConfig = async (config: Partial<config>): Promise<boolean> => {
     try {
         const data = updateConfigSchema.parse(config) as Partial<config>;
-        const user = await actions.getCurrentUser();
+        const user = await getCurrentUser();
         if (!user) return false;
 
         if (('plugins' in config || 'themes' in config) && !hasAuthority(user.role, 'admin', 0))
