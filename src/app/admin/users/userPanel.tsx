@@ -4,16 +4,25 @@ import { useSession } from 'next-auth/react';
 import { Trash2 } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from '@/components/ui/select';
 
 import { cn, hasAuthority, validName, validPassword } from '@/lib/utils';
 
-const UserPanel: React.FC<{
+type Props = {
     user?: User | undefined;
     onChange: (user: User & { password?: string; }) => void;
-}> = ({ user, onChange }) => {
+    onDelete: () => void;
+};
+
+const UserPanel: React.FC<Props> = ({ user, onChange, onDelete }) => {
     const { status, data } = useSession();
     const [ userState, setUserState ] = React.useState<User & { password?: string } | undefined>();
 
@@ -87,7 +96,12 @@ const UserPanel: React.FC<{
             </SelectContent>
             </Select>
             <div className='flex gap-2'>
-                <Button size='icon' variant='destructive' disabled={ !canEdit }>
+                <Button
+                    size='icon'
+                    variant='destructive'
+                    disabled={ !canEdit }
+                    onClick={ onDelete }
+                >
                     <Trash2 />
                 </Button>
                 <Button

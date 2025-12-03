@@ -32,7 +32,7 @@ const Role: React.FC<{ role: User['role'] }> = ({ role }) => (
 const UsersList: React.FC<{
     users: User[];
     onUserSelect: (user: User) => void;
-    onUserAdd: (user: User) => void;
+    onUserAdd: (user: Omit<User, 'id'> & { password: string }) => void;
 }> = ({ users, onUserSelect, onUserAdd }) => {
     const { data } = useSession();
     const [ searchBy, setSearchBy ] = React.useState<string>('');

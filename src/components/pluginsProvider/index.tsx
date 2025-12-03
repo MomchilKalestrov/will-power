@@ -9,7 +9,6 @@ import { pluginModuleSchema } from '@/lib/zodSchemas';
 import * as pluginActions from '@/lib/actions/plugin';
 import * as configActions from '@/lib/actions/config';
 import * as componentActions from '@/lib/db/actions/component';
-import { toast } from 'sonner';
 
 type pluginInstance = plugin & {
     components: ({

@@ -59,7 +59,11 @@ const defaultConfig: config = {
 };
 
 const getConfig = async (): serverActionResponse<config> => {
-    if (global.config) return JSON.parse(JSON.stringify(global.config));
+    if (global.config)
+        return {
+            success: true,
+            value: JSON.parse(JSON.stringify(global.config))
+        };
     
     try {
         await connect();
@@ -72,7 +76,10 @@ const getConfig = async (): serverActionResponse<config> => {
             document.save();
         };
     
-        return JSON.parse(JSON.stringify(global.config));
+        return {
+            success: true,
+            value: JSON.parse(JSON.stringify(global.config))
+        };
     } catch (error) {
         console.error('[sa] getConfig error: ', error);
         return {

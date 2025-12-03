@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { toast } from 'sonner';
 import { PlusCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -22,10 +21,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-import { createUser } from '@/lib/db/actions';
 import { validName, validPassword } from '@/lib/utils';
 
-const AddUserDialog: React.FC<{ onUserAdd: (user: User) => void }> = ({ onUserAdd }) => {
+type Props = {
+    onUserAdd: (user: Omit<User, 'id'> & { password: string }) => void;
+};
+
+const AddUserDialog: React.FC<Props> = ({ onUserAdd }) => {
     const [ dialogOpen, setDialogOpen ] = React.useState<boolean>(false);
     const [ user, setUser ] = React.useState<Omit<User, 'id'> & { password: string }>({
         username: 'newuser',
@@ -77,20 +79,7 @@ const AddUserDialog: React.FC<{ onUserAdd: (user: User) => void }> = ({ onUserAd
                 </div>
                 <Button
                     disabled={ !validName(user.username) || !validPassword(user.password) }
-                    onClick={ async () => {
-                        const response = await createUser(user);
-                    
-                        setDialogOpen(false);
-
-                        if (!response.success)
-                            return toast('Failed to create new user: ' + response.reason);
-
-                        onUserAdd({
-                            id: response.value,
-                            username: user.username,
-                            role: user.role
-                        });
-                    } }
+                    onClick={ () => onUserAdd(user) }
                 >Add</Button>
             </DialogContent>
         </Dialog>

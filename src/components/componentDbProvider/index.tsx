@@ -16,7 +16,7 @@ const ComponentDbCTX = React.createContext<{
     getComponent: (type: string) => Promise<componentData | null>;
     components: string[]
 }>({
-    getComponent: async _ => null,
+    getComponent: async () => null,
     components: []
 });
 

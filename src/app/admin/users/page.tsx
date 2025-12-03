@@ -6,7 +6,7 @@ import { ServerCrash } from 'lucide-react';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
-import { getAllUsers, updateUser } from '@/lib/db/actions';
+import { getAllUsers, updateUser, deleteUser, createUser } from '@/lib/db/actions';
 
 import UsersList from './usersList';
 import UserPanel from './userPanel';
@@ -18,30 +18,66 @@ const Page: NextPage = () => {
     React.useEffect(() => {
         getAllUsers()
             .then(response => {
-                if (!response.success)
+                if (!response.success) {
+                    setUsers(null);
                     return toast(response.reason);
+                };
                 return setUsers(response.value);
             });
     }, []);
 
     const onUserUpdate = React.useCallback(async (user: User & { password?: string; }) => {
-        const result = await updateUser(user);
+        const response = await updateUser(user);
 
-        if (!result.success)
-            return toast('Failed updating user.');
-        toast('Updated user successfully.');
+        if (!response.success)
+            return toast('Error: ' + response.reason);
+        toast('Updated user.');
         
-        setUsers((state) => {
-            if (!state || selectedIndex === undefined ) return;
-            const newState = [ ...state ];
-            newState[ selectedIndex ] = {
+        setUsers((state) => {            
+            const newState = [ ...state! ];
+            newState[ selectedIndex! ] = {
                 id: user.id,
                 username: user.username,
                 role: user.role
             };
+            
             return newState;
         });
+    }, [ selectedIndex ]);
+
+    const onUserDelete = React.useCallback(async () => {
+        const response = await deleteUser(users![ selectedIndex! ].id);
+
+        if (!response.success)
+            return toast('Error: ' + response.reason);
+        toast('Deleted user.');
+
+        setUsers(state => {            
+            const newState = [ ...state! ];
+            newState.splice(selectedIndex!, 1);
+
+            return newState;
+        })
     }, [ users, selectedIndex ]);
+
+    const onUserAdd = React.useCallback(async (user: Omit<User, 'id'> & { password: string }) => {
+        const response = await createUser(user);
+
+        if (!response.success)
+            return toast('Error: ' + response.reason);
+        toast('Created user.');
+        
+        setUsers(state => {
+            const newState = [ ...state! ];
+            newState.push({
+                ...user,
+                password: undefined,
+                id: response.value
+            } as User);
+
+            return newState;
+        });
+    }, []);
 
     if (users === null)
         return (
@@ -63,8 +99,7 @@ const Page: NextPage = () => {
                         const newIndex = users.findIndex((u) => username === u.username);
                         if (newIndex !== -1) setSelectedIndex(newIndex);
                     } }
-                    onUserAdd={ async (newUser) => {
-                    } }
+                    onUserAdd={ onUserAdd }
                 /> 
             </ResizablePanel>
             <ResizableHandle withHandle />
@@ -76,6 +111,7 @@ const Page: NextPage = () => {
                         :   undefined
                     }
                     onChange={ onUserUpdate }
+                    onDelete={ onUserDelete }
                 />
             </ResizablePanel>
         </ResizablePanelGroup>

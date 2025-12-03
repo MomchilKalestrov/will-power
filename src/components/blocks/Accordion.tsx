@@ -104,14 +104,12 @@ const metadata: NodeMetadata = {
 };
 
 type Props = {
-    onClick?: string;
     entries?: string[];
     defaultOpen?: number;
     style?: Record<string, string | number>;
 };
 
 const Component: React.FC<React.PropsWithChildren<Props>> = ({
-    onClick = 'console.log("Hello, world!");',
     children,
     entries = [],
     defaultOpen = 1,
