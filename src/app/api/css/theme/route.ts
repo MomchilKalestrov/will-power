@@ -1,13 +1,19 @@
 import { getConfig } from '@/lib/actions/config';
 import { NextResponse } from 'next/server';
 
-const handler = async () =>
-    NextResponse.redirect(
+const handler = async () => {
+    const config = await getConfig();
+
+    if (!config.success)
+        return new NextResponse(null, { status: 500 });
+    
+    return NextResponse.redirect(
         process.env.NEXT_PUBLIC_BLOB_URL +
         '/themes/' +
-        (await getConfig()).theme +
+        config.value.theme +
         '/index.css'
     );
+};
 
 export {
     handler as GET,

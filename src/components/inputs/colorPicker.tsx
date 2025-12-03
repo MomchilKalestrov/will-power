@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/u
 
 import { useConfig } from '@/components/configProvider';
 
-import type { config } from '@/lib/actions/config';
 import { hexToHsv, hsvToHex } from '@/lib/color';
 
 const BaseColorPicker: React.FC<{

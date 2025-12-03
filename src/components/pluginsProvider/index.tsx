@@ -9,6 +9,7 @@ import { pluginModuleSchema } from '@/lib/zodSchemas';
 import * as pluginActions from '@/lib/actions/plugin';
 import * as configActions from '@/lib/actions/config';
 import * as componentActions from '@/lib/db/actions/component';
+import { toast } from 'sonner';
 
 type pluginInstance = plugin & {
     components: ({
@@ -102,11 +103,11 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
         const response = await pluginActions.addPlugin(data);
         
-        if (typeof response === 'string')
-            return `Error: ${ response }.`;
+        if (!response.success)
+            return `Error: ${ response.reason }.`;
 
         await updateConfig({
-            plugins: [ ...config.plugins, response ]
+            plugins: [ ...config.plugins, response.value ]
         }, false);
 
         return 'Successfully added the plugin.';
@@ -115,8 +116,8 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const removePlugin = React.useCallback(async (name: string): Promise<string> => {
         const response = await pluginActions.removePlugin(name);
 
-        if (typeof response === 'string')
-            return `Error: ${ response }.`;
+        if (!response.success)
+            return `Error: ${ response.reason }.`;
 
         updateConfig({
             plugins: config.plugins.filter(plugin => plugin.name !== name)
@@ -126,10 +127,10 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     }, [ config, updateConfig ]);
 
     const togglePlugin = React.useCallback(async (name: string): Promise<string> => {
-        const response = await actions.togglePlugin(name);
+        const response = await pluginActions.togglePlugin(name);
 
-        if (typeof response === 'string')
-            return `Error: ${ response }.`;
+        if (!response.success)
+            return `Error: ${ response.reason }.`;
 
         const newPlugins = [ ...config.plugins ];
         const index = newPlugins.findIndex(plugin => plugin.name === name);

@@ -1,6 +1,5 @@
 import { twMerge } from 'tailwind-merge';
 import { clsx, type ClassValue } from 'clsx';
-import type { config, font } from './actions/config';
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 

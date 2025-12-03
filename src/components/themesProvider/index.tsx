@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useConfig } from '@/components/configProvider';
-import * as actions from '@/lib/actions/theme';
+import * as themeActions from '@/lib/actions/theme';
 
 
 const ThemesCTX = React.createContext<{
@@ -33,23 +33,23 @@ const ThemesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         const data = new FormData();
         data.append('theme', theme, 'theme.zip');
 
-        const response = await actions.addTheme(data);
+        const response = await themeActions.addTheme(data);
         
-        if (typeof response === 'string')
-            return `Error: ${ response }.`;
+        if (!response.success)
+            return `Error: ${ response.reason }.`;
 
         updateConfig({
-            themes: [ ...config.themes, response.name ]
+            themes: [ ...config.themes, response.value.name ]
         }, false);
 
         return 'Successfully added the theme.';
     }, [ config, updateConfig ]);
 
     const removeTheme = React.useCallback(async (name: string): Promise<string> => {
-        const response = await actions.removeTheme(name);
+        const response = await themeActions.removeTheme(name);
 
-        if (typeof response === 'string')
-            return `Error: ${ response }.`;
+        if (!response.success)
+            return `Error: ${ response.reason }.`;
 
         updateConfig({
             themes: config.themes.filter(theme => theme !== name)
@@ -59,10 +59,10 @@ const ThemesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     }, [ config, updateConfig ]);
 
     const selectTheme = React.useCallback(async (name: string): Promise<string> => {
-        const response = await actions.selectTheme(name);
+        const response = await themeActions.selectTheme(name);
 
-        if (typeof response === 'string')
-            return `Error: ${ response }.`;
+        if (!response.success)
+            return `Error: ${ response.reason }.`;
 
         updateConfig({ theme: name }, false);
 

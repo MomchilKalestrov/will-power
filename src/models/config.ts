@@ -1,7 +1,6 @@
-import { config } from '@/lib/actions/config';
 import mongoose from 'mongoose';
 
-const variableSchema = new mongoose.Schema({
+const variableSchema = new mongoose.Schema<variable>({
     id: { type: String, required: true },
     type: {
         type: String,
@@ -30,18 +29,18 @@ const variableSchema = new mongoose.Schema({
     color: String
 }, { _id: false }); 
 
-const fontSchema = new mongoose.Schema({
+const fontSchema = new mongoose.Schema<config[ 'fonts' ][ number ]>({
     family: { type: String, required: true },
     url: { type: String, required: true }
 }, { _id: false });
 
-const pluginSchema = new mongoose.Schema({
+const pluginSchema = new mongoose.Schema<plugin>({
     name: { type: String, required: true },
     version: { type: String, required: true },
     enabled: { type: Boolean, required: true, default: true }
 });
 
-const ConfigSchema = new mongoose.Schema({
+const ConfigSchema = new mongoose.Schema<config>({
     theme: { type: String, required: true, default: 'default' },
     fonts: { type: [ fontSchema ], default: [] },
     variables: { type: [ variableSchema ], default: [] },

@@ -8,8 +8,12 @@ export const metadata: Metadata = {
     title: 'Variables'
 };
 
-const Page: NextPage = async () => (
-    <Editor initialConfig={ await getConfig() } />
-)
+const Page: NextPage = async () => {
+    const config = await getConfig();
+    
+    return config.success
+    ?   <Editor initialConfig={ config.value } />
+    :   <p>Failed to get the config:<br />{ config.reason }</p>;
+};
 
 export default Page;

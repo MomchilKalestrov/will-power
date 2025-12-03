@@ -17,9 +17,8 @@ import { useFileSelector } from '@/components/fileSelector';
 import CssUnitInput from '@/components/inputs/cssUnitInput';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 
-import type { font, fontVariable, config } from '@/lib/actions/config';
-import { cssToFont, fontToCss } from '@/lib/utils';
 import { hexToHsl, hslToHex } from '@/lib/color';
+import { cssToFont, fontToCss } from '@/lib/utils';
 
 type Props = {
     initialConfig: config;

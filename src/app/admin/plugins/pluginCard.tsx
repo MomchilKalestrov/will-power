@@ -9,8 +9,6 @@ import { Switch } from '@/components/ui/switch';
 
 import { usePlugins } from '@/components/pluginsProvider';
 
-import { plugin } from '@/lib/actions/config';
-
 import defaultPluginThumbnail from './defaultPlugin.png';
 
 const PluginCard: React.FC<{ plugin: plugin }> = ({ plugin }) => {
