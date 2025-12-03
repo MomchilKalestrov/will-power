@@ -36,12 +36,6 @@ if (!globalThis.componentNames)
     globalThis.componentNames = {};
 
 const getComponentByName = async (name: string, type?: componentType): serverActionResponse<Component> => {
-    if (!await getCurrentUser())
-        return {
-            success: false,
-            reason: 'Unauthorized action.'
-        };
-        
     const params: any = { name };
     
     try {
@@ -224,12 +218,6 @@ const deleteComponent = async (name: string): serverActionResponse<boolean> => {
 };
 
 const getMatchingComponents = async (name: string, type: 'header' | 'footer'): serverActionResponse<Component[]> => {
-    if (!await getCurrentUser())
-        return {
-            success: false,
-            reason: 'Unauthorized action.'
-        };
-    
     try {
         await connect();
 
