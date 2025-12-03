@@ -1,6 +1,8 @@
 import { Metadata, NextPage } from 'next';
 import { notFound } from 'next/navigation';
+
 import RenderNode from '@/components/renderNode';
+
 import { getComponentByName, getMatchingComponents } from '@/lib/db/actions';
 
 export const generateMetadata = async ({ params }: PageProps<'/[page]'>): Promise<Metadata> => {

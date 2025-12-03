@@ -22,7 +22,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-import * as actions from '@/lib/db/actions';
+import { createUser } from '@/lib/db/actions';
 import { validName, validPassword } from '@/lib/utils';
 
 const AddUserDialog: React.FC<{ onUserAdd: (user: User) => void }> = ({ onUserAdd }) => {
@@ -78,7 +78,7 @@ const AddUserDialog: React.FC<{ onUserAdd: (user: User) => void }> = ({ onUserAd
                 <Button
                     disabled={ !validName(user.username) || !validPassword(user.password) }
                     onClick={ async () => {
-                        const response = await actions.createUser(user);
+                        const response = await createUser(user);
                     
                         setDialogOpen(false);
 

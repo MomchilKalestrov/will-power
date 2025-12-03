@@ -1,4 +1,4 @@
-import { getConfig } from '@/lib/config';
+import { getConfig } from '@/lib/actions/config';
 import { NextResponse } from 'next/server';
 
 const handler = async () =>

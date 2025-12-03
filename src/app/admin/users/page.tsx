@@ -6,7 +6,7 @@ import { ServerCrash } from 'lucide-react';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
-import * as actions from '@/lib/db/actions';
+import { getAllUsers, updateUser } from '@/lib/db/actions';
 
 import UsersList from './usersList';
 import UserPanel from './userPanel';
@@ -16,17 +16,16 @@ const Page: NextPage = () => {
     const [ selectedIndex, setSelectedIndex ] = React.useState<number | undefined>();
 
     React.useEffect(() => {
-        actions
-            .getAllUsers()
-                .then(response => {
-                    if (!response.success)
-                        return toast(response.reason);
-                    return setUsers(response.value);
-                });
+        getAllUsers()
+            .then(response => {
+                if (!response.success)
+                    return toast(response.reason);
+                return setUsers(response.value);
+            });
     }, []);
 
     const onUserUpdate = React.useCallback(async (user: User & { password?: string; }) => {
-        const result = await actions.updateUser(user);
+        const result = await updateUser(user);
 
         if (!result.success)
             return toast('Failed updating user.');

@@ -22,7 +22,7 @@ import {
     BreadcrumbSeparator
 } from '@/components/ui/breadcrumb';
 
-import * as blobs from '@/lib/actions';
+import { getBlobList, addBlob, deleteBlob } from '@/lib/actions';
 
 import DirectoryViewer from './directoryViewer';
 import SelectedFilePanel from './selectedFilePanel';
@@ -108,32 +108,33 @@ const FileSelector: React.FC<{
     const [ cwd, setCwd ] = React.useState<string[]>([ 'assets' ]);
 
     React.useEffect(() => {
-        blobs.getBlobList()
-            .then(response =>
+        getBlobList()
+            .then(response => {
+                if (!response.success)
+                    return setFiles(null);
                 setFiles(
-                    response === null
-                    ?   null
-                    :   filterFiles(response, fileType)
-                            .reduce<Record<string, BlobInformation>>((acc, curr) => {
-                                acc[ curr.pathname ] = curr;
-                                return acc;
-                            }, {})
-                    )
-            );
+                    filterFiles(response.value, fileType)
+                    .reduce<Record<string, BlobInformation>>((acc, curr) => {
+                        acc[ curr.pathname ] = curr;
+                        return acc;
+                    }, {})
+                );
+            })
+            .catch(() => setFiles(null));
     }, []);
 
     const onDelete = React.useCallback(() =>
-        blobs.deleteBlob(lastSelectedFile!)
-            .then(result => {
-                if (!result)
-                    return toast('Failed to delete the blob.');
+        deleteBlob(lastSelectedFile!)
+            .then(response => {
+                if (!response.success)
+                    return toast('Failed to delete the blob: ' + response.reason);
                 setSelectedFiles(state => {
                     const newSet = new Set(state);
                     newSet.delete(lastSelectedFile!);
                     return newSet;
                 });
                 setFiles(state => {
-                    const newState = { ...state! };
+                    const newState = { ...state };
                     delete newState[ lastSelectedFile! ];
                     return newState;
                 });
@@ -152,15 +153,15 @@ const FileSelector: React.FC<{
     );
 
     const onFileAdd = React.useCallback((file: File) => 
-        blobs.addBlob(`${ cwd.join('/') }/${ file.name }`, file, {
+        addBlob(`${ cwd.join('/') }/${ file.name }`, file, {
             access: 'public'
         })
-            .then((result) => {
-                if (!result)
-                    return toast('Failed to upload file.');
+            .then(response => {
+                if (!response.success)
+                    return toast('Failed to upload file: ' + response.reason);
                 setFiles(state => {
-                    const newState = { ...state ?? {} };
-                    newState[ (result as BlobInformation).pathname ] = result as BlobInformation;
+                    const newState = { ...state };
+                    newState[ response.value.pathname ] = response.value;
                     return newState;
                 });
             })

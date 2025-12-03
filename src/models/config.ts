@@ -1,4 +1,4 @@
-import { config } from '@/lib/config';
+import { config } from '@/lib/actions/config';
 import mongoose from 'mongoose';
 
 const variableSchema = new mongoose.Schema({

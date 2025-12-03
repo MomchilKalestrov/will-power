@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useConfig } from '@/components/configProvider';
-import * as actions from '@/lib/themes';
+import * as actions from '@/lib/actions/theme';
 
 
 const ThemesCTX = React.createContext<{

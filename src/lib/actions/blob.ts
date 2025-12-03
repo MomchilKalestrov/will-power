@@ -1,6 +1,7 @@
 'use server';
-import { put, list, del, PutCommandOptions } from '@vercel/blob';
 import { Readable } from 'stream';
+import { put, list, del, type PutCommandOptions } from '@vercel/blob';
+import { getCurrentUser } from '@/lib/db/actions';
 
 declare global {
     var cachedBlobList: BlobInformation[] | undefined;
@@ -9,6 +10,12 @@ declare global {
 type PutBody = string | Readable | Buffer | Blob | ArrayBuffer | ReadableStream | File;
 
 const getBlobList = async (): serverActionResponse<BlobInformation[]> => {
+    if (!await getCurrentUser())
+        return {
+            success: false,
+            reason: 'Unauthorized action.'
+        };
+
     if (global.cachedBlobList)
         return {
             success: true,
@@ -32,6 +39,12 @@ const getBlobList = async (): serverActionResponse<BlobInformation[]> => {
 };
 
 const addBlob = async (path: string, body: PutBody, options: PutCommandOptions): serverActionResponse<BlobInformation> => {
+    if (!await getCurrentUser())
+        return {
+            success: false,
+            reason: 'Unauthorized action.'
+        };
+    
     try {
         const size = body.toString().length;
         const uploadedAt = new Date();
@@ -39,6 +52,7 @@ const addBlob = async (path: string, body: PutBody, options: PutCommandOptions):
         
         if (!global.cachedBlobList)
             await getBlobList();
+        
         global.cachedBlobList!.push({
             ...blob,
             size,
@@ -59,6 +73,12 @@ const addBlob = async (path: string, body: PutBody, options: PutCommandOptions):
 };
 
 const existsBlob = async (path: string): serverActionResponse<boolean> => {
+    if (!await getCurrentUser())
+        return {
+            success: false,
+            reason: 'Unauthorized action.'
+        };
+
     try {
         const blobs = await getBlobList();
         if (!blobs.success)
@@ -84,6 +104,12 @@ const existsBlob = async (path: string): serverActionResponse<boolean> => {
 };
 
 const deleteBlob = async (path: string): serverActionResponse<boolean> => {
+    if (!await getCurrentUser())
+        return {
+            success: false,
+            reason: 'Unauthorized action.'
+        };
+
     try {
         const blobs = await getBlobList();
         if (!blobs.success)

@@ -9,7 +9,7 @@ import { useConfig } from '@/components/configProvider';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
-import type { fontVariable, font } from '@/lib/config';
+import type { fontVariable, font } from '@/lib/actions/config';
 import { cn, fontToCss, cssToFont } from '@/lib/utils';
 
 import CssUnitInput from './cssUnitInput';

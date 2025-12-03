@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { toast } from 'sonner';
 import type { NextPage } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -7,7 +8,6 @@ import { getAllComponents } from '@/lib/db/actions';
 
 import ComponentCard from './componentCard';
 import CreatePageDialog from './createComponentDialog';
-import { toast } from 'sonner';
 
 const Page: NextPage<PageProps<'/admin/components/[type]'>> = ({ params }) => {
     const { type } = React.use(params) as { type: componentType };

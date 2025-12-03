@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
-import * as actions from '@/lib/config';
-import { type config } from '@/lib/config';
+import { getConfig, setConfig as setBackendConfig } from '@/lib/actions';
 
 const ConfigCTX = React.createContext<{
     config: config,
@@ -16,15 +15,20 @@ const ConfigCTX = React.createContext<{
 const useConfig = () => React.useContext(ConfigCTX);
 
 const ConfigProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-    const [ config, setConfig ] = React.useState<config | undefined>(undefined);
+    const [ config, setConfig ] = React.useState<config | undefined>();
     
     React.useEffect(() => {
-        actions.getConfig().then(setConfig);
+        getConfig().then(response => {
+            if (!response.success)
+                return console.error('Error loading config: ' + response.reason);
+            setConfig(response.value);
+        });
     }, []);
 
     const updateConfig = React.useCallback(async (newConfig: Partial<config>, updateBackend: boolean = true) => {
-        if (updateBackend)    
-            await actions.setConfig(newConfig);
+        if (updateBackend) {
+            await setBackendConfig(newConfig);
+        };
         setConfig({ ...config!, ...newConfig });
     }, [ config ]);
 

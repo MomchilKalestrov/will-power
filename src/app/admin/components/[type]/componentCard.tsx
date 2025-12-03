@@ -1,23 +1,23 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
+import { toast } from 'sonner';
 import { get, set } from 'idb-keyval';
 import { Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 
-import { Card, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardFooter } from '@/components/ui/card';
 
-import { deleteComponent } from '@/lib/db/actions';
+import { storage } from '@/lib/utils';
 import screenshot from '@/lib/screenshot';
+import { deleteComponent } from '@/lib/db/actions';
 
 import headerFallback from './defaultHeader.png';
 import pageFallback from './defaultPage.png';
 import footerFallback from './defaultFooter.png';
 import componentFallback from './defaultComponent.png';
-import { storage } from '@/lib/utils';
 
 const fallbacks: Record<componentType, typeof pageFallback> = {
     'header': headerFallback,

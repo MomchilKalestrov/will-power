@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getConfig } from '@/lib/config';
+import { getConfig } from '@/lib/actions/config';
 import { cssFromConfig } from '@/lib/utils';
 
 const GET = async () =>

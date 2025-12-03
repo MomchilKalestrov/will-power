@@ -1,6 +1,6 @@
 import { Metadata, NextPage } from 'next';
 
-import { getConfig } from '@/lib/config';
+import { getConfig } from '@/lib/actions/config';
 
 import Editor from './editor';
 

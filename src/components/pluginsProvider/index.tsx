@@ -5,11 +5,10 @@ import ReactJsxRuntime from 'react/jsx-runtime';
 
 import { useConfig } from '@/components/configProvider';
 
-import * as actions from '@/lib/plugins';
-import type { plugin } from '@/lib/config';
-import * as configActions from '@/lib/config';
-import * as componentActions from '@/lib/db/actions/component';
 import { pluginModuleSchema } from '@/lib/zodSchemas';
+import * as pluginActions from '@/lib/actions/plugin';
+import * as configActions from '@/lib/actions/config';
+import * as componentActions from '@/lib/db/actions/component';
 
 type pluginInstance = plugin & {
     components: ({
@@ -24,13 +23,13 @@ type pluginInstance = plugin & {
 
 class WP {
     components: typeof componentActions;
-    plugins: typeof actions;
+    plugins: typeof pluginActions;
     config: typeof configActions;
     storageURL: URL;
 
     constructor() {
         this.components = componentActions;
-        this.plugins = actions;
+        this.plugins = pluginActions;
         this.config = configActions;
         this.storageURL = new URL(process.env.NEXT_PUBLIC_BLOB_URL!);
     };
@@ -101,7 +100,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         const data = new FormData();
         data.append('plugin', plugin, 'plugin.zip');
 
-        const response = await actions.addPlugin(data);
+        const response = await pluginActions.addPlugin(data);
         
         if (typeof response === 'string')
             return `Error: ${ response }.`;
@@ -114,7 +113,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     }, [ config, updateConfig ]);
 
     const removePlugin = React.useCallback(async (name: string): Promise<string> => {
-        const response = await actions.removePlugin(name);
+        const response = await pluginActions.removePlugin(name);
 
         if (typeof response === 'string')
             return `Error: ${ response }.`;

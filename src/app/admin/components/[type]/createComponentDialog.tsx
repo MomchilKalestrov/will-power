@@ -1,7 +1,9 @@
 'use client';
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { CirclePlus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,8 +15,8 @@ import {
     DialogTitle,
     DialogTrigger
 } from '@/components/ui/dialog';
-import { createComponent } from '@/lib/db/actions/';
-import { toast } from 'sonner';
+
+import { createComponent } from '@/lib/db/actions';
 
 const CreateComponentDialog: React.FC<{
     components: string[],
