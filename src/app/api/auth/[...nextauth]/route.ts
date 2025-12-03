@@ -21,7 +21,7 @@ const authOptions: AuthOptions = {
                     try {
                         await connect();
                         
-                        const user: DbUser | null = await User.findOne({ username }).lean() as DbUser | null;
+                        const user = await User.findOne({ username }).lean<DbUser>();
                         if (!user || !(await argon2.verify(user.passwordHash!, password)))
                             return null;
 
@@ -31,7 +31,7 @@ const authOptions: AuthOptions = {
                             role: user.role
                         };
                     } catch (error) {
-                        console.error('Error signing in: ' + error);
+                        console.error('[auth] Error signing in: ' + error);
                         return null;
                     }
                 }
