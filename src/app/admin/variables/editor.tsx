@@ -64,8 +64,9 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
                     <ColorEditor { ...editorParams } />
                     <ColorPreview config={ config } />
                     <Separator className='col-span-full' />
-                    <div className='space-y-4'>
+                    <div>
                         <FontfaceEditor { ...editorParams } />
+                        <Separator className='my-4' />
                         <FontEditor { ...editorParams } />
                     </div>
                     <FontPreview config={ config } />

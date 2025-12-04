@@ -1,6 +1,7 @@
 import argon2 from 'argon2';
-import NextAuth, { AuthOptions } from 'next-auth';
+import NextAuth, { type AuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+
 import connect from '@/lib/db';
 import User from '@/models/user';
 

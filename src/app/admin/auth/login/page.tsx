@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { cookies } from '@/lib/utils';
 
 const errors: Record<string, string> = {
     'CredentialsSignin': 'Invalid credentials. Please try again.'
@@ -14,14 +15,36 @@ const errors: Record<string, string> = {
 
 const redirectPage: string = '/admin/components/page';
 
+const getToken = async (): Promise<string> => {
+    const request = await fetch('/api/get-token');
+    return await request.text();
+};
+
 const Page: NextPage = () => {
     const params = useSearchParams();
     const router = useRouter();
     const session = useSession();
+
+    const proceed = React.useCallback(async () => {
+        // special exception for when loggin in for VSCode (to use the MCP server)
+        if (params.get('redirect_uri')) {
+            let url = params.get('redirect_uri')!;
+            if (!url.endsWith('/'))
+                url += '/';
+            const newParams = {
+                state: params.get('state')!,
+                code: await getToken()
+            };
+
+            return router.replace(`${ url }?${ new URLSearchParams(newParams).toString() }`);
+        };
+
+        router.replace(params.get('callbackUrl') ?? redirectPage);
+    }, []);
     
     React.useEffect(() => {
         if (session.status === 'authenticated')
-            router.replace(params.get('callbackUrl') ?? redirectPage);
+            proceed();    
     }, [ session ]);
 
     const onSignIn = React.useCallback(async (data: FormData) => {
@@ -29,8 +52,7 @@ const Page: NextPage = () => {
             username: data.get('username'),
             password: data.get('password')
         });
-        if (response?.ok)
-            return router.replace(params.get('callbackUrl') ?? redirectPage);
+        if (response?.ok) proceed();
     }, [ params ]);
     
     return (
