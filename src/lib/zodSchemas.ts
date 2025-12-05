@@ -72,19 +72,7 @@ const propStructure: z.ZodType<any> = z.lazy(() =>
         z.object({
             type: z.literal('array'),
             key: z.string(),
-            structure: z.array(
-                z.union([
-                    z.object({ type: z.enum([ 'number','string','enum' ]) }),
-                    z.object({
-                        type: z.literal('object'),
-                        structure: z.array(propStructure)
-                    }),
-                    z.object({
-                        type: z.literal('array'),
-                        structure: z.array(z.any())
-                    })
-                ])
-            )
+            structure: propStructure
         })
     ])
 );
@@ -122,7 +110,7 @@ export const pluginModuleSchema = z.object({
             Icon: z.function(),
             Component: z.function(),
             metadata: blockMetadataSchema.extend({
-                name: z.string(),
+                name: z.string().refine(validName, { error: 'The component has an invalid name.' }),
                 type: z.enum([ 'page', 'component' ])
             }) 
         })
