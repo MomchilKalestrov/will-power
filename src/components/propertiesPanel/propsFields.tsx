@@ -18,6 +18,7 @@ import {
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 import AdvancedTextarea from '@/components/inputs/advancedTextarea';
 import { getObjectPropertyDefault } from '@/lib/propsFiller';
+import { isPanelPropertyVisible } from '@/lib/utils';
 
 type Props = {
     metadata: NodeMetadata;
@@ -232,6 +233,9 @@ const PropsFields: React.FC<Props> = ({
             { Object.entries(metadata.props).map(([ key, prop ]) => {
                 const currentValue = node.props?.[ key ] ?? prop.default;
                 const name = key.replace(/([A-Z])/g, ' $1');
+
+                if (!isPanelPropertyVisible(node, metadata, prop.condition, 'props'))
+                    return (<></>);
 
                 switch (prop.type) {
                     case 'string':

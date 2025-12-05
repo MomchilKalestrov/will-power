@@ -20,6 +20,8 @@ import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 import BackgroundPicker from '@/components/inputs/backgroundPicker';
 import FontInput from '@/components/inputs/fontInput';
 
+import { isPanelPropertyVisible } from '@/lib/utils';
+
 type groupedProps<T> = Record<string, (Omit<T & { name: string, key: string }, 'in'>)[]>;
 
 type Props = {
@@ -27,29 +29,6 @@ type Props = {
     metadata: NodeMetadata;
     node: ComponentNode;
     handleChange: (key: string, value: string, property: 'style') => void;
-};
-
-const isVisible = (
-    node: ComponentNode,
-    metadata: NodeMetadata,
-    condition: editorVisibilityCondition | undefined,
-    key: 'props' | 'styles' | 'attributes'
-): boolean => {
-    type genericMeta = Record<string, prop | style | attribute>;
-    if (!condition) return true;
-    const nodeAccessor: string = ({ props: 'props', styles: 'style', attributes: 'attributes' })[ key ];
-
-    const value = node[ nodeAccessor ]?.[ condition.key ] ?? (metadata[ key ] as genericMeta)[ condition.key ].default;
-    let result = value == condition.value;
-    if (condition.comparison === 'different')
-        result = !result;
-
-    if ('or' in condition)
-        result = result || isVisible(node, metadata, condition.or, key);
-    else if ('and' in condition)
-        result = result && isVisible(node, metadata, condition.and, key);
-
-    return result;
 };
 
 const StyleFields: React.FC<Props> = ({
@@ -70,7 +49,8 @@ const StyleFields: React.FC<Props> = ({
                                 { styles.map((style) => {
                                     const currentValue = node.style?.[ style.key ] ?? style.default;
 
-                                    if (!isVisible(node, metadata, style.condition, 'styles')) return;
+                                    if (!isPanelPropertyVisible(node, metadata, style.condition, 'styles'))
+                                        return (<></>);
 
                                     switch(style.type) {
                                         case 'font':

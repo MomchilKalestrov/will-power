@@ -119,4 +119,27 @@ const validPassword = (password: string): boolean => {
     return true;
 };
 
-export { cssFromConfig, storage, cookies, awaitable, hasAuthority, validPassword, validName };
+const isPanelPropertyVisible = (
+    node: ComponentNode,
+    metadata: NodeMetadata,
+    condition: editorVisibilityCondition | undefined,
+    key: 'props' | 'styles' | 'attributes'
+): boolean => {
+    type genericMeta = Record<string, prop | style | attribute>;
+    if (!condition) return true;
+    const nodeAccessor: string = ({ props: 'props', styles: 'style', attributes: 'attributes' })[ key ];
+
+    const value = node[ nodeAccessor ]?.[ condition.key ] ?? (metadata[ key ] as genericMeta)[ condition.key ].default;
+    let result = value == condition.value;
+    if (condition.comparison === 'different')
+        result = !result;
+
+    if ('or' in condition)
+        result = result || isPanelPropertyVisible(node, metadata, condition.or, key);
+    else if ('and' in condition)
+        result = result && isPanelPropertyVisible(node, metadata, condition.and, key);
+
+    return result;
+};
+
+export { cssFromConfig, storage, cookies, awaitable, hasAuthority, validPassword, validName, isPanelPropertyVisible };
