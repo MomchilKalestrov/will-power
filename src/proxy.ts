@@ -11,14 +11,15 @@ const next = (request: NextRequest): NextResponse => {
 
 const authenticate = async (request: NextRequest): Promise<NextResponse> => {
     const token = await getToken({ req: request });
+    if (token) return next(request);
 
-    if (!token)
-        return NextResponse.redirect(new URL(
-            '/admin/auth/login',
-            request.url
-        ));
-    
-    return next(request);
+    const params = request.nextUrl.searchParams;
+    params.set('callbackUrl', request.url);
+
+    return NextResponse.redirect(new URL(
+        '/admin/auth/login?' + params.toString(),
+        request.url
+    ));
 };
 
 export const proxy = (request: NextRequest): NextResponse | Promise<NextResponse> => {
