@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
-import { awaitable } from '@/lib/utils';
 import { usePlugins } from '@/components/pluginsProvider';
+import { awaitable, validName } from '@/lib/utils';
 
 type componentData = {
     Icon: React.ComponentType<any>;
@@ -43,7 +43,7 @@ const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
                 .map(({ components }) => components)
                 .flat()
                 .filter(({ metadata }) => metadata.type === 'component')
-                .map((component) => [
+                .map(component => [
                     component.metadata.name,
                     component
                 ])
@@ -51,7 +51,7 @@ const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     , [ plugins ]);
 
     const getComponent = React.useCallback(async (type: string): Promise<componentData | null> => {
-        if (!type.match(/^[a-zA-Z]+$/)) return null;
+        if (!validName(type)) return null;
 
         if (components.has(type))
             return components.get(type)!;
@@ -61,7 +61,7 @@ const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
                 pluginComponents.get(type) ??
                 require(`@/components/blocks/${ type }`);
         } catch (error) {
-            console.log('failed getting the component', error)
+            console.error('failed getting the component', error)
             return null;
         };
 

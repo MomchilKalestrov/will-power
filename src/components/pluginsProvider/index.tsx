@@ -85,12 +85,12 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
                     :   await import(
                             /* webpackIgnore: true */
                             `plugins/${ plugin.name }/index.js`
-                        );   
+                        );
                     var parsedModule = pluginModuleSchema.parse(module) as any;
+                    newState.set(plugin.name, { ...plugin, ...parsedModule });
                 } catch (error) {
-                    console.log('Malformed plugin: ' + plugin.name, error);
+                    console.error('Malformed plugin: ' + plugin.name, error);
                 };
-                newState.set(plugin.name, { ...plugin, ...parsedModule });
             }
             setPlugins(newState);
         })();
@@ -139,7 +139,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
         return `${ name } has been toggled ${ newPlugins[ index ].enabled ? 'on' : 'off' }.`;
     }, [ config, updateConfig ]);
-
+    
     if (!plugins) return (<></>);
 
     return (

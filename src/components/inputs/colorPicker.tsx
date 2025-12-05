@@ -23,7 +23,6 @@ const BaseColorPicker: React.FC<{
         },
         [ value ]
     );
-    console.log('a', a)
     
     const onColorChange = React.useCallback((event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         if (!event.currentTarget) return;
