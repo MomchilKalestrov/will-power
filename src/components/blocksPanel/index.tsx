@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
-import { useComponentDb, type componentData } from '@/components/componentDbProvider';
-import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { useComponentDb, type componentData } from '@/components/componentDbProvider';
 
 type Props = {
     onNodeAdd: (type: string, acceptChildren: boolean) => void;
@@ -13,8 +13,7 @@ const ComponentButton: React.FC<Props & { type: string }> = ({ type, onNodeAdd }
     const [ Data, setData ] = React.useState<componentData | null>();
 
     React.useEffect(() => {
-        getComponent(type)
-            .then(setData)
+        getComponent(type).then(setData);
     }, [ type ]);
 
     if (!Data) return (<></>);
@@ -26,7 +25,9 @@ const ComponentButton: React.FC<Props & { type: string }> = ({ type, onNodeAdd }
             onClick={ () => onNodeAdd(type, Data.metadata.acceptChildren) }
         >
             <Data.Icon className='size-[50%] opacity-75' />
-            <span className='mt-2 text-sm font-semibold'>{ type }</span>
+            <span className='mt-2 text-sm font-semibold capitalize'>
+                { type.replace(/([A-Z])/g, ' $1') }
+            </span>
         </Button>
     );
 };
@@ -41,12 +42,12 @@ const BlockPanel: React.FC<Props> = ({ onNodeAdd }) => {
             <div className='overflow-y-scroll'>
                 <div className='grid gap-2 grid-cols-[repeat(auto-fit,minmax(calc(var(--spacing)*26),1fr))]'>
                     { components.map((componentType) => (
-                    <ComponentButton
-                        key={ componentType }
-                        type={ componentType }
-                        onNodeAdd={ onNodeAdd }
-                    />
-                )) }
+                        <ComponentButton
+                            key={ componentType }
+                            type={ componentType }
+                            onNodeAdd={ onNodeAdd }
+                        />
+                    )) }
                 </div>
             </div>
         </div>
