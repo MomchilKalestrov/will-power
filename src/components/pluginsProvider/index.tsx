@@ -86,6 +86,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
                             /* webpackIgnore: true */
                             `plugins/${ plugin.name }/index.js`
                         );
+                    
                     var parsedModule = pluginModuleSchema.parse(module) as any;
                     newState.set(plugin.name, { ...plugin, ...parsedModule });
                 } catch (error) {

@@ -15,11 +15,6 @@ const editorVisibilityCondition: z.ZodType<any> = z.lazy(() =>
         z.object({
             key: z.string(),
             value: z.string(),
-            comparison: z.enum([ 'equal', 'different' ]).optional()
-        }),
-        z.object({
-            key: z.string(),
-            value: z.string(),
             and: editorVisibilityCondition,
             comparison: z.enum([ 'equal', 'different' ]).optional()
         }),
@@ -27,6 +22,11 @@ const editorVisibilityCondition: z.ZodType<any> = z.lazy(() =>
             key: z.string(),
             value: z.string(),
             or: editorVisibilityCondition,
+            comparison: z.enum([ 'equal', 'different' ]).optional()
+        }),
+        z.object({
+            key: z.string(),
+            value: z.string(),
             comparison: z.enum([ 'equal', 'different' ]).optional()
         })
     ])

@@ -3,8 +3,6 @@ import { Toaster } from 'sonner';
 import { ComponentDbProvider } from '@/components/componentDbProvider';
 //@ts-ignore
 import './globals.css';
-//@ts-ignore
-import './admin/globals.css';
 import { ConfigProvider } from '@/components/configProvider';
 import { PluginsProvider } from '@/components/pluginsProvider';
 import { FileSelectorProvider } from '@/components/fileSelector';
