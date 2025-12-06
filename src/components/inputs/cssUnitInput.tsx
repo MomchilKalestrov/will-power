@@ -23,7 +23,7 @@ const CssUnitInput: React.FC<{
         let detectedUnit: string;
         if (value.length !== 0)
             if (!value.includes('('))
-                detectedUnit = units.find(u => value && value.includes(u)) || 'custom';
+                detectedUnit = units.find(unit => value && value.includes(unit)) || 'custom';
             else
                 detectedUnit = 'custom';
         else

@@ -111,7 +111,7 @@ type Props = {
 
 const Component: React.FC<React.PropsWithChildren<Props>> = ({
     children,
-    entries = [],
+    entries = [ 'Title' ],
     defaultOpen = 1,
     style = {},
     ...props

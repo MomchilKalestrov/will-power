@@ -33,7 +33,8 @@ export const components = [
         Component: ({
             children,
             onSubmit: onSubmitCode = 'alert("Result: " + JSON.stringify(submission));',
-            title = 'Form'
+            title = 'Form',
+            style = {}
         }) => {
             const uuid = React.useMemo(() => crypto.randomUUID(), []);
             const onSubmit = React.useCallback(({ currentTarget }) => {
@@ -45,7 +46,8 @@ export const components = [
                 'form',
                 {
                     key: `${ uuid }-div`,
-                    onSubmit
+                    onSubmit,
+                    style
                 },
                 [
                     React.createElement(
@@ -76,9 +78,111 @@ export const components = [
                     default: 'Form'
                 }
             },
-            styles: {},
+            styles: {
+                color: {
+                    type: 'color',
+                    default: '#000000',
+                    in: 'Styling'
+                },
+                background: {
+                    type: 'background',
+                    default: 'unset',
+                    in: 'Styling'
+                },
+                font: {
+                    type: 'font',
+                    default: 'normal normal 1rem "Times New Roman", sans-serif',
+                    in: 'Styling'
+                },
+                boxShadow: {
+                    type: 'shadow',
+                    default: 'none',
+                    in: 'Styling'
+                },
+                borderRadius: {
+                    type: 'css-units',
+                    default: '0px 0px 0px 0px',
+                    units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+                    count: 4,
+                    in: 'Styling'
+                },
+                width: {
+                    type: 'css-units',
+                    default: '100%',
+                    units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+                    in: 'Sizing',
+                },
+                height: {
+                    type: 'css-units',
+                    default: '100%',
+                    units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+                    in: 'Sizing',
+                },
+                boxSizing: {
+                    type: 'keyword',
+                    default: 'content-box',
+                    in: 'Sizing'
+                },
+                margin: {
+                    type: 'css-units',
+                    default: '0px',
+                    count: 4,
+                    units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+                    in: 'Positioning'
+                },
+                position: {
+                    type: 'keyword',
+                    default: 'static',
+                    in: 'Positioning'
+                },
+                top: {
+                    type: 'css-units',
+                    default: '0px',
+                    units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+                    in: 'Positioning',
+                    condition: {
+                        key: 'position',
+                        value: 'static',
+                        comparison: 'different'
+                    }
+                },
+                left: {
+                    type: 'css-units',
+                    default: '0px',
+                    units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+                    in: 'Positioning',
+                    condition: {
+                        key: 'position',
+                        value: 'static',
+                        comparison: 'different'
+                    }
+                },
+                padding: {
+                    type: 'css-units',
+                    default: '0px 0px 0px 0px',
+                    count: 4,
+                    units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+                    in: 'Sizing'
+                },
+                gap: {
+                    type: 'css-units',
+                    default: '0px',
+                    count: 2,
+                    units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+                    in: 'Layout'
+                },
+            },
             attributes: {},
-            enumerators: {},
+            enumerators: {
+                boxSizing: {
+                    values: [ 'border-box', 'content-box' ],
+                    icon: false
+                },
+                position: {
+                    values: [ 'static', 'relative', 'fixed', 'sticky', 'absolute' ],
+                    icon: false
+                }
+            },
             acceptChildren: true,
             name: 'Form',
             type: 'component'
@@ -112,7 +216,7 @@ export const components = [
             type = 'text',
             min = '0',
             max = '100',
-            options = [],
+            options = [ '' ],
             required = 'false'
         }) => {
             const uuid = React.useMemo(() => crypto.randomUUID(), []);
