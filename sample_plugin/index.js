@@ -1,5 +1,3 @@
-const FormCTX = React.createContext();
-
 export const components = [
     {
         Icon: props =>
@@ -34,49 +32,35 @@ export const components = [
             ),
         Component: ({
             children,
-            onSubmit: onSubmitCode = 'alert("Result: " + JSON.stringify(submission));'
+            onSubmit: onSubmitCode = 'alert("Result: " + JSON.stringify(submission));',
+            title = 'Form'
         }) => {
-            const [ values, setValues ] = React.useState({});
-            const onSubmit = React.useCallback(() => {
-                const submission = Object.freeze(
-                    Object.fromEntries(
-                        Object.entries(values)
-                            .map(([ key, value ]) => 
-                                [ key, value instanceof Set ? [ ...value ] : value ]
-                            )
-                    )
-                );
-
-                eval(onSubmitCode);
-            }, [ values, onSubmitCode ]);
-            const updateValue = React.useCallback((key, value) =>
-                setValues(state => ({ ...state, [ key ]: value }))
-            , []);
             const uuid = React.useMemo(() => crypto.randomUUID(), []);
+            const onSubmit = React.useCallback(({ currentTarget }) => {
+                const submission = new FormData(currentTarget);
+                eval(onSubmitCode);
+            }, [ onSubmitCode ]);
 
             return React.createElement(
-                FormCTX.Provider,
+                'form',
                 {
-                    value: { onSubmit, updateValue, values },
-                    key: uuid
+                    key: `${ uuid }-div`,
+                    onSubmit
                 },
                 [
                     React.createElement(
-                        'div',
+                        'p',
+                        { key: `${ uuid }-title` },
+                        [ title ]
+                    ),
+                    ...children,
+                    React.createElement(
+                        'button',
                         {
+                            onClick: onSubmit,
                             key: `${ uuid }-div`
                         },
-                        [
-                            ...children,
-                            React.createElement(
-                                'button',
-                                {
-                                    onClick: onSubmit,
-                                    key: `${ uuid }-div`
-                                },
-                                'Submit'
-                            )
-                        ]
+                        'Submit'
                     )
                 ]
             );
@@ -128,54 +112,21 @@ export const components = [
             type = 'text',
             min = '0',
             max = '100',
-            options = []
+            options = [],
+            required = 'false'
         }) => {
-            const context = React.useContext(FormCTX);
-            const onChange = React.useCallback((event) => {
-                if (!context || !event.currentTarget) return;
-                const { updateValue, values } = context;
-                const { value: targetValue } = event.currentTarget;
-
-                let value;
-                switch (type) {
-                    case 'radio':
-                    case 'checkbox':
-                        value = new Set(type === 'radio' ? [] : values[ label ]);
-                        if (value.has(targetValue))
-                            value.delete(targetValue);
-                        else
-                            value.add(targetValue);
-                        break;
-                    case 'text':
-                        value = targetValue;
-                        break;
-                    case 'number':
-                        value = Number(targetValue);
-                        break;
-                };
-
-                updateValue(label, value);
-            }, [ context, type ]);
             const uuid = React.useMemo(() => crypto.randomUUID(), []);
 
-            if (!context) return '"Form Input" cannot be used outside a "Form" block.';
-            const { values } = context;
-            
-            const value = values[ label ];
             switch (type) {
                 case 'checkbox':
                 case 'radio':
                     return React.createElement(
                         'div',
-                        {
-                            key: `${ label }-container`
-                        },
+                        { key: `${ label }-container` },
                         [
                             React.createElement(
                                 'label',
-                                {
-                                    key: `${ label }-label`
-                                },
+                                { key: `${ label }-label` },
                                 [ label ]
                             ),
                             ...options.map(option =>
@@ -186,12 +137,10 @@ export const components = [
                                         React.createElement(
                                             'input',
                                             {
+                                                required: Boolean(required),
                                                 name: label,
                                                 id: uuid,
                                                 type,
-                                                value: option,
-                                                checked: (!!value !== false) && value.has(option),
-                                                onChange,
                                                 key: `${ option }-input`
                                             }
                                         ),
@@ -213,13 +162,15 @@ export const components = [
                     return React.createElement(
                         'input',
                         {
-                            onChange,
                             type,
                             placeholder: label,
                             min,
                             max,
+                            required: Boolean(required),
                             key: `${ label }-container`,
-                            value: value?.toString() ?? ''
+                            style: {
+                                display: 'block'
+                            }
                         }
                     );
             };
@@ -273,6 +224,10 @@ export const components = [
                             comparison: 'equal'
                         }
                     }
+                },
+                required: {
+                    type: 'enum',
+                    default: 'false'
                 }
             },
             styles: {},
@@ -280,6 +235,9 @@ export const components = [
             enumerators: {
                 type: {
                     values: [ 'text', 'number', 'radio', 'checkbox' ]
+                },
+                required: {
+                    values: [ 'true', 'false' ]
                 }
             },
             acceptChildren: false,
