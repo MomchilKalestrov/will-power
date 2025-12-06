@@ -49,8 +49,7 @@ const StyleFields: React.FC<Props> = ({
                                 { styles.map((style) => {
                                     const currentValue = node.style?.[ style.key ] ?? style.default;
 
-                                    if (!isPanelPropertyVisible(node, metadata, style.condition, 'styles'))
-                                        return (<></>);
+                                    if (!isPanelPropertyVisible(node, metadata, style.condition, 'styles')) return;
 
                                     switch(style.type) {
                                         case 'font':

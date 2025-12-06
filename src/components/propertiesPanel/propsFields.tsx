@@ -234,8 +234,7 @@ const PropsFields: React.FC<Props> = ({
                 const currentValue = node.props?.[ key ] ?? prop.default;
                 const name = key.replace(/([A-Z])/g, ' $1');
 
-                if (!isPanelPropertyVisible(node, metadata, prop.condition, 'props'))
-                    return (<></>);
+                if (!isPanelPropertyVisible(node, metadata, prop.condition, 'props')) return;
 
                 switch (prop.type) {
                     case 'string':
