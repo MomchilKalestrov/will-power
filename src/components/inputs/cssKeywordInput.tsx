@@ -9,14 +9,14 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
-interface CssKeywordInputProps {
+type Props = {
     value: string;
     onChange: (newValue: string) => void;
     options: string[];
     id: string;
 };
 
-const CssKeywordInput: React.FC<CssKeywordInputProps> = ({
+const CssKeywordInput: React.FC<Props> = ({
     value,
     onChange,
     options,

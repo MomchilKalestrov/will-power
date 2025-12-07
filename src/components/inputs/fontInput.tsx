@@ -17,7 +17,7 @@ import CssKeywordInput from './cssKeywordInput';
 type Props = {
     value: string | fontVariable;
     onChange: (newValue: string) => void;
-    noVars?: boolean
+    noVars?: boolean;
 };
 
 const FontInput: React.FC<Props> = ({

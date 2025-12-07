@@ -9,13 +9,15 @@ import {
 } from '@/components/ui/select'
 import { Input } from '@/components/ui/input';
 
-const CssUnitInput: React.FC<{
+type Props = {
     value: string;
     units: string[];
     onChange: (newValue: string) => void;
     count?: number;
     allowCustom?: boolean;
-}> = ({ value, units, onChange, count = 1, allowCustom = true }) => {
+};
+
+const CssUnitInput: React.FC<Props> = ({ value, units, onChange, count = 1, allowCustom = true }) => {
     const [ currentValues, setCurrentValues ] = React.useState<string[]>([]);
     const [ currentUnit, setCurrentUnit ] = React.useState<string>('');
 

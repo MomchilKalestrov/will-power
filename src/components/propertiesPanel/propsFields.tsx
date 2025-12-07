@@ -1,9 +1,7 @@
 'use client';
 import React from 'react';
-import MonacoEditor from '@monaco-editor/react';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 
-import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -15,8 +13,10 @@ import {
     CollapsibleTrigger
 } from '@/components/ui/collapsible';
 
+import CodeInput from '@/components/inputs/codeInput';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 import AdvancedTextarea from '@/components/inputs/advancedTextarea';
+
 import { getObjectPropertyDefault } from '@/lib/propsFiller';
 import { isPanelPropertyVisible } from '@/lib/utils';
 
@@ -286,21 +286,10 @@ const PropsFields: React.FC<Props> = ({
                         return (
                             <div key={ key } className='grid gap-2'>
                                 <Label className='capitalize'>{ name }</Label>
-                                <Card className='py-0 overflow-hidden'>
-                                    <MonacoEditor
-                                        defaultValue={ currentValue }
-                                        language='html'
-                                        theme={
-                                            document.body.classList.contains('dark')
-                                            ?   'vs-dark'
-                                            :   'light'
-                                        }
-                                        onChange={ text => {
-                                            handleChange(key, text || '', 'props');
-                                        } }
-                                        className='h-64'
-                                    />
-                                </Card>
+                                <CodeInput
+                                    value={ currentValue }
+                                    onChange={ value => handleChange(key, value || '', 'props') }
+                                />
                             </div>
                         );
                     case 'custom':
