@@ -110,11 +110,17 @@ export const pluginModuleSchema = z.object({
             Icon: z.function(),
             Component: z.function(),
             metadata: blockMetadataSchema.extend({
-                name: z.string().refine(validName, { error: 'The component has an invalid name.' }),
-                type: z.enum([ 'page', 'component' ])
+                name: z.string().refine(validName, { error: 'The component has an invalid name.' })
             }) 
         })
-    )
+    ).optional(),
+    pages: z.array(
+        z.object({
+            Component: z.function(),
+            name: z.string().refine(validName, { error: 'The component has an invalid name.' })
+        })
+    ).optional(),
+    onLoad: z.function().optional()
 });
 
 export const configSchema = z.object({

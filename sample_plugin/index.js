@@ -184,8 +184,7 @@ export const components = [
                 }
             },
             acceptChildren: true,
-            name: 'Form',
-            type: 'component'
+            name: 'Form'
         }
     },
     {
@@ -345,8 +344,7 @@ export const components = [
                 }
             },
             acceptChildren: false,
-            name: 'Form_Input',
-            type: 'component'
+            name: 'Form_Input'
         }
     },
 ];

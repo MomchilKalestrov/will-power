@@ -55,7 +55,13 @@ export const addPlugin = async (data: FormData): serverActionResponse<plugin> =>
 
     for (const file of archive.getEntries())
         if (!file.entryName.endsWith('/')) {
-            const data = archive.readAsText(file);
+            const data = archive.readFile(file);
+            
+            if (!data) {
+                console.error('[plugins] addPlugin error: data is null.');
+                continue;
+            };
+
             await addBlob(`/plugins/${ metadata.name }/${ file.entryName }`, data, {
                 access: 'public'
             });

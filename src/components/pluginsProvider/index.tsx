@@ -1,4 +1,5 @@
 'use client';
+import type z from 'zod';
 import React from 'react';
 import ReactDom from 'react-dom';
 import ReactJsxRuntime from 'react/jsx-runtime';
@@ -6,20 +7,14 @@ import ReactJsxRuntime from 'react/jsx-runtime';
 import { useConfig } from '@/components/configProvider';
 
 import { pluginModuleSchema } from '@/lib/zodSchemas';
+
 import * as pluginActions from '@/lib/actions/plugin';
 import * as configActions from '@/lib/actions/config';
+
 import * as componentActions from '@/lib/db/actions/component';
 
-type pluginInstance = plugin & {
-    components: ({
-        Icon: React.ComponentType<any>;
-        Component: React.ComponentType<any>;
-        metadata: NodeMetadata & {
-            name: string;
-            type: 'page' | 'component';
-        };
-    })[];
-};
+
+type pluginInstance = plugin & z.infer<typeof pluginModuleSchema>;
 
 class WP {
     components: typeof componentActions;
@@ -78,7 +73,8 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     React.useEffect(() => {
         (async () => {
             const newState = new Map<string, pluginInstance>();
-            for (const plugin of config.plugins) {    
+
+            for (const plugin of config.plugins)
                 try {
                     const module = plugins?.has(plugin.name)
                     ?   plugins.get(plugin.name)!
@@ -86,13 +82,14 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
                             /* webpackIgnore: true */
                             `plugins/${ plugin.name }/index.js`
                         );
-                    
-                    var parsedModule = pluginModuleSchema.parse(module) as any;
-                    newState.set(plugin.name, { ...plugin, ...parsedModule });
+                    var parsedModule = pluginModuleSchema.parse(module);
+                    newState.set(plugin.name, { ...plugin, ...parsedModule } as pluginInstance);
+
+                    parsedModule.onLoad?.();
                 } catch (error) {
                     console.error('Malformed plugin: ' + plugin.name, error);
                 };
-            }
+            
             setPlugins(newState);
         })();
     }, [ config.plugins ]);

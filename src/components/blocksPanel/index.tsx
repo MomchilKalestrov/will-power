@@ -26,7 +26,7 @@ const ComponentButton: React.FC<Props & { type: string }> = ({ type, onNodeAdd }
         >
             <Data.Icon className='size-[50%] opacity-75' />
             <span className='mt-2 text-sm font-semibold capitalize'>
-                { type.replace(/([A-Z])/g, ' $1') }
+                { type.replace('_', ' ') }
             </span>
         </Button>
     );

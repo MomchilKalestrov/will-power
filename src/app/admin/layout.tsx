@@ -77,10 +77,10 @@ const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin'>>
     const pluginPages = React.useMemo<[ string, string ][]>(() =>
         [ ...plugins.values() ]
             .filter(({ enabled }) => enabled)
-            .map(({ components }) => components)
+            .map(({ pages }) => pages)
             .flat()
-            .filter(({ metadata }) => metadata.type === 'page')
-            .map<[ string, string ]>(({ metadata }) => [
+            .filter(Boolean)
+            .map<[ string, string ]>(({ metadata }: any) => [
                 metadata.name,
                 `/admin/plugin/${ encodeURI(metadata.name) }`
             ] as [ string, string ])
