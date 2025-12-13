@@ -3,7 +3,7 @@ import React from 'react';
 import { NextPage } from 'next';
 import { notFound, usePathname, useRouter } from 'next/navigation';
 
-import { usePlugins } from '@/components/pluginsProvider';
+import { usePlugins } from '@/contexts/plugins';
 
 const Page: NextPage<PageProps<'/admin/plugin/[...params]'>> = ({ params: slugs }) => {
     const { params: [ page, ...params ] } = React.use(slugs);

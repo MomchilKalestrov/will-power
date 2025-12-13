@@ -12,7 +12,7 @@ import Logo from '@/components/icons/logo';
 import TreePanel from '@/components/treePanel';
 import BlockPanel from '@/components/blocksPanel';
 import PropertiesPanel from '@/components/propertiesPanel';
-import { useComponentDb } from '@/components/componentDbProvider';
+import { useComponents } from '@/contexts/components';
 
 import { storage } from '@/lib/utils';
 import { saveComponent } from '@/lib/db/actions';
@@ -71,7 +71,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
     const [ selectedNode, setSelectedNode ] = React.useState<ComponentNode | undefined>();
     const [ nodeMetadata, setNodeMetadata ] = React.useState<NodeMetadata | undefined>();
     const [ settingsOpen, setSettingsOpen ] = React.useState<boolean>(false);
-    const { getComponent } = useComponentDb();
+    const { getComponent } = useComponents();
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
     React.useEffect(() => {

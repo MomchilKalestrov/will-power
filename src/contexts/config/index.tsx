@@ -5,14 +5,13 @@ import { getConfig, setConfig as setBackendConfig } from '@/lib/actions';
 const ConfigCTX = React.createContext<{
     config: config,
     updateConfig: (newConfig: Partial<config>, updateBackend?: boolean) => Promise<void>
-}>({
-    config: null as unknown as config,
-    updateConfig: () => {
-        throw new Error('There is no config Provider!')
-    }
-});
+} | undefined>(undefined);
 
-const useConfig = () => React.useContext(ConfigCTX);
+const useConfig = () => {
+    const value = React.useContext(ConfigCTX);
+    if (!value) throw new Error('useConfig must be used within a ConfigProvider');
+    return value;
+};
 
 const ConfigProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const [ config, setConfig ] = React.useState<config | undefined>();

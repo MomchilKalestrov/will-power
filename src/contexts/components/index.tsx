@@ -1,26 +1,29 @@
 'use client';
 import React from 'react';
-import { usePlugins } from '@/components/pluginsProvider';
+import { usePlugins } from '@/contexts/plugins';
 import { awaitable, validName } from '@/lib/utils';
 
-type componentData = {
-    Icon: React.ComponentType<any>;
-    Component: React.ComponentType<any>;
-    metadata: NodeMetadata & {
-        name: string;
-        type: "page" | "component";
+declare global {
+    type componentData = {
+        Icon: React.ComponentType<any>;
+        Component: React.ComponentType<any>;
+        metadata: NodeMetadata & {
+            name: string;
+            type: "page" | "component";
+        };
     };
 };
 
-const ComponentDbCTX = React.createContext<{
+const ComponentsCTX = React.createContext<{
     getComponent: (type: string) => Promise<componentData | null>;
     components: string[]
-}>({
-    getComponent: async () => null,
-    components: []
-});
+} | undefined>(undefined);
 
-const useComponentDb = () => React.useContext(ComponentDbCTX);
+const useComponents = () => {
+    const value = React.useContext(ComponentsCTX);
+    if (!value) throw new Error('useComponents must be used within a ComponentsProvider');
+    return value;
+};
 
 const baseComponentNames = [
     'Container',
@@ -33,7 +36,7 @@ const baseComponentNames = [
     'Link'
 ];
 
-const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+const ComponentsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const [ components, setComponents ] = React.useState<Map<string, componentData>>(new Map());
     const { plugins } = usePlugins();
     const pluginComponents = React.useMemo<Map<string, componentData>>(() =>
@@ -75,13 +78,13 @@ const ComponentDbProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     }, [ components, pluginComponents ]);
 
     return (
-        <ComponentDbCTX.Provider value={ {
+        <ComponentsCTX.Provider value={ {
             getComponent,
             components: [ ...baseComponentNames, ...pluginComponents.keys() ]
         } }>
             { children }
-        </ComponentDbCTX.Provider>
+        </ComponentsCTX.Provider>
     );
 };
 
-export { useComponentDb, ComponentDbProvider, type componentData };
+export { useComponents, ComponentsProvider };

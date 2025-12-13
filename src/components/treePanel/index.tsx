@@ -2,7 +2,7 @@
 import React from 'react';
 import { ChevronDown, ChevronRight, ChevronUp, SquareDashed, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useComponentDb } from '@/components/componentDbProvider';
+import { useComponentDb } from '@/contexts/components';
 import { cn } from '@/lib/utils';
 
 type Props = {

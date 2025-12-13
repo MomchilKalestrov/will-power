@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { useComponentDb, type componentData } from '@/components/componentDbProvider';
+import { useComponentDb, type componentData } from '@/contexts/components';
 
 type Props = {
     onNodeAdd: (type: string, acceptChildren: boolean) => void;

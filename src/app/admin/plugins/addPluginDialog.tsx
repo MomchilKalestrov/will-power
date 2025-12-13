@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 
-import { usePlugins } from '@/components/pluginsProvider';
+import { usePlugins } from '@/contexts/plugins';
 
 const AddPluginDialog: React.FC = () => {
     const { addPlugin } = usePlugins();

@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useConfig } from '@/components/configProvider';
+import { useConfig } from '@/contexts/config';
 import * as themeActions from '@/lib/actions/theme';
 
 
@@ -10,21 +10,13 @@ const ThemesCTX = React.createContext<{
     addTheme: ((theme: Blob) => Promise<string>);
     removeTheme: ((name: string) => Promise<string>);
     selectTheme: ((name: string) => Promise<string>);
-}>({
-    themes: [],
-    theme: 'There is no theme Provider!',
-    addTheme: () => {
-        throw new Error('There is no theme Provider!');
-    },
-    removeTheme: () => {
-        throw new Error('There is no theme Provider!');
-    },
-    selectTheme: () => {
-        throw new Error('There is no theme Provider!');
-    }
-});
+} | undefined>(undefined);
 
-const useThemes = () => React.useContext(ThemesCTX);
+const useThemes = () => {
+    const value = React.useContext(ThemesCTX);
+    if (!value) throw new Error('useThemes should be used within a ThemesProvider');
+    return value;
+};
 
 const ThemesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const { config, updateConfig } = useConfig();

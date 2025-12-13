@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 
-import { usePlugins } from '@/components/pluginsProvider';
+import { usePlugins } from '@/contexts/plugins';
 
 import defaultPluginThumbnail from './defaultPlugin.png';
 

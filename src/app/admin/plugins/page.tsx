@@ -1,7 +1,7 @@
 'use client';
 import { NextPage } from 'next';
 
-import { usePlugins } from '@/components/pluginsProvider';
+import { usePlugins } from '@/contexts/plugins';
 
 import PluginCard from './pluginCard';
 import AddPluginDialog from './addPluginDialog';

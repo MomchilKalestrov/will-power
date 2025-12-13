@@ -1,10 +1,10 @@
 import React from 'react';
 import { Toaster } from 'sonner';
-import { ComponentDbProvider } from '@/components/componentDbProvider';
+import { ComponentsProvider } from '@/contexts/components';
 //@ts-ignore
 import './globals.css';
-import { ConfigProvider } from '@/components/configProvider';
-import { PluginsProvider } from '@/components/pluginsProvider';
+import { ConfigProvider } from '@/contexts/config';
+import { PluginsProvider } from '@/contexts/plugins';
 import { FileSelectorProvider } from '@/components/fileSelector';
 
 const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
@@ -28,9 +28,9 @@ const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
             <FileSelectorProvider>
                 <ConfigProvider>
                     <PluginsProvider>
-                        <ComponentDbProvider>
+                        <ComponentsProvider>
                             { children }
-                        </ComponentDbProvider>
+                        </ComponentsProvider>
                     </PluginsProvider>
                 </ConfigProvider>
             </FileSelectorProvider>

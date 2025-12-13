@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import ReactDom from 'react-dom';
 import ReactJsxRuntime from 'react/jsx-runtime';
 
-import { useConfig } from '@/components/configProvider';
+import { useConfig } from '@/contexts/config';
 
 import { pluginModuleSchema } from '@/lib/zodSchemas';
 
@@ -50,20 +50,13 @@ const PluginsCTX = React.createContext<{
     addPlugin: ((plugin: Blob) => Promise<string>);
     removePlugin: ((name: string) => Promise<string>);
     togglePlugin: ((name: string) => Promise<string>);
-}>({
-    plugins: new Map(),
-    addPlugin: () => {
-        throw new Error('There is no plugin Provider!');
-    },
-    removePlugin: () => {
-        throw new Error('There is no plugin Provider!');
-    },
-    togglePlugin: () => {
-        throw new Error('There is no plugin Provider!');
-    }
-});
+} | undefined>(undefined);
 
-const usePlugins = () => React.useContext(PluginsCTX);
+const usePlugins = () => {
+    const value = React.useContext(PluginsCTX);
+    if (!value) throw new Error('usePlugins should be used within a PluginsProvider');
+    return value;
+};
 
 const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const { config, updateConfig } = useConfig();

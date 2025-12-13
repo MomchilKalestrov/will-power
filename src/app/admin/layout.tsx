@@ -28,8 +28,8 @@ import {
 } from '@/components/ui/sidebar';
 import { Label } from '@/components/ui/label';
 
-import { usePlugins } from '@/components/pluginsProvider';
-import { ThemesProvider } from '@/components/themesProvider';
+import { usePlugins } from '@/contexts/plugins';
+import { ThemesProvider } from '@/contexts/themes';
 import { FileSelectorProvider, useFileSelector } from '@/components/fileSelector';
 
 import { cookies } from '@/lib/utils';

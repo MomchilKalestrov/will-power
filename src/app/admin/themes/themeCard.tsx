@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 
-import { useThemes } from '@/components/themesProvider';
+import { useThemes } from '@/contexts/themes';
 
 import defaultThemeThumbnail from './defaultTheme.png';
 

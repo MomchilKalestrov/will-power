@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useComponentDb } from '@/components/componentDbProvider';
+import { useComponentDb } from '@/contexts/components';
 import Overlay from './overlay';
 
 type Props = {

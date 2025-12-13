@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 
-import { useThemes } from '@/components/themesProvider';
+import { useThemes } from '@/contexts/themes';
 
 const AddThemeDialog: React.FC = () => {
     const { addTheme } = useThemes();

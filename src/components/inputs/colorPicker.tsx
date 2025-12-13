@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
-import { useConfig } from '@/components/configProvider';
+import { useConfig } from '@/contexts/config';
 
 import { hexToHsv, hsvToHex } from '@/lib/color';
 

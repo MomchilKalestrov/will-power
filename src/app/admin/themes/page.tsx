@@ -1,7 +1,7 @@
 'use client';
 import { NextPage } from 'next';
 
-import { useThemes } from '@/components/themesProvider';
+import { useThemes } from '@/contexts/themes';
 
 import AddThemeDialog from './addThemeDialog';
 import ThemeCard from './themeCard';

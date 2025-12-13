@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
 import FontInput from '@/components/inputs/fontInput';
-import { useConfig } from '@/components/configProvider';
+import { useConfig } from '@/contexts/config';
 import ColorPicker from '@/components/inputs/colorPicker';
 import { useFileSelector } from '@/components/fileSelector';
 import CssUnitInput from '@/components/inputs/cssUnitInput';
