@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useComponentDb } from '@/contexts/components';
+import { useComponents } from '@/contexts/components';
 import Overlay from './overlay';
 
 type Props = {
@@ -25,7 +25,7 @@ const RenderNode: React.FC<Props> = ({
     depth = 0,
     onTreeLoaded: onTreeLoadedCallback
 }) => {
-    const { getComponent } = useComponentDb();
+    const { getComponent } = useComponents();
     const [ loadedCount, setLoadedCount ] = React.useState<number>(0);
     const [ Component, setComponent ] = React.useState<React.ComponentType<any> | null | undefined>();
 
