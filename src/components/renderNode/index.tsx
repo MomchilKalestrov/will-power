@@ -26,14 +26,17 @@ const RenderNode: React.FC<Props> = ({
     onTreeLoaded: onTreeLoadedCallback
 }) => {
     const { getComponent } = useComponents();
-    const [ loadedCount, setLoadedCount ] = React.useState<number>(0);
+    const [ _, setLoadedCount ] = React.useState<number>(0);
     const [ Component, setComponent ] = React.useState<React.ComponentType<any> | null | undefined>();
 
     const onTreeLoaded = React.useCallback(() => {
-        setLoadedCount(loadedCount + 1);
-        if (loadedCount + 1 === children.length)
-            onTreeLoadedCallback?.();
-    }, [ loadedCount ]);
+        let flag: boolean = false;
+        setLoadedCount(state => {
+            flag = state + 1 === children.length;
+            return state + 1;
+        });
+        if (flag) onTreeLoadedCallback?.();
+    }, []);
 
     React.useEffect(() => {
         getComponent(type)
