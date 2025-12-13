@@ -52,8 +52,7 @@ const hideNavInRoutes: string[] = [
     '/admin/auth/login',
     '/admin/viewer',
     '/admin/editor',
-    '/admin/logout',
-    '/admin/plugin/'
+    '/admin/logout'
 ];
 
 const FilesButton: React.FC = () => {
@@ -71,36 +70,33 @@ const FilesButton: React.FC = () => {
 const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin'>> = ({
     children
 }) => {
-    const currentPath = usePathname().split('?')[ 0 ];
+    const [ pathname, stringParams ] = usePathname().split('?');
     const { plugins } = usePlugins();
     const [ darkMode, setDarkMode ] = React.useState<boolean>(false);
+    const urlParams = React.useMemo(() => new URLSearchParams(stringParams), [ stringParams ]);
     const pluginPages = React.useMemo<[ string, string ][]>(() =>
         [ ...plugins.values() ]
             .filter(({ enabled }) => enabled)
             .map(({ pages }) => pages)
             .flat()
             .filter(Boolean)
-            .map<[ string, string ]>(({ metadata }: any) => [
-                metadata.name,
-                `/admin/plugin/${ encodeURI(metadata.name) }`
+            .map<[ string, string ]>(({ name }: any) => [
+                name,
+                `/admin/plugin/${ encodeURI(name) }`
             ] as [ string, string ])
     , [ plugins ]);
 
     React.useEffect(() => {
         if (typeof window === 'undefined') return;
         const isDark = cookies.get('darkMode') === 'true';
-        if (
-            !window.location.href.includes('/admin/viewer/') &&
-            !window.location.href.includes('/admin/plugin/') &&
-            isDark
-        )
+        if (!pathname.includes('/admin/viewer/') && isDark)
             document.body.classList.add('dark');
         else
             document.body.classList.remove('dark');
         setDarkMode(isDark);
-    }, [ currentPath ]);
+    }, [ pathname ]);
 
-    if (hideNavInRoutes.some(v => currentPath.startsWith(v)))
+    if (hideNavInRoutes.some(v => pathname.startsWith(v)) || urlParams.get('showSidebar') === 'false')
         return (
             <FileSelectorProvider>
                 <SessionProvider>
@@ -136,7 +132,7 @@ const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin'>>
                                                                 <CollapsibleContent>
                                                                     <SidebarMenuSub>
                                                                         { Object.entries(value).map(([ key, value ]) => (
-                                                                            <SidebarMenuButton isActive={ value === currentPath } key={ key }>
+                                                                            <SidebarMenuButton isActive={ value === pathname } key={ key }>
                                                                                 <Link href={ value }>{ key }</Link>
                                                                             </SidebarMenuButton>
                                                                         )) }
@@ -146,7 +142,7 @@ const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin'>>
                                                         </SidebarMenuItem>
                                                     )
                                                 : (
-                                                    <SidebarMenuButton isActive={ value === currentPath } key={ key }>
+                                                    <SidebarMenuButton isActive={ value === pathname } key={ key }>
                                                         <Link href={ value }>{ key }</Link>
                                                     </SidebarMenuButton>
                                                 )
@@ -163,7 +159,7 @@ const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin'>>
                                                     <CollapsibleContent>
                                                         <SidebarMenuSub>
                                                             { pluginPages.map(([ name, path ]) => (
-                                                                <SidebarMenuButton className='capitalize' isActive={ path === currentPath } key={ name }>
+                                                                <SidebarMenuButton className='capitalize' isActive={ path === pathname } key={ name }>
                                                                     <Link href={ path }>{ name.replace(/([A-Z])/g, ' $1') }</Link>
                                                                 </SidebarMenuButton>
                                                             )) }

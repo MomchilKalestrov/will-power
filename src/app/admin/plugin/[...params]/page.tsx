@@ -1,19 +1,29 @@
 'use client';
 import React from 'react';
 import { NextPage } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, usePathname, useRouter } from 'next/navigation';
 
 import { usePlugins } from '@/components/pluginsProvider';
 
 const Page: NextPage<PageProps<'/admin/plugin/[...params]'>> = ({ params: slugs }) => {
     const { params: [ page, ...params ] } = React.use(slugs);
     const { plugins } = usePlugins();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    React.useEffect(() => {
+        if (!pathname.includes('showSidebar'))
+            router.push(`${ pathname }${ pathname.includes('?') ? '&' : '?' }showSidebar=${ Page.showSidebar }`);
+    }, [ pathname, router ]);
+    
+    type clusterfuck = Exclude<ReturnType<ReturnType<typeof plugins.values>[ 'toArray' ]>[ number ][ 'pages' ], undefined>[ number ] & { Component: (...params: any) => React.JSX.Element };
+
     const Page =
-        [ ...plugins.values() ]
+        [...plugins.values()]
             .map(plugin => plugin.pages)
             .flat()
             .filter(Boolean)
-            .find(({ name }: any) => name === page) as { Component: React.ComponentType<any> } | undefined;
+            .find(({ name }: any) => name === page) as clusterfuck;
     
     if (!Page) return notFound();
 

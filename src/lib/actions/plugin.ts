@@ -211,6 +211,12 @@ export const readDocuments = async (
     from: number | undefined,
     to: number | undefined
 ): serverActionResponse<any> => {
+    if (typeof collectionName !== 'string')
+        return {
+            success: false,
+            reason: 'Cannot omit `collectionName`.'
+        };
+    
     try {
         const connection = (await connect()).connection.useDb('plugins');
         const collection = connection.collection(collectionName);
@@ -221,10 +227,11 @@ export const readDocuments = async (
                 reason: 'Unauthorized action.'
             };
     
-        const query = collection
+        const query = await collection
             .find({})
-            .skip(Number(from) ?? 0)
-            .limit(Number(to) ?? 0);
+            .skip(Number(from) || 0)
+            .limit(Number(to) || 0)
+            .toArray();
         
         return {
             success: true,

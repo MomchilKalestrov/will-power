@@ -1,6 +1,7 @@
 'use client';
 import type z from 'zod';
 import React from 'react';
+import { toast } from 'sonner';
 import ReactDom from 'react-dom';
 import ReactJsxRuntime from 'react/jsx-runtime';
 
@@ -21,12 +22,17 @@ class WP {
     plugins: typeof pluginActions;
     config: typeof configActions;
     storageURL: URL;
+    alert: (message: string) => void;
 
     constructor() {
         this.components = componentActions;
         this.plugins = pluginActions;
         this.config = configActions;
         this.storageURL = new URL(process.env.NEXT_PUBLIC_BLOB_URL!);
+        this.alert = message =>
+            window.location.pathname.startsWith('/admin')
+            ?   toast(message)
+            :   window.alert(message);
     };
 };
 
@@ -62,6 +68,7 @@ const usePlugins = () => React.useContext(PluginsCTX);
 const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const { config, updateConfig } = useConfig();
     const [ plugins, setPlugins ] = React.useState<Map<string, pluginInstance>>();
+    const [ pluginsToInstall, setPluginsToInstall ] = React.useState<Set<string>>(new Set());
 
     React.useEffect(() => {
         window.WP = Object.freeze(new WP());
@@ -83,11 +90,22 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
                             `plugins/${ plugin.name }/index.js`
                         );
                     var parsedModule = pluginModuleSchema.parse(module);
-                    newState.set(plugin.name, { ...plugin, ...parsedModule } as pluginInstance);
 
+                    if (pluginsToInstall.has(plugin.name)) {
+                        await parsedModule.onInstall?.();
+                        setPluginsToInstall(state => {
+                            const newState = new Set(state);
+                            newState.delete(plugin.name);
+                            return newState;
+                        });
+                    };
                     parsedModule.onLoad?.();
+                    
+                    newState.set(plugin.name, { ...plugin, ...parsedModule });
+
                 } catch (error) {
                     console.error('Malformed plugin: ' + plugin.name, error);
+                    newState.set(plugin.name, plugin);
                 };
             
             setPlugins(newState);
@@ -106,6 +124,8 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         await updateConfig({
             plugins: [ ...config.plugins, response.value ]
         }, false);
+
+        setPluginsToInstall(state => new Set([ ...state, response.value.name ]));
 
         return 'Successfully added the plugin.';
     }, [ config, updateConfig ]);
