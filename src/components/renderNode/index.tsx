@@ -35,7 +35,7 @@ const RenderNode: React.FC<Props> = ({
             flag = state + 1 === children.length;
             return state + 1;
         });
-        if (flag) onTreeLoadedCallback?.();
+        flag && onTreeLoadedCallback?.();
     }, []);
 
     React.useEffect(() => {

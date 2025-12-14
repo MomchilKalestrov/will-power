@@ -8,7 +8,7 @@ export const pages = [
             const id = React.useId();
             
             React.useEffect(() => {
-                WP.plugins.readDocuments('telemetry').then(response => {
+                WP.collections.readDocuments('telemetry').then(response => {
                     if (!response.success) setBrowsers(response.reason);
 
                     let buckets = {
@@ -128,7 +128,7 @@ const saveTelemetry = () => {
 
     console.log({ ...ua, timeVisited });
 
-    WP.plugins.createDocument('telemetry', { ...ua, timeVisited })
+    WP.collections.createDocument('telemetry', { ...ua, timeVisited })
         .then((response) =>
             !response.success &&
             console.error('Failed save telemetry: ' + response.reason)
@@ -138,7 +138,7 @@ const saveTelemetry = () => {
 export const onLoad = () => saveTelemetry();
 
 export const onInstall = async () => {
-    const response = await WP.plugins.createCollection('telemetry', [ 'add' ]);
+    const response = await WP.collections.createCollection('telemetry', [ 'add' ]);
     if (!response.success)
         console.error('Failed to create a `telemetry` collection: ' + response.reason);
 };

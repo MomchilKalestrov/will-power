@@ -11,6 +11,7 @@ import { pluginModuleSchema } from '@/lib/zodSchemas';
 
 import * as pluginActions from '@/lib/actions/plugin';
 import * as configActions from '@/lib/actions/config';
+import * as collectionActions from '@/lib/actions/collections';
 
 import * as componentActions from '@/lib/db/actions/component';
 
@@ -18,22 +19,14 @@ import * as componentActions from '@/lib/db/actions/component';
 type pluginInstance = plugin & z.infer<typeof pluginModuleSchema>;
 
 class WP {
-    components: typeof componentActions;
-    plugins: typeof pluginActions;
-    config: typeof configActions;
-    storageURL: URL;
-    alert: (message: string) => void;
-
-    constructor() {
-        this.components = componentActions;
-        this.plugins = pluginActions;
-        this.config = configActions;
-        this.storageURL = new URL(process.env.NEXT_PUBLIC_BLOB_URL!);
-        this.alert = message =>
-            window.location.pathname.startsWith('/admin')
-            ?   toast(message)
-            :   window.alert(message);
-    };
+    components= componentActions;
+    collections = collectionActions;
+    config = configActions;
+    storageURL = new URL(process.env.NEXT_PUBLIC_BLOB_URL!);
+    alert = (message: string) =>
+        window.location.pathname.startsWith('/admin')
+        ?   toast(message)
+        :   window.alert(message);
 };
 
 declare global {
@@ -82,6 +75,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
                             /* webpackIgnore: true */
                             `plugins/${ plugin.name }/index.js`
                         );
+
                     var parsedModule = pluginModuleSchema.parse(module);
 
                     if (pluginsToInstall.has(plugin.name)) {
@@ -92,7 +86,9 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
                             return newState;
                         });
                     };
-                    parsedModule.onLoad?.();
+
+                    if (!plugins?.has(plugin.name))
+                        parsedModule.onLoad?.();
                     
                     newState.set(plugin.name, { ...plugin, ...parsedModule });
 
