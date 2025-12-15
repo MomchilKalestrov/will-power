@@ -11,9 +11,9 @@ import {
     DialogContent,
     DialogDescription
 } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Checkbox } from '../ui/checkbox';
-import { Label } from '../ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type Props = {
     onSend: (file: File) => void;

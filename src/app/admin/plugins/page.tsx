@@ -4,7 +4,6 @@ import { NextPage } from 'next';
 import { usePlugins } from '@/contexts/plugins';
 
 import PluginCard from './pluginCard';
-import AddPluginDialog from './addPluginDialog';
 
 // Oct 21 17:02:29
 // I am back to feeling soulless. Well, I do have feelings. just that they are
@@ -40,7 +39,6 @@ const Page: NextPage = () => {
             { [ ...plugins.values() ].map(plugin => (
                 <PluginCard key={ plugin.name } plugin={ plugin } />
             )) }
-            <AddPluginDialog />
         </div>
     );
 };

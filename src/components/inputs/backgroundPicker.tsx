@@ -1,11 +1,14 @@
 'use client';
 import React from 'react';
-import { Image as ImageIcon, CirclePlus } from 'lucide-react';
 import Image from 'next/image';
+import { Image as ImageIcon, CirclePlus } from 'lucide-react';
+
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useFileSelector } from '@/components/fileSelector';
-import { Label } from '@/components/ui/label';
+
+import { useFileSelector } from '@/contexts/file';
+
 import CssKeywordInput from './cssKeywordInput';
 
 const attachment = [ 'scroll', 'fixed', 'local' ];

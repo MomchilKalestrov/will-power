@@ -3,16 +3,14 @@ import React from 'react';
 import { toast } from 'sonner';
 import { ServerCrash, X } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import {
-    Card,
-    CardTitle,
-    CardFooter,
-    CardHeader,
-    CardContent
-} from '@/components/ui/card';
+    Dialog,
+    DialogTitle,
+    DialogFooter,
+    DialogHeader,
+    DialogContent,
+    DialogDescription
+} from '@/components/ui/dialog';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -21,6 +19,9 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator
 } from '@/components/ui/breadcrumb';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
 import { getBlobList, addBlob, deleteBlob } from '@/lib/actions';
 
@@ -86,11 +87,19 @@ const toTree = (paths: string[]): fileNode => {
     };
 };
 
-const FileSelector: React.FC<{
-    onSelected: (blob: BlobInformation[] | null) => void,
-    fileType: fileTypes,
-    fileCount: fileCount
-}> = ({ onSelected, fileType, fileCount }) => {
+type Props = {
+    onSelected: (blob: BlobInformation[] | null) => void;
+    fileType: fileTypes;
+    fileCount: fileCount;
+    visible: boolean;
+};
+
+const FileSelector: React.FC<Props> = ({
+    onSelected,
+    fileType,
+    fileCount,
+    visible
+}) => {
     const [ selectedFiles, setSelectedFiles ] = React.useState<Set<string>>(new Set<string>());
     const [ files, setFiles ] = React.useState<Record<string, BlobInformation> | null | undefined>();
     const tree = React.useMemo(() =>
@@ -168,27 +177,67 @@ const FileSelector: React.FC<{
             .catch(() => toast('Failed to upload file.')),
         []
     );
-
-
     
     if (files === null)
         return (
-            <div className='fixed p-16 inset-0 z-49 w-dvw h-dvh bg-black/30 backdrop-blur-xs'>
-                <Card className='w-full h-full min-h-0 flex flex-col gap-0 py-4'>
-                    <CardHeader className='flex justify-end items-center px-4'>
+            <Dialog open={ visible } onOpenChange={ open => !open && onSelected(null) }>
+                <DialogContent
+                    showCloseButton={ false }
+                    className='max-w-[100%_!important] w-[calc(100dvw-var(--spacing)*16)] h-[calc(100dvh-var(--spacing)*16)] grid grid-rows-[auto_auto_1fr_auto_auto] p-4 gap-0'
+                >
+                    <DialogHeader className='flex flex-row justify-between items-center'>
+                        <div className='flex gap-2 items-center'>
+                            <AddFileDialog
+                                onSend={ onFileAdd }
+                                accepts={
+                                    fileCount !== 'none'
+                                    ?   formats[ fileType ]
+                                            .map(format => '.' + format)
+                                            .join(',')
+                                    :   undefined
+                                }
+                            />
+                            <DialogTitle className='text-xl'>
+                                <DialogDescription>
+                                    { fileCount !== 'none' && 'Select file' + (fileCount === 'multiple' ? 's' : '') }
+                                </DialogDescription>
+                            </DialogTitle>
+                        </div>
+                        <Breadcrumb>
+                            <BreadcrumbList>
+                                { cwd.map((path, index, { length }) => (
+                                    <React.Fragment key={ 'path-' + index }>
+                                        <BreadcrumbItem>
+                                            <BreadcrumbLink onClick={ () => {
+                                                setCwd(state => state.slice(0, index + 1));
+                                                if (fileCount === 'none')
+                                                    setSelectedFiles(new Set());
+                                            } }>
+                                                {
+                                                    length - 1 === index
+                                                    ?   <BreadcrumbPage>{ path }</BreadcrumbPage>
+                                                    :   path
+                                                }
+                                            </BreadcrumbLink>
+                                        </BreadcrumbItem>
+                                        { index < length - 1 && <BreadcrumbSeparator /> }
+                                    </React.Fragment>
+                                )) }
+                            </BreadcrumbList>
+                        </Breadcrumb>
                         <Button
                             size='icon'
                             variant='outline'
                             onClick={ () => onSelected(null) }
                         ><X /></Button>
-                    </CardHeader>
+                    </DialogHeader>
                     <Separator className='my-4' />
-                    <CardContent className='w-full h-full flex justify-center items-center flex-col opacity-30'>
+                    <div className='min-h-0 grid grid-cols-[1fr_auto] overflow-hidden'>
                         <ServerCrash className='size-27' />
                         <p className='text-xl'>Failed to get files...</p>
-                    </CardContent>
-                </Card>
-            </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
         );
 
     let directoryNode: fileNode | undefined = tree;
@@ -197,9 +246,12 @@ const FileSelector: React.FC<{
             directoryNode = directoryNode?.children![ cwd[ i ] ];
 
     return (
-        <div className='fixed p-16 inset-0 z-49 w-dvw h-dvh bg-black/30 backdrop-blur-xs'>
-            <Card className='w-full h-full min-h-0 flex flex-col gap-0 py-4'>
-                <CardHeader className='flex justify-between items-center px-4'>
+        <Dialog open={ visible } onOpenChange={ open => !open && onSelected(null) }>
+            <DialogContent
+                showCloseButton={ false }
+                className='max-w-[100%_!important] w-[calc(100dvw-var(--spacing)*16)] h-[calc(100dvh-var(--spacing)*16)] grid grid-rows-[auto_auto_1fr_auto_auto] p-4 gap-0'
+            >
+                <DialogHeader className='flex flex-row justify-between items-center'>
                     <div className='flex gap-2 items-center'>
                         <AddFileDialog
                             onSend={ onFileAdd }
@@ -211,9 +263,11 @@ const FileSelector: React.FC<{
                                 :   undefined
                             }
                         />
-                        <CardTitle className='text-xl'>
-                            { fileCount !== 'none' && 'Select file' + (fileCount === 'multiple' ? 's' : '') }
-                        </CardTitle>
+                        <DialogTitle className='text-xl'>
+                            <DialogDescription>
+                                { fileCount !== 'none' && 'Select file' + (fileCount === 'multiple' ? 's' : '') }
+                            </DialogDescription>
+                        </DialogTitle>
                     </div>
                     <Breadcrumb>
                         <BreadcrumbList>
@@ -242,9 +296,9 @@ const FileSelector: React.FC<{
                         variant='outline'
                         onClick={ () => onSelected(null) }
                     ><X /></Button>
-                </CardHeader>
+                </DialogHeader>
                 <Separator className='my-4' />
-                <CardContent className='flex-1 min-h-0 grid grid-cols-[1fr_auto] px-4 overflow-hidden'>
+                <div className='min-h-0 grid grid-cols-[1fr_auto] overflow-hidden'>
                     {
                         files === undefined
                         ?   <div className='w-full flex items-center justify-center'>Loading...</div>
@@ -285,12 +339,12 @@ const FileSelector: React.FC<{
                             onDelete={ onDelete }
                         />
                     }
-                </CardContent>
+                </div>
                 {
                     selectedFiles.size !== 0 && fileCount === 'multiple' &&
                     <>
                         <Separator className='my-4' />
-                        <CardFooter className='px-4'>
+                        <DialogFooter>
                             { [ ...selectedFiles ].map(file => (
                                 <Badge
                                     key={ files![ file ].pathname }
@@ -302,11 +356,11 @@ const FileSelector: React.FC<{
                                     { files![ file ].pathname.split('/').pop() }
                                 </Badge>
                             )) }
-                        </CardFooter>
+                        </DialogFooter>
                     </>
                 }
-            </Card>
-        </div>
+            </DialogContent>
+        </Dialog>
     );
 };
 

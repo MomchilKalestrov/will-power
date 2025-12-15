@@ -34,12 +34,11 @@ const AddPluginDialog: React.FC = () => {
     }, [ file ]);
 
     return (
-
         <Dialog open={ dialogOpen } onOpenChange={ setDialogOpen }>
             <DialogTrigger asChild>
-                <div className='w-[194px] aspect-[384/284.883] basis-64 grow max-w-96 text-center flex justify-center items-center rounded-xl border-2 border-dashed'>
-                    <CirclePlus className='opacity-20' size={ 32 } />
-                </div>
+                <Button variant='outline' size='icon'>
+                    <CirclePlus />
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -48,6 +47,8 @@ const AddPluginDialog: React.FC = () => {
                         Select an <code>.zip</code> archive to upload as a plugin.
                         The archive must contain a <code>metadata.json</code>{ ' ' }
                         and <code>index.js</code> file inside.
+                        <strong className='text-destructive'>DO NOT TRUST RANDOM PLUGINS YOU FOUND ON THE WEB!</strong>
+                        <strong className='text-destructive'>THE DEVELOPERS ARE NOT RESPONSIBLE FOR ANY DAMAGES!</strong>
                     </DialogDescription>
                 </DialogHeader>
                 <Input

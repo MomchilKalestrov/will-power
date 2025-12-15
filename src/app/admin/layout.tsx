@@ -6,33 +6,34 @@ import { usePathname } from 'next/navigation';
 import { SessionProvider } from 'next-auth/react';
 import { NextComponentType, NextPageContext } from 'next';
 
-import { Switch } from '@/components/ui/switch';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
 import {
     Sidebar,
-    SidebarContent,
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarHeader,
-    SidebarInset,
+    SidebarRail,
     SidebarMenu,
-    SidebarMenuButton, 
-    SidebarMenuItem,
+    SidebarInset,
+    SidebarGroup,
+    SidebarHeader,
     SidebarMenuSub,
+    SidebarContent,
     SidebarProvider,
-    SidebarRail
+    SidebarMenuItem,
+    SidebarMenuButton, 
+    SidebarGroupContent
 } from '@/components/ui/sidebar';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 import { usePlugins } from '@/contexts/plugins';
 import { ThemesProvider } from '@/contexts/themes';
-import { FileSelectorProvider, useFileSelector } from '@/components/fileSelector';
+import { FileSelectorProvider, useFileSelector } from '@/contexts/file';
 
 import { cookies } from '@/lib/utils';
+import { DialogProvider } from '@/contexts/dialog';
 
 const pages: Record<string, Record<string, string> | string> = {
     'Home': '/admin/home',
@@ -98,107 +99,111 @@ const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin'>>
 
     if (hideNavInRoutes.some(v => pathname.startsWith(v)) || urlParams.get('showSidebar') === 'false')
         return (
-            <FileSelectorProvider>
-                <SessionProvider>
-                    { children }
-                </SessionProvider>
-            </FileSelectorProvider>
+            <DialogProvider>
+                <FileSelectorProvider>
+                    <SessionProvider>
+                        { children }
+                    </SessionProvider>
+                </FileSelectorProvider>
+            </DialogProvider>
         );
 
     return (
         <FileSelectorProvider>
-            <ThemesProvider>
-                <SessionProvider>
-                    <SidebarProvider>
-                        <Sidebar className='dark:bg-accent'>
-                            <SidebarHeader className='flex flex-row items-center gap-2'>
-                                <p className='font-bold text-xl grow text-center'>Will-Power</p>
-                            </SidebarHeader>
-                            <SidebarContent className='grid grid-rows-[1fr_auto]'>
-                                <SidebarGroup>
-                                    <SidebarGroupContent>
-                                        <SidebarMenu>
-                                            { Object.entries(pages).map(([ key, value ]) =>
-                                                typeof value === 'object'
-                                                ?   (
-                                                        <SidebarMenuItem key={ key }>
-                                                            <Collapsible defaultOpen={ true }>
-                                                                <CollapsibleTrigger asChild>
-                                                                    <SidebarMenuButton className='flex justify-between'>
-                                                                        { key }
-                                                                        <ChevronDown />
-                                                                    </SidebarMenuButton>
-                                                                </CollapsibleTrigger>
-                                                                <CollapsibleContent>
-                                                                    <SidebarMenuSub>
-                                                                        { Object.entries(value).map(([ key, value ]) => (
-                                                                            <SidebarMenuButton isActive={ value === pathname } key={ key }>
-                                                                                <Link href={ value }>{ key }</Link>
-                                                                            </SidebarMenuButton>
-                                                                        )) }
-                                                                    </SidebarMenuSub>
-                                                                </CollapsibleContent>
-                                                            </Collapsible>
-                                                        </SidebarMenuItem>
-                                                    )
-                                                : (
-                                                    <SidebarMenuButton isActive={ value === pathname } key={ key }>
-                                                        <Link href={ value }>{ key }</Link>
-                                                    </SidebarMenuButton>
-                                                )
-                                            ) }
-                                            <FilesButton />
-                                            <SidebarMenuItem>
-                                                <Collapsible defaultOpen={ true }>
-                                                    <CollapsibleTrigger asChild>
-                                                        <SidebarMenuButton className='flex justify-between'>
-                                                            Plugins Pages
-                                                            <ChevronDown />
+            <DialogProvider>
+                <ThemesProvider>
+                    <SessionProvider>
+                        <SidebarProvider>
+                            <Sidebar className='dark:bg-accent'>
+                                <SidebarHeader className='flex flex-row items-center gap-2'>
+                                    <p className='font-bold text-2xl grow text-center'>SeraphimCMS</p>
+                                </SidebarHeader>
+                                <SidebarContent className='grid grid-rows-[1fr_auto]'>
+                                    <SidebarGroup>
+                                        <SidebarGroupContent>
+                                            <SidebarMenu>
+                                                { Object.entries(pages).map(([ key, value ]) =>
+                                                    typeof value === 'object'
+                                                    ?   (
+                                                            <SidebarMenuItem key={ key }>
+                                                                <Collapsible defaultOpen={ true }>
+                                                                    <CollapsibleTrigger asChild>
+                                                                        <SidebarMenuButton className='flex justify-between'>
+                                                                            { key }
+                                                                            <ChevronDown />
+                                                                        </SidebarMenuButton>
+                                                                    </CollapsibleTrigger>
+                                                                    <CollapsibleContent>
+                                                                        <SidebarMenuSub>
+                                                                            { Object.entries(value).map(([ key, value ]) => (
+                                                                                <SidebarMenuButton isActive={ value === pathname } key={ key }>
+                                                                                    <Link href={ value }>{ key }</Link>
+                                                                                </SidebarMenuButton>
+                                                                            )) }
+                                                                        </SidebarMenuSub>
+                                                                    </CollapsibleContent>
+                                                                </Collapsible>
+                                                            </SidebarMenuItem>
+                                                        )
+                                                    : (
+                                                        <SidebarMenuButton isActive={ value === pathname } key={ key }>
+                                                            <Link href={ value }>{ key }</Link>
                                                         </SidebarMenuButton>
-                                                    </CollapsibleTrigger>
-                                                    <CollapsibleContent>
-                                                        <SidebarMenuSub>
-                                                            { pluginPages.map(([ name, path ]) => (
-                                                                <SidebarMenuButton className='capitalize' isActive={ path === pathname } key={ name }>
-                                                                    <Link href={ path }>{ name.replace(/([A-Z])/g, ' $1') }</Link>
-                                                                </SidebarMenuButton>
-                                                            )) }
-                                                        </SidebarMenuSub>
-                                                    </CollapsibleContent>
-                                                </Collapsible>
-                                            </SidebarMenuItem>
-                                        </SidebarMenu>
-                                    </SidebarGroupContent>
-                                </SidebarGroup>
-                                    <div className='flex gap-2 p-4'>
-                                        <Switch
-                                            checked={ darkMode }
-                                            name='dark-mode-toggle'
-                                            onClick={ () => {
-                                                const newMode = !darkMode;
-                                                setDarkMode(newMode);
-                                                if (newMode) {
-                                                    cookies.set('darkMode', 'true');
-                                                    document.body.classList.add('dark');
-                                                } else {
-                                                    cookies.set('darkMode', 'false');
-                                                    document.body.classList.remove('dark');
-                                                }
-                                            } }
-                                        />
-                                        <Label htmlFor='dark-mode-toggle'>
-                                            { darkMode ? 'Dark Mode' : 'Light Mode' }
-                                        </Label>
-                                    </div>
-                            </SidebarContent>
-                            <SidebarRail />
-                        </Sidebar>
-                        <SidebarInset>
-                            { children }
-                        </SidebarInset>
-                    </SidebarProvider>
-                </SessionProvider>
-            </ThemesProvider>
+                                                    )
+                                                ) }
+                                                <FilesButton />
+                                                <SidebarMenuItem>
+                                                    <Collapsible defaultOpen={ true }>
+                                                        <CollapsibleTrigger asChild>
+                                                            <SidebarMenuButton className='flex justify-between'>
+                                                                Plugins Pages
+                                                                <ChevronDown />
+                                                            </SidebarMenuButton>
+                                                        </CollapsibleTrigger>
+                                                        <CollapsibleContent>
+                                                            <SidebarMenuSub>
+                                                                { pluginPages.map(([ name, path ]) => (
+                                                                    <SidebarMenuButton className='capitalize' isActive={ path === pathname } key={ name }>
+                                                                        <Link href={ path }>{ name.replace(/([A-Z])/g, ' $1') }</Link>
+                                                                    </SidebarMenuButton>
+                                                                )) }
+                                                            </SidebarMenuSub>
+                                                        </CollapsibleContent>
+                                                    </Collapsible>
+                                                </SidebarMenuItem>
+                                            </SidebarMenu>
+                                        </SidebarGroupContent>
+                                    </SidebarGroup>
+                                        <div className='flex gap-2 p-4'>
+                                            <Switch
+                                                checked={ darkMode }
+                                                name='dark-mode-toggle'
+                                                onClick={ () => {
+                                                    const newMode = !darkMode;
+                                                    setDarkMode(newMode);
+                                                    if (newMode) {
+                                                        cookies.set('darkMode', 'true');
+                                                        document.body.classList.add('dark');
+                                                    } else {
+                                                        cookies.set('darkMode', 'false');
+                                                        document.body.classList.remove('dark');
+                                                    }
+                                                } }
+                                            />
+                                            <Label htmlFor='dark-mode-toggle'>
+                                                { darkMode ? 'Dark Mode' : 'Light Mode' }
+                                            </Label>
+                                        </div>
+                                </SidebarContent>
+                                <SidebarRail />
+                            </Sidebar>
+                            <SidebarInset>
+                                { children }
+                            </SidebarInset>
+                        </SidebarProvider>
+                    </SessionProvider>
+                </ThemesProvider>
+            </DialogProvider>
         </FileSelectorProvider>
     );
 };

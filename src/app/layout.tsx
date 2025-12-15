@@ -1,11 +1,12 @@
 import React from 'react';
 import { Toaster } from 'sonner';
-import { ComponentsProvider } from '@/contexts/components';
-//@ts-ignore
-import './globals.css';
+
 import { ConfigProvider } from '@/contexts/config';
 import { PluginsProvider } from '@/contexts/plugins';
-import { FileSelectorProvider } from '@/components/fileSelector';
+import { ComponentsProvider } from '@/contexts/components';
+
+//@ts-ignore
+import './globals.css';
 
 const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
     <html lang='en'>
@@ -25,15 +26,13 @@ const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
         </head>
         <body>
             <Toaster />
-            <FileSelectorProvider>
-                <ConfigProvider>
-                    <PluginsProvider>
-                        <ComponentsProvider>
-                            { children }
-                        </ComponentsProvider>
-                    </PluginsProvider>
-                </ConfigProvider>
-            </FileSelectorProvider>
+            <ConfigProvider>
+                <PluginsProvider>
+                    <ComponentsProvider>
+                        { children }
+                    </ComponentsProvider>
+                </PluginsProvider>
+            </ConfigProvider>
         </body>
     </html>
 );

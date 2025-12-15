@@ -1,19 +1,20 @@
 'use client';
 import React from 'react';
-
 import FileSelector from './fileSelector';
 
 type fileTypes = 'image' | 'video' | 'font' | 'all';
 type fileCount = 'single' | 'multiple' | 'none';
 type selectFileFunctionType = (fileCount: fileCount, fileType?: fileTypes) => Promise<BlobInformation[]>;
 
-const fileSelectorCTX = React.createContext<{
+const FileSelectorCTX = React.createContext<{
     selectFile: selectFileFunctionType
-}>({
-    selectFile: async () => []
-});
+} | undefined>(undefined);
 
-const useFileSelector = () => React.useContext(fileSelectorCTX);
+const useFileSelector = () => {
+    const value = React.useContext(FileSelectorCTX);
+    if (!value) throw new Error('useFileSelector must be used within a FileSelectorProvider');
+    return value;
+};
 
 const FileSelectorProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const [ visible, setVisibility ] = React.useState<boolean>(false);
@@ -46,11 +47,11 @@ const FileSelectorProvider: React.FC<React.PropsWithChildren> = ({ children }) =
     }, [ promise ]);
 
     return (
-        <fileSelectorCTX.Provider value={ { selectFile } }>
-            { visible && <FileSelector fileCount={ fileCount } onSelected={ onSelected } fileType={ fileType } /> }
+        <FileSelectorCTX.Provider value={ { selectFile } }>
+            <FileSelector fileCount={ fileCount } onSelected={ onSelected } fileType={ fileType } visible={ visible } />
             { children }
-        </fileSelectorCTX.Provider>
+        </FileSelectorCTX.Provider>
     )
 };
 
-export { useFileSelector, FileSelectorProvider, FileSelector };
+export { useFileSelector, FileSelectorProvider };

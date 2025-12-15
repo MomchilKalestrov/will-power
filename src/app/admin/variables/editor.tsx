@@ -11,14 +11,15 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
 import FontInput from '@/components/inputs/fontInput';
-import { useConfig } from '@/contexts/config';
 import ColorPicker from '@/components/inputs/colorPicker';
-import { useFileSelector } from '@/components/fileSelector';
 import CssUnitInput from '@/components/inputs/cssUnitInput';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 
 import { hexToHsl, hslToHex } from '@/lib/color';
 import { cssToFont, fontToCss } from '@/lib/utils';
+
+import { useConfig } from '@/contexts/config';
+import { useFileSelector } from '@/contexts/file';
 
 type Props = {
     initialConfig: config;
