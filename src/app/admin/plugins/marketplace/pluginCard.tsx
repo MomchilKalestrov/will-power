@@ -60,7 +60,7 @@ const PluginCard: React.FC<Props> = ({ plugin }) => {
                     variant='outline'
                     size='icon'
                 >
-                    <Link href={ `/admin/plugins/marketplace/${ encodeURIComponent(plugin.name) }` }>
+                    <Link href={ `/admin/plugins/marketplace/plugin/${ encodeURIComponent(plugin.name) }` }>
                         <ExternalLink />
                     </Link>
                 </Button>

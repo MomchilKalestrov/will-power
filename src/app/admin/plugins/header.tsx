@@ -12,17 +12,21 @@ const Header: React.FC = () => {
     const path = usePathname().split('?')[ 0 ];
     const params = useParams();
     const router = useRouter();
+
+    let name = '';
+    if (path === '/admin/plugins')
+        name = 'Installed plugins';
+    else if (path.startsWith('/admin/plugins/marketplace/author'))
+        name = 'Plugin author';
+    else if (path.startsWith('/admin/plugins/marketplace/plugin'))
+        name = 'Plugin';
+    else
+        name = 'Plugin marketplace';
     
     return (
         <header className='h-16 px-4 border-b bg-background flex justify-between items-center gap-4'>
             <p className='font-bold text-xl'>
-                {
-                    params.name
-                    ?   params.name
-                    :   path !== '/admin/plugins/marketplace'
-                        ?   'Installed plugins'
-                        :   'Plugin marketplace'
-                }
+                { name }
             </p>
             <div className='flex gap-2'>
                 { path === '/admin/plugins' && <AddPluginDialog /> }

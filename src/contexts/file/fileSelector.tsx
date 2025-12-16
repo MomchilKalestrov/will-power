@@ -183,7 +183,7 @@ const FileSelector: React.FC<Props> = ({
             <Dialog open={ visible } onOpenChange={ open => !open && onSelected(null) }>
                 <DialogContent
                     showCloseButton={ false }
-                    className='max-w-[100%_!important] w-[calc(100dvw-var(--spacing)*16)] h-[calc(100dvh-var(--spacing)*16)] grid grid-rows-[auto_auto_1fr_auto_auto] p-4 gap-0'
+                    className='max-w-full! w-[calc(100dvw-var(--spacing)*16)] h-[calc(100dvh-var(--spacing)*16)] grid grid-rows-[auto_auto_1fr_auto_auto] p-4 gap-0'
                 >
                     <DialogHeader className='flex flex-row justify-between items-center'>
                         <div className='flex gap-2 items-center'>
@@ -249,7 +249,7 @@ const FileSelector: React.FC<Props> = ({
         <Dialog open={ visible } onOpenChange={ open => !open && onSelected(null) }>
             <DialogContent
                 showCloseButton={ false }
-                className='max-w-[100%_!important] w-[calc(100dvw-var(--spacing)*16)] h-[calc(100dvh-var(--spacing)*16)] grid grid-rows-[auto_auto_1fr_auto_auto] p-4 gap-0'
+                className='max-w-full! w-[calc(100dvw-var(--spacing)*16)] h-[calc(100dvh-var(--spacing)*16)] grid grid-rows-[auto_auto_1fr_auto_auto] p-4 gap-0'
             >
                 <DialogHeader className='flex flex-row justify-between items-center'>
                     <div className='flex gap-2 items-center'>

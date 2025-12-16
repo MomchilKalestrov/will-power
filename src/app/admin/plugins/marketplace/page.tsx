@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 
 import { getPlugins } from '@/lib/actions';
+
 import PluginCard from './pluginCard';
 
 type strippedPlugins = (Awaited<ReturnType<typeof getPlugins>> & { success: true; })[ 'value' ];
@@ -29,8 +30,8 @@ const Page: NextPage = () => {
     }, [ page ]);
 
     return (
-        <div className='h-[calc(100dvh-var(--spacing)*16)] p-8 box-border grid grid-rows-[1fr_auto]'>
-            <div className='w-full flex flex-wrap gap-2 items-start content-start'>
+        <div className='h-[calc(100dvh-var(--spacing)*16)] p-8 box-border grid grid-rows-[1fr_auto] gap-8'>
+            <div className='w-full flex flex-wrap gap-4 items-start content-start overflow-scroll'>
                 { plugins.map(plugin => (
                     <PluginCard plugin={ plugin } key={ plugin.name } />
                 )) }
