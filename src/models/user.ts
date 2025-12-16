@@ -6,6 +6,6 @@ const userSchema = new mongoose.Schema<User & { passwordHash: string }>({
     role: { type: String, required: true, enum: [ 'editor', 'admin', 'owner' ] }
 });
 
-const User = mongoose.model<User & { passwordHash: string }>('User', userSchema);
+const User: inferModel<typeof userSchema> = mongoose.models.User || mongoose.model<User & { passwordHash: string }>('User', userSchema);
 
 export default User;
