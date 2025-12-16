@@ -1,6 +1,37 @@
 import mongoose from 'mongoose';
-import componentNodeSchema from './pageNode';
-import displayCondition from './displayCondition';
+
+const componentNodeSchema = new mongoose.Schema<ComponentNode>({
+    id: { type: String, required: true },
+    type: { type: String, required: true },
+    style: { type: Object, of: String, default: {} },
+    attributes: { type: Object, of: String, default: {} },
+    props: { type: Object, of: Object, default: {} },
+    acceptChildren: { type: Boolean, default: false }
+}, {
+    minimize: false,
+    id: false,
+    _id: false,
+    versionKey: false
+});
+
+componentNodeSchema.add({
+    children: { type: [ componentNodeSchema ], default: [] }
+});
+
+const displayCondition = new mongoose.Schema<displayCondition>({
+    show: {
+        type: String,
+        required: true,
+        default: 'all',
+        enum: [ 'all', 'page', 'exclude' ]
+    },
+    name: { type: String, required: false }
+}, {
+    minimize: false,
+    id: false,
+    _id: false,
+    versionKey: false
+});
 
 const componentSchema = new mongoose.Schema<Component>({
     name: { type: String,  required: true },
@@ -33,7 +64,6 @@ const componentSchema = new mongoose.Schema<Component>({
     }
 });
 
-const db = mongoose.connection;
-const Component = db.models.Component || mongoose.model<Component>('Component', componentSchema);
+const Component = mongoose.model<Component>('Component', componentSchema);
 
 export default Component;

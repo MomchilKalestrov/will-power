@@ -48,7 +48,6 @@ const ConfigSchema = new mongoose.Schema<config>({
     themes: { type: [ String ], default: [] }
 });
 
-const db = mongoose.connection;
-const Config = db.models.Config || mongoose.model<config>('Config', ConfigSchema);
+const Config = mongoose.model<config>('Config', ConfigSchema);
 
 export default Config;

@@ -45,7 +45,7 @@ const authOptions: AuthOptions = {
         jwt: ({ token, user }) => {
             if (user) {
                 token.id = user.id ?? token.sub;
-                token.role = (user as typeof user & { role: User[ 'role' ] }).role;
+                token.role = user.role;
                 token.name = user.name ?? undefined;
             }
             return token;
