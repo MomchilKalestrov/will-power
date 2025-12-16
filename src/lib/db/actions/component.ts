@@ -1,11 +1,12 @@
 'use server';
-import connect from '@/lib/db';
-import { getCurrentUser } from '@/lib/db/actions';
 import {
     componentNameSchema,
     componentSchema,
     componentTypesSchema
 } from '@/lib/zodSchemas';
+
+import connect from '@/lib/db';
+import { getCurrentUser } from '@/lib/db/actions';
 
 import Component from '@/models/component';
 
@@ -43,7 +44,7 @@ const getComponentByName = async (name: string, type?: componentType): serverAct
             params.type = type;
 
         await connect();
-        const component = await Component.findOne(params).lean<Component>();
+        const component = await Component.findOne(params).lean();
         if (!component)
             return {
                 success: false,
@@ -79,7 +80,7 @@ const getAllComponents = async (type: componentType = 'page'): serverActionRespo
             };
 
         await connect();
-        const components = await Component.find({ type }).distinct('name').lean<string[]>();
+        const components = await Component.find({ type }).distinct('name').lean();
         global.componentNames[ type ] = new Set(components);
        
         return {
@@ -159,7 +160,7 @@ const createComponent = async (name: string, type: componentType = 'page'): serv
             };
 
         await connect();
-        const exists = await Component.findOne({ name, type }).lean<Component>();
+        const exists = await Component.findOne({ name, type }).lean();
         if (exists)
             return {
                 success: false,
@@ -194,7 +195,7 @@ const deleteComponent = async (name: string): serverActionResponse<boolean> => {
     
     try {
         await connect();
-        const component = await Component.findOneAndDelete<Component>({ name });
+        const component = await Component.findOneAndDelete({ name });
         if (!component)
             return {
                 success: false,
@@ -230,7 +231,7 @@ const getMatchingComponents = async (name: string, type: 'header' | 'footer'): s
                 { displayCondition: { $elemMatch: { show: 'all' } } },
                 { displayCondition: { $elemMatch: { show: 'page', name } } }
             ]
-        }).lean<Component[]>();
+        }).lean();
 
         return {
             success: true,

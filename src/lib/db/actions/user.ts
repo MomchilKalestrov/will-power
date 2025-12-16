@@ -3,9 +3,10 @@ import type z from 'zod';
 import argon2 from 'argon2';
 import { getServerSession } from 'next-auth';
 
+import { updateUserSchema, userSchema } from '@/lib/zodSchemas';
+
 import connect from '@/lib/db';
 import { hasAuthority } from '@/lib/utils';
-import { updateUserSchema, userSchema } from '@/lib/zodSchemas';
 
 import User from '@/models/user';
 
@@ -18,7 +19,7 @@ const getAllUsers = async (): serverActionResponse<User[] | null> => {
     
     try {
         await connect();
-        const users = await User.aggregate<User>([
+        const users = await User.aggregate([
             { $project: {
                 id: '$_id',
                 username: 1,
@@ -57,12 +58,13 @@ const getUser = async (username: string): serverActionResponse<User | null> => {
         };
     
     try {
-        const user = await User.findOne({ username }).lean<any>();
+        const user = await User.findOne({ username }).lean();
         if (!user)
             return {
                 success: false,
                 reason: 'Not found.'
             };
+        
         return {
             success: true,
             value: JSON.parse(JSON.stringify({
@@ -85,7 +87,7 @@ const getCurrentUser = async (): Promise<User | null> => {
     try {
         const session = await getServerSession();
         if (!session) return null;
-        return await User.findOne<User | null>({ username: session.user?.name });
+        return await User.findOne({ username: session.user?.name });
     } catch (error) {
         console.error('[db] getCurrentUser error:', error);
         return null;
@@ -104,6 +106,11 @@ const updateUser = async (userState: z.infer<typeof updateUserSchema>): serverAc
         const { id, ...data } = updateUserSchema.parse(userState);
 
         const targetUser = await User.findById(id);
+        if (!targetUser)
+            return {
+                success: false,
+                reason: 'Not found.'
+            };
         
         if (
             !hasAuthority(currentUser.role, targetUser.role) ||
@@ -154,6 +161,11 @@ const deleteUser = async (id: string): serverActionResponse<boolean> => {
 
     try {
         const targetUser = await User.findById(id);
+        if (!targetUser)
+            return {
+                success: false,
+                reason: 'Not found.'
+            };
         
         if (!hasAuthority(currentUser.role, targetUser.role))
             return {
