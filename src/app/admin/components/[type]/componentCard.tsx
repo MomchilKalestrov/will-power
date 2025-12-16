@@ -26,12 +26,12 @@ const fallbacks: Record<componentType, typeof pageFallback> = {
     'component': componentFallback
 };
 
-type ComponentCardProps = {
+type Props = {
     name: string;
     removeComponent: (name: string) => void;
 };
 
-const ComponentCard: React.FC<ComponentCardProps> = ({
+const ComponentCard: React.FC<Props> = ({
     name,
     removeComponent
 }) => {
@@ -74,7 +74,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
             .then(response => {
                 button.disabled = false;
                 if (!response.success)
-                    return toast(`Failed deleting the ${ type }: ` + response.reason);
+                    return toast(`Failed to delete the ${ type }: ` + response.reason);
                 removeComponent(name);
             });
     }, [ name, type ]);

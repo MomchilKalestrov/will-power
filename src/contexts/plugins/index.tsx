@@ -108,7 +108,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         const response = await pluginActions.addPlugin(data);
         
         if (!response.success)
-            return `Error: ${ response.reason }.`;
+            return 'Failed to add the plugin: ' + response.reason;
 
         await updateConfig({
             plugins: [ ...config.plugins, response.value ]
@@ -123,7 +123,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         const response = await pluginActions.removePlugin(name);
 
         if (!response.success)
-            return `Error: ${ response.reason }.`;
+            return 'Failed to remove the plugin: ' + response.reason;
 
         updateConfig({
             plugins: config.plugins.filter(plugin => plugin.name !== name)

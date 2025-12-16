@@ -28,7 +28,7 @@ const ThemesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         const response = await themeActions.addTheme(data);
         
         if (!response.success)
-            return `Error: ${ response.reason }.`;
+            return 'Failed to add the theme: ' + response.reason;
 
         updateConfig({
             themes: [ ...config.themes, response.value.name ]
@@ -41,7 +41,7 @@ const ThemesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         const response = await themeActions.removeTheme(name);
 
         if (!response.success)
-            return `Error: ${ response.reason }.`;
+            return 'Failed to remove the theme: ' + response.reason;
 
         updateConfig({
             themes: config.themes.filter(theme => theme !== name)
@@ -54,7 +54,7 @@ const ThemesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         const response = await themeActions.selectTheme(name);
 
         if (!response.success)
-            return `Error: ${ response.reason }.`;
+            return 'Failed to select the theme: ' + response.reason;
 
         updateConfig({ theme: name }, false);
 

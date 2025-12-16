@@ -1,12 +1,15 @@
 import React from 'react';
 import Link from 'next/link';
-import { getPlugins } from '@/lib/actions';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { Download, ExternalLink } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+    
 import { useDialog } from '@/contexts/dialog';
 import { usePlugins } from '@/contexts/plugins';
-import { toast } from 'sonner';
+
+import { getPlugins } from '@/lib/actions';
 
 type strippedPlugin = (Awaited<ReturnType<typeof getPlugins>> & { success: true; })[ 'value' ][ number ];
 
@@ -25,7 +28,7 @@ const PluginCard: React.FC<Props> = ({ plugin }) => {
                 const toastText = await addPlugin(blob);
                 toast(toastText);
             })
-            .catch(() => toast('Failed installing the plugin.'));
+            .catch(() => toast('Failed to install the plugin.'));
     }, []);
 
     const onInstallRequest = React.useCallback(() => {

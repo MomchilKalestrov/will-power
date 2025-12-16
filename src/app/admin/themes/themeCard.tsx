@@ -1,11 +1,11 @@
 'use client';
 import React from 'react';
-import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 import { useThemes } from '@/contexts/themes';
 

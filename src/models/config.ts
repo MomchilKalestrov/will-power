@@ -48,6 +48,6 @@ const ConfigSchema = new mongoose.Schema<config>({
     themes: { type: [ String ], default: [] }
 });
 
-const Config = mongoose.model<config>('Config', ConfigSchema);
+const Config: inferModel<typeof ConfigSchema> = mongoose.models.Config || mongoose.model<config>('Config', ConfigSchema);
 
 export default Config;

@@ -33,7 +33,7 @@ const SettingsEditor: React.FC<Props> = ({ component, onChange }) => {
             getAllComponents('page')
                 .then(response => {
                     if (!response.success)
-                        return toast('Failed fetching page names: ' + response.reason);
+                        return toast('Failed to fetch page names: ' + response.reason);
                     setPageNames(response.value);
                 });
     }, [ component ]);

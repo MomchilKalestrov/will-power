@@ -25,11 +25,12 @@ const AddPluginDialog: React.FC = () => {
         if (event.currentTarget)
             event.currentTarget.disabled = true;
 
-        const response = await addPlugin!(file!);
+        const response = await addPlugin(file!);
         toast(response);
 
         if (event.currentTarget)
             event.currentTarget.disabled = false;
+        
         setDialogOpen(false);
     }, [ file ]);
 

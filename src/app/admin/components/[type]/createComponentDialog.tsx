@@ -4,8 +4,6 @@ import { toast } from 'sonner';
 import { CirclePlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogClose,
@@ -15,13 +13,17 @@ import {
     DialogTitle,
     DialogTrigger
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 import { createComponent } from '@/lib/db/actions';
 
-const CreateComponentDialog: React.FC<{
-    components: string[],
-    type: componentType
-}> = ({
+type Props = {
+    components: string[];
+    type: componentType;
+};
+
+const CreateComponentDialog: React.FC<Props> = ({
     components,
     type
 }) => {
@@ -31,7 +33,7 @@ const CreateComponentDialog: React.FC<{
     const onPageCreated = React.useCallback(async () => {
         const response = await createComponent(name, type);
         if(!response.success)
-            return toast('Couldn\'t create a page with that name: ' + response.reason);
+            return toast(`Failed to create the ${ type }: ` + response.reason);
         router.push('/admin/editor/' + name);
     }, [ name, type ]);
 
@@ -44,7 +46,7 @@ const CreateComponentDialog: React.FC<{
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className='w-[194px] aspect-[384/284.883] basis-64 grow max-w-96 text-center flex justify-center items-center rounded-xl border-2 border-dashed'>
+                <div className='w-48.5 aspect-[384/284.883] basis-64 grow max-w-96 text-center flex justify-center items-center rounded-xl border-2 border-dashed'>
                     <CirclePlus className='opacity-20' size={ 32 } />
                 </div>
             </DialogTrigger>

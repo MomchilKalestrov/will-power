@@ -20,7 +20,7 @@ const Page: NextPage = () => {
             .then(response => {
                 if (!response.success) {
                     setUsers(null);
-                    return toast(response.reason);
+                    return toast('Failed to get users: ' + response.reason);
                 };
                 return setUsers(response.value);
             });
@@ -30,8 +30,8 @@ const Page: NextPage = () => {
         const response = await updateUser(user);
 
         if (!response.success)
-            return toast('Error: ' + response.reason);
-        toast('Updated user.');
+            return toast('Failed to update the user: ' + response.reason);
+        toast('Updated the user.');
         
         setUsers((state) => {            
             const newState = [ ...state! ];
@@ -49,8 +49,8 @@ const Page: NextPage = () => {
         const response = await deleteUser(users![ selectedIndex! ].id);
 
         if (!response.success)
-            return toast('Error: ' + response.reason);
-        toast('Deleted user.');
+            return toast('Failed to delete the user: ' + response.reason);
+        toast('Deleted the user.');
 
         setUsers(state => {            
             const newState = [ ...state! ];
@@ -64,8 +64,8 @@ const Page: NextPage = () => {
         const response = await createUser(user);
 
         if (!response.success)
-            return toast('Error: ' + response.reason);
-        toast('Created user.');
+            return toast('Failed to create a new user: ' + response.reason);
+        toast('Created a new user.');
         
         setUsers(state => {
             const newState = [ ...state! ];

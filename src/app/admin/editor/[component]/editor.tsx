@@ -65,7 +65,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
         
         const localRevision: Component = storage.parse<Component>(component.name);
         if (localRevision.lastEdited < component.lastEdited)
-            toast('A newer version is available on remote');
+            toast('A newer version is available on the server.');
         return localRevision.rootNode;
     });
     const [ selectedNode, setSelectedNode ] = React.useState<ComponentNode | undefined>();
@@ -117,7 +117,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
         })
 
         button.disabled = false;
-        toast(response.success ? 'Saved.' : ('Failed saving: ' + response.reason));
+        toast(response.success ? 'Saved.' : ('Failed to save: ' + response.reason));
     }, [ component, tree ]);
     
     React.useEffect(() => {

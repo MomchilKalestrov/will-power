@@ -64,6 +64,6 @@ const componentSchema = new mongoose.Schema<Component>({
     }
 });
 
-const Component = mongoose.model<Component>('Component', componentSchema);
+const Component: inferModel<typeof componentSchema> = mongoose.models.Component || mongoose.model<Component>('Component', componentSchema);
 
 export default Component;
