@@ -5,8 +5,6 @@ import Credentials from 'next-auth/providers/credentials';
 import connect from '@/lib/db';
 import User from '@/models/user';
 
-type DbUser = User & { passwordHash: string, _id: object };
-
 const authOptions: AuthOptions = {
     providers: [
         Credentials({
@@ -22,7 +20,7 @@ const authOptions: AuthOptions = {
                     try {
                         await connect();
                         
-                        const user = await User.findOne({ username }).lean<DbUser>();
+                        const user = await User.findOne({ username }).lean();
                         if (!user || !(await argon2.verify(user.passwordHash!, password)))
                             return null;
 
@@ -47,7 +45,7 @@ const authOptions: AuthOptions = {
                 token.id = user.id ?? token.sub;
                 token.role = user.role;
                 token.name = user.name ?? undefined;
-            }
+            };
             return token;
         },
         session: ({ session, token }) => {
@@ -64,4 +62,4 @@ const authOptions: AuthOptions = {
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST, authOptions };

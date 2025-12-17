@@ -3,11 +3,17 @@ import React from 'react';
 import { NextPage } from 'next';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
+import {
+    Card,
+    CardTitle,
+    CardHeader,
+    CardContent,
+    CardDescription
+} from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { cookies } from '@/lib/utils';
 
 const errors: Record<string, string> = {
     'CredentialsSignin': 'Invalid credentials. Please try again.'

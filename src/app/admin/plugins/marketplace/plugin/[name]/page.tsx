@@ -10,6 +10,8 @@ import { getPlugin } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Separator } from '@/components/ui/separator';
+import { usePlugins } from '@/contexts/plugins';
+import { useDialog } from '@/contexts/dialog';
 
 type plugin = (Awaited<ReturnType<typeof getPlugin>> & { success: true; })[ 'value' ];
 
@@ -20,6 +22,8 @@ const getLanguage = (lang: string): string => ({
 
 const Page: NextPage<PageProps<'/admin/plugins/marketplace/plugin/[name]'>> = ({ params }) => {
     const { name } = React.use(params);
+    const { showDialog } = useDialog();
+    const { addPlugin } = usePlugins();
     const [ plugin, setPlugin ] = React.useState<plugin>();
 
     React.useEffect(() => {
@@ -29,6 +33,32 @@ const Page: NextPage<PageProps<'/admin/plugins/marketplace/plugin/[name]'>> = ({
             :   setPlugin(response.value)
         );
     }, [ name ]);
+
+    const installPlugin = React.useCallback((url: string) => {
+        fetch(url)
+            .then(async response => {
+                const blob = await response.blob();
+                const toastText = await addPlugin(blob);
+                toast(toastText);
+            })
+            .catch(() => toast('Failed to install the plugin.'));
+    }, []);
+
+    const onInstallRequest = React.useCallback(() => {
+        if (!plugin) return;
+
+        showDialog(
+            'Confirm',
+            `Are you sure you want to install "${ plugin.name }"?`,
+            [
+                { text: 'No', variant: 'default' },
+                { text: 'Yes', variant: 'outline' }
+            ]
+        )
+            .then(value => value === 'Yes' && installPlugin(plugin.downloadUrl))
+            .catch(() => null);
+    }, [ plugin ]);
+        
 
     if (!plugin)
         return (
@@ -51,7 +81,7 @@ const Page: NextPage<PageProps<'/admin/plugins/marketplace/plugin/[name]'>> = ({
                     </p>
                     <p className='opacity-50 text-sm'>v{ plugin.version }</p>
                 </div>
-                <Button size='lg'>Install</Button>
+                <Button size='lg' onClick={ onInstallRequest }>Install</Button>
             </header>
             <Separator className='my-4' />
             <div className='[&_h1,h2,h3,h4,h5,h6]:font-bold [&_h1,h2,h3,h4,h5,h6]:my-2 [&_h1]:text-3xl [&_h1]:mb-2 [&_h1,h2]:pb-2 [&_h1,h2]:border-b [&_h2]:text-2xl [&_h3]:text-xl [&_h4]:text-lg [&_h5]:text-md [&_h6]:text-sm'>

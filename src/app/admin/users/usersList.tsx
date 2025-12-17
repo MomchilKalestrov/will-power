@@ -1,10 +1,27 @@
 'use client';
 import React from 'react';
 import { useSession } from 'next-auth/react';
-import { cn, hasAuthority } from '@/lib/utils';
+
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow
+} from '@/components/ui/table';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
+import { cn, hasAuthority } from '@/lib/utils';
+
 import AddUserDialog from './addUserDialog';
 
 // Types
