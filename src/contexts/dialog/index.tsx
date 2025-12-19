@@ -1,10 +1,23 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import React from 'react';
 
+import {
+    Dialog,
+    DialogTitle,
+    DialogFooter,
+    DialogHeader,
+    DialogContent,
+    DialogDescription
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+
+type option = {
+    text: string;
+    variant: 'default' | 'ghost' | 'outline';
+};
+
 const DialogCTX = React.createContext<{
-    showDialog: (title: string, description: string, options: ({ text: string, variant: 'default' | 'ghost' | 'outline' })[]) => Promise<string>;
+    showDialog: (title: string, description: string, options: option[]) => Promise<string>;
 } | undefined>(undefined);
 
 const useDialog = () => {
@@ -17,7 +30,7 @@ const DialogProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const [ title, setTitle ] = React.useState<string>('Title');
     const [ visible, setVisibility ] = React.useState<boolean>(false);
     const [ description, setDescription ] = React.useState<string>('Description');
-    const [ options, setOptions ] = React.useState<({ text: string, variant: 'default' | 'ghost' | 'outline' })[]>([]);
+    const [ options, setOptions ] = React.useState<option[]>([]);
     const [ promise, setPromise ] = React.useState<{
         resolve: (value: string) => void,
         reject: () => void
@@ -27,7 +40,7 @@ const DialogProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     });
     
 
-    const showDialog = React.useCallback((title: string, description: string, options: ({ text: string, variant: 'default' | 'ghost' | 'outline' })[]) =>
+    const showDialog = React.useCallback((title: string, description: string, options: option[]) =>
         new Promise<string>((resolve, reject) => {
             setVisibility(true);
             setTitle(title);

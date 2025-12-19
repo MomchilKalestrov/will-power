@@ -2,23 +2,23 @@
 import React from 'react';
 import { Ban } from 'lucide-react';
 
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger
 } from '@/components/ui/accordion';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
+import FontInput from '@/components/inputs/fontInput';
 import ColorPicker from '@/components/inputs/colorPicker';
-import ShadowPicker from '@/components/inputs/ShadowPicker';
+import ShadowPicker from '@/components/inputs/shadowPicker';
 import CssUnitInput from '@/components/inputs/cssUnitInput';
 import GradientPicker from '@/components/inputs/gradientPicker';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 import BackgroundPicker from '@/components/inputs/backgroundPicker';
-import FontInput from '@/components/inputs/fontInput';
 
 import { isPanelPropertyVisible } from '@/lib/utils';
 

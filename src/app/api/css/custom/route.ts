@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getConfig } from '@/lib/actions/config';
+
 import { cssFromConfig } from '@/lib/utils';
+import { getConfig } from '@/lib/actions/config';
 
 const GET = async () => {
     const config = await getConfig();

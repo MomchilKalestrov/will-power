@@ -4,19 +4,19 @@ import { useSession } from 'next-auth/react';
 
 import {
     Table,
+    TableRow,
     TableBody,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
-    TableRow
+    TableFooter
 } from '@/components/ui/table';
 import {
     Select,
-    SelectContent,
     SelectItem,
+    SelectValue,
     SelectTrigger,
-    SelectValue
+    SelectContent
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 
@@ -24,7 +24,6 @@ import { cn, hasAuthority } from '@/lib/utils';
 
 import AddUserDialog from './addUserDialog';
 
-// Types
 export type SortFunction = Parameters<User[][ 'sort' ]>[ 0 ];
 
 const roles: Record<User[ 'role' ], string> = {

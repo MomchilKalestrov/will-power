@@ -1,7 +1,7 @@
 'use server';
 import {
-    componentNameSchema,
     componentSchema,
+    componentNameSchema,
     componentTypesSchema
 } from '@/lib/zodSchemas';
 

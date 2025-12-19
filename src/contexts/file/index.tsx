@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+
 import FileSelector from './fileSelector';
 
 type fileTypes = 'image' | 'video' | 'font' | 'all';

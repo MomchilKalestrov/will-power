@@ -5,9 +5,10 @@ import { toast } from 'sonner';
 import { NextPage } from 'next';
 import { Verified } from 'lucide-react';
 
-import { getAuthor } from '@/lib/actions';
 import { Spinner } from '@/components/ui/spinner';
 import { Separator } from '@/components/ui/separator';
+
+import { getAuthor } from '@/lib/actions';
 
 type author = (Awaited<ReturnType<typeof getAuthor>> & { success: true; })[ 'value' ];
 

@@ -1,9 +1,8 @@
 'use client';
 import React from 'react';
-import { CirclePlus } from 'lucide-react';
 import { toast } from 'sonner';
+import { CirclePlus } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -13,6 +12,7 @@ import {
     DialogTrigger
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 import { useThemes } from '@/contexts/themes';
 
@@ -25,7 +25,7 @@ const AddThemeDialog: React.FC = () => {
         if (event.currentTarget)
             event.currentTarget.disabled = true;
 
-        const response = await addTheme!(file!);
+        const response = await addTheme(file!);
         toast(response);
 
         if (event.currentTarget)

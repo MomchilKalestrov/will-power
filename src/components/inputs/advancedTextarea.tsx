@@ -1,33 +1,44 @@
 
 'use client';
-import React from 'react';
-import { Bold, Italic, LinkIcon, List, Plus, Redo, Strikethrough, Underline, Undo } from 'lucide-react';
 import {
+    $getRoot,
     EditorState,
-    FORMAT_TEXT_COMMAND,
     UNDO_COMMAND,
     REDO_COMMAND,
-    TextFormatType,
     LexicalEditor,
-    $getRoot,
     $getSelection,
-    $isRangeSelection
+    TextFormatType,
+    $isRangeSelection,
+    FORMAT_TEXT_COMMAND
 } from 'lexical';
-import { $isLinkNode, LinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
+import {
+    List,
+    Plus,
+    Undo,
+    Redo,
+    Bold,
+    Italic,
+    LinkIcon,
+    Underline,
+    Strikethrough
+} from 'lucide-react';
+import React from 'react';
 
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { $isLinkNode, LinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { type InitialConfigType, LexicalComposer } from '@lexical/react/LexicalComposer';
 
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Input } from '@/components/ui/input';
+
 import { getAllComponents } from '@/lib/db/actions';
 
 const formatting: ({

@@ -1,8 +1,17 @@
 'use client';
 import React from 'react';
-import { ChevronDown, ChevronRight, ChevronUp, SquareDashed, Trash2 } from 'lucide-react';
+import {
+    Trash2,
+    ChevronUp,
+    ChevronDown,
+    ChevronRight,
+    SquareDashed
+} from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
-import { useComponentDb } from '@/contexts/components';
+
+import { useComponents } from '@/contexts/components';
+
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -14,7 +23,7 @@ type Props = {
 const DragCTX = React.createContext<(childId: string, newParentId: string) => void>(() => null);
 
 const TreePanelNode: React.FC<Props> = ({ node, selectedNodeId, onParentChange: onParentChangeCallback }) => {
-    const { getComponent } = useComponentDb();
+    const { getComponent } = useComponents();
     const reference = React.useRef<HTMLDivElement>(null);
     const onParentChange = React.useContext(DragCTX);
     const [ isExpanded, setIsExpanded ] = React.useState<boolean>(true);
@@ -22,7 +31,7 @@ const TreePanelNode: React.FC<Props> = ({ node, selectedNodeId, onParentChange: 
 
     React.useEffect(() => {
         getComponent(node.type)
-            .then((value) => value?.Icon ? setIcon(() => value.Icon) : null)
+            .then((value) => value?.Icon && setIcon(() => value.Icon))
             .catch(() => null);
     }, [ node.type ]);
 
@@ -87,7 +96,7 @@ const TreePanelNode: React.FC<Props> = ({ node, selectedNodeId, onParentChange: 
             </div>
             {
                 isExpanded && hasChildren && (
-                    <div className='pl-4 border-l border-muted-foreground/20 ml-[11px]'>
+                    <div className='pl-4 border-l border-muted-foreground/20 ml-2.75'>
                         {
                             Array.isArray(node.children) && node.children.map((child) => (
                                 <TreePanelNode

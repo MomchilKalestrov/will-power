@@ -1,15 +1,17 @@
 'use client';
 import React from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { useComponentDb, type componentData } from '@/contexts/components';
+
+import { useComponents } from '@/contexts/components';
 
 type Props = {
     onNodeAdd: (type: string, acceptChildren: boolean) => void;
 };
 
 const ComponentButton: React.FC<Props & { type: string }> = ({ type, onNodeAdd }) => {
-    const { getComponent } = useComponentDb();
+    const { getComponent } = useComponents();
     const [ Data, setData ] = React.useState<componentData | null>();
 
     React.useEffect(() => {
@@ -33,7 +35,7 @@ const ComponentButton: React.FC<Props & { type: string }> = ({ type, onNodeAdd }
 };
 
 const BlockPanel: React.FC<Props> = ({ onNodeAdd }) => {
-    const { components } = useComponentDb();
+    const { components } = useComponents();
 
     return (
         <div className='grid gap-4 h-full grid-rows-[min-content_min-content_1fr]'>
@@ -41,10 +43,10 @@ const BlockPanel: React.FC<Props> = ({ onNodeAdd }) => {
             <Separator/>
             <div className='overflow-y-scroll'>
                 <div className='grid gap-2 grid-cols-[repeat(auto-fit,minmax(calc(var(--spacing)*26),1fr))]'>
-                    { components.map((componentType) => (
+                    { components.map(type => (
                         <ComponentButton
-                            key={ componentType }
-                            type={ componentType }
+                            key={ type }
+                            type={ type }
                             onNodeAdd={ onNodeAdd }
                         />
                     )) }

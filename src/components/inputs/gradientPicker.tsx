@@ -1,12 +1,14 @@
 'use client';
 import React from 'react';
 import { Minus, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import CssKeywordInput from './cssKeywordInput';
+
 import ColorPicker from './colorPicker';
+import CssKeywordInput from './cssKeywordInput';
 
 const positions = [
     'top left',    'top center',    'top right',

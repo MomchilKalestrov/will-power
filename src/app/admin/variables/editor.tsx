@@ -15,11 +15,11 @@ import ColorPicker from '@/components/inputs/colorPicker';
 import CssUnitInput from '@/components/inputs/cssUnitInput';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 
-import { hexToHsl, hslToHex } from '@/lib/color';
-import { cssToFont, fontToCss } from '@/lib/utils';
-
 import { useConfig } from '@/contexts/config';
 import { useFileSelector } from '@/contexts/file';
+
+import { hexToHsl, hslToHex } from '@/lib/color';
+import { cssToFont, fontToCss } from '@/lib/utils';
 
 type Props = {
     initialConfig: config;

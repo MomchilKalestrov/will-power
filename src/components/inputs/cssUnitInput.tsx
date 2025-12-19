@@ -1,11 +1,12 @@
 'use client';
 import React from 'react';
+
 import {
     Select,
-    SelectContent,
     SelectItem,
-    SelectTrigger,
     SelectValue,
+    SelectContent,
+    SelectTrigger
 } from '@/components/ui/select'
 import { Input } from '@/components/ui/input';
 

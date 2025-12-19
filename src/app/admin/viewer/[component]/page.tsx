@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation';
 
 import RenderNode from '@/components/renderNode';
 
-import { getComponentByName } from '@/lib/db/actions';
+import useNodeTree from '@/hooks/useNodeTree';
+
 import { storage } from '@/lib/utils';
 
-import useNodeTree from '@/hooks/useNodeTree';
+import { getComponentByName } from '@/lib/db/actions';
 
 const Page: NextPage<PageProps<'/admin/viewer/[component]'>> = ({ params }) => {
     const router = useRouter();

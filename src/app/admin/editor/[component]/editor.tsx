@@ -5,22 +5,24 @@ import { toast } from 'sonner';
 import { del } from 'idb-keyval';
 import { Plus, RotateCcw, Settings } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 import Logo from '@/components/icons/logo';
 import TreePanel from '@/components/treePanel';
 import BlockPanel from '@/components/blocksPanel';
 import PropertiesPanel from '@/components/propertiesPanel';
+
+import useNodeTree from '@/hooks/useNodeTree';
+
 import { useComponents } from '@/contexts/components';
 
 import { storage } from '@/lib/utils';
 import { saveComponent } from '@/lib/db/actions';
 
-import useNodeTree from '@/hooks/useNodeTree';
 
-import ComponentHistoryMenu from './componentHistoryMenu';
 import SettingsEditor from './settingsEditor';
+import ComponentHistoryMenu from './componentHistoryMenu';
 
 type Props = {
     component: Component;

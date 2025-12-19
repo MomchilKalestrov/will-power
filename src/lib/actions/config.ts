@@ -1,9 +1,9 @@
 'use server';
-import connect from '@/lib/db';
-import { getCurrentUser } from '@/lib/db/actions';
-
 import { hasAuthority } from '@/lib/utils';
 import { updateConfigSchema } from '@/lib/zodSchemas';
+
+import connect from '@/lib/db';
+import { getCurrentUser } from '@/lib/db/actions';
 
 import Config from '@/models/config';
 

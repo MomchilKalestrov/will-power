@@ -3,6 +3,7 @@ import NextAuth, { type AuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
 import connect from '@/lib/db';
+
 import User from '@/models/user';
 
 const authOptions: AuthOptions = {

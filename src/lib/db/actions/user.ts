@@ -3,10 +3,10 @@ import type z from 'zod';
 import argon2 from 'argon2';
 import { getServerSession } from 'next-auth';
 
+import { hasAuthority } from '@/lib/utils';
 import { updateUserSchema, userSchema } from '@/lib/zodSchemas';
 
 import connect from '@/lib/db';
-import { hasAuthority } from '@/lib/utils';
 
 import User from '@/models/user';
 

@@ -1,5 +1,5 @@
-import { getConfig } from '@/lib/actions/config';
 import { NextResponse } from 'next/server';
+import { getConfig } from '@/lib/actions/config';
 
 const handler = async () => {
     const config = await getConfig();

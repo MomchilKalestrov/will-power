@@ -4,9 +4,10 @@ import { Metadata, NextComponentType, NextPageContext } from 'next';
 
 import { hasAuthority } from '@/lib/utils';
 
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+
 import Header from './header';
 
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 //@ts-ignore
 import '../globals.css';

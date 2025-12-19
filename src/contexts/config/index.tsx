@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+
 import { getConfig, setConfig as setBackendConfig } from '@/lib/actions';
 
 const ConfigCTX = React.createContext<{
@@ -14,7 +15,7 @@ const useConfig = () => {
 };
 
 const ConfigProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-    const [ config, setConfig ] = React.useState<config | undefined>();
+    const [ config, setConfig ] = React.useState<config | null | undefined>();
     
     React.useEffect(() => {
         getConfig().then(response => {
@@ -31,7 +32,11 @@ const ConfigProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         setConfig({ ...config!, ...newConfig });
     }, [ config ]);
 
-    if (!config) return (<></>);
+    if (config === null)
+        return (<p>FATAL ERROR. CANNOT LOAD SERVER CONFIGURATION.</p>);
+
+    if (!config)
+        return (<></>);
 
     return (
         <ConfigCTX.Provider value={ { config, updateConfig } }>

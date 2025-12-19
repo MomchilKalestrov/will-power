@@ -5,9 +5,10 @@ import { CaseSensitive, Settings, Variable } from 'lucide-react';
 
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { useConfig } from '@/contexts/config';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+
+import { useConfig } from '@/contexts/config';
 
 import { cn, fontToCss, cssToFont } from '@/lib/utils';
 

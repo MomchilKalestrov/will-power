@@ -2,23 +2,23 @@
 import React from 'react';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 
+import {
+    Collapsible,
+    CollapsibleTrigger,
+    CollapsibleContent
+} from '@/components/ui/collapsible';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger
-} from '@/components/ui/collapsible';
+import { Separator } from '@/components/ui/separator';
 
 import CodeInput from '@/components/inputs/codeInput';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 import AdvancedTextarea from '@/components/inputs/advancedTextarea';
 
-import { getObjectPropertyDefault } from '@/lib/propsFiller';
 import { isPanelPropertyVisible } from '@/lib/utils';
+import { getObjectPropertyDefault } from '@/lib/propsFiller';
 
 type Props = {
     metadata: NodeMetadata;
@@ -100,7 +100,7 @@ const ObjectProperty: React.FC<{
                         <Label htmlFor={ `input-${ property.key }` } className='capitalize'>{ name }</Label>
                     }
                     <Textarea
-                        className='min-h-[38px]'
+                        className='min-h-9.5'
                         id={ `input-${ property.key }` }
                         value={ currentValue }
                         onChange={ ({ target: { value: newValue } }) =>

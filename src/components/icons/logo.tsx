@@ -1,5 +1,5 @@
-
 import { createLucideIcon } from 'lucide-react';
+
 export default createLucideIcon('Logo', [
     [
         'path',

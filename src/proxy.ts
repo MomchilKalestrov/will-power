@@ -1,5 +1,5 @@
-import { NextResponse, type NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { NextResponse, type NextRequest } from 'next/server';
 
 const next = (request: NextRequest): NextResponse => {
     const headers = new Headers(request.headers);

@@ -1,9 +1,17 @@
 'use client';
+import {
+    Puzzle,
+    PanelTop,
+    StickyNote,
+    ChevronDown,
+    PanelBottom
+} from 'lucide-react';
 import React from 'react';
 import Link from 'next/link';
-import { ChevronDown, PanelBottom, PanelTop, Puzzle, StickyNote, type LucideProps } from 'lucide-react';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+
 import { Button } from '@/components/ui/button';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+
 import { storage } from '@/lib/utils';
 
 type history = ({ name: string, type: componentType })[];
@@ -13,9 +21,7 @@ type Props = {
     type: componentType;
 };
 
-type lucideComponent = React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
-
-const icons: Record<componentType, lucideComponent> = {
+const icons: Record<componentType, typeof Puzzle> = {
     header: PanelTop,
     page: StickyNote,
     footer: PanelBottom,

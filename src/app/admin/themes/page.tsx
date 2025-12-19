@@ -3,8 +3,8 @@ import { NextPage } from 'next';
 
 import { useThemes } from '@/contexts/themes';
 
-import AddThemeDialog from './addThemeDialog';
 import ThemeCard from './themeCard';
+import AddThemeDialog from './addThemeDialog';
 
 const Page: NextPage = () => {
     const { themes } = useThemes();

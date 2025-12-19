@@ -1,4 +1,5 @@
 import z from 'zod';
+
 import { validName, validPassword } from '@/lib/utils';
 
 export const themeMetadataSchema = z.object({
