@@ -10,15 +10,15 @@ import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardFooter } from '@/components/ui/card';
 
-import { storage } from '@/lib/utils';
 import screenshot from '@/lib/screenshot';
+import { cn, storage } from '@/lib/utils';
 
 import { deleteComponent } from '@/lib/db/actions';
 
-import headerFallback from './defaultHeader.png';
-import pageFallback from './defaultPage.png';
-import footerFallback from './defaultFooter.png';
-import componentFallback from './defaultComponent.png';
+import headerFallback from './defaultHeader.svg';
+import pageFallback from './defaultPage.svg';
+import footerFallback from './defaultFooter.svg';
+import componentFallback from './defaultComponent.svg';
 
 const fallbacks: Record<componentType, typeof pageFallback> = {
     'header': headerFallback,
@@ -80,10 +80,7 @@ const ComponentCard: React.FC<Props> = ({
             });
     }, [ name, type ]);
 
-    const filter =
-        document.body.classList.contains('dark') && preview === fallbacks[ type ]
-        ?   'invert(100%)'
-        :   '';
+    const hasFilter = preview === fallbacks[ type ];
 
     return (
         <Card className='p-0 gap-0 basis-64 grow max-w-96 text-center'>
@@ -93,8 +90,7 @@ const ComponentCard: React.FC<Props> = ({
                 alt='fallback'
                 src={ preview }
                 priority={ true }
-                className='w-full rounded-xl'
-                style={ { filter } }
+                className={ cn('w-full rounded-xl', hasFilter && 'dark:invert') }
             />
             <CardFooter className='p-4 flex gap-2 justify-between items-center'>
                 <p className='font-medium text-lg grow text-left'>{ name }</p>

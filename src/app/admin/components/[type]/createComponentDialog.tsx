@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { toast } from 'sonner';
-import ReactDOM from 'react-dom';
 import { PlusCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -51,7 +50,7 @@ const CreateComponentDialog: React.FC<Props> = ({
 
     if (!mounted) return (<></>);
 
-    return ReactDOM.createPortal(
+    return (
         <Dialog>
             <DialogTrigger asChild>
                 <Button variant='outline' size='icon'>
@@ -85,9 +84,8 @@ const CreateComponentDialog: React.FC<Props> = ({
                     </Button>
                 </div>
             </DialogContent>
-        </Dialog>,
-        document.getElementById('components-portal')!
-    )
+        </Dialog>
+    );
 };
 
 export default CreateComponentDialog;

@@ -1,6 +1,8 @@
 'use client';
 import React from 'react';
 import { toast } from 'sonner';
+import ReactDOM from 'react-dom';
+import { Rat } from 'lucide-react';
 import type { NextPage } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -26,6 +28,14 @@ const Page: NextPage<PageProps<'/admin/components/[type]'>> = ({ params }) => {
     if (![ 'header', 'page', 'footer', 'component' ].includes(type))
         return notFound();
 
+    if (components.length === 0)
+        return (
+            <div className='w-full h-[calc(100dvh-var(--spacing)*16)] flex justify-center items-center flex-col opacity-30'>
+                <Rat className='size-27' />
+                <p className='text-xl'>No { type }s here...</p>
+            </div>
+        );
+
     return (
         <main className='flex gap-2 flex-wrap justify-center content-start items-start overflow-y-scroll p-8 h-[calc(100dvh-var(--spacing)*16)]'>
             { components.map(component => (
@@ -35,7 +45,10 @@ const Page: NextPage<PageProps<'/admin/components/[type]'>> = ({ params }) => {
                     removeComponent={ name => setComponents(components.filter(component => component !== name)) }
                 />
             )) }
-            <CreateComponentDialog components={ components } type={ type } />
+            { ReactDOM.createPortal(
+                <CreateComponentDialog components={ components } type={ type } />,
+                document.getElementById('components-portal')!
+            ) }
         </main>
     )
 };

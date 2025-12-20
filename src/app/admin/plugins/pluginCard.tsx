@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 import { usePlugins } from '@/contexts/plugins';
 
-import defaultPluginThumbnail from './defaultPlugin.png';
+import defaultPluginThumbnail from './defaultPlugin.svg';
 
 const PluginCard: React.FC<{ plugin: plugin }> = ({ plugin }) => {
     const { togglePlugin, removePlugin } = usePlugins();

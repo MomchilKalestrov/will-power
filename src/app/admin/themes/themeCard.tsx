@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 import { useThemes } from '@/contexts/themes';
 
-import defaultThemeThumbnail from './defaultTheme.png';
+import themeFallback from './defaultTheme.svg';
 
 const ThemeCard: React.FC<{ theme: string }> = ({ theme }) => {
     const { theme: currentTheme, selectTheme, removeTheme } = useThemes();
@@ -30,7 +30,7 @@ const ThemeCard: React.FC<{ theme: string }> = ({ theme }) => {
             <CardHeader className='p-4 relative aspect-video overflow-hidden rounded-xl'>
                 <div
                     className='absolute inset-0 bg-center bg-no-repeat bg-cover filter dark:invert'
-                    style={ { backgroundImage: `url(${ defaultThemeThumbnail.src })` } }
+                    style={ { backgroundImage: `url(${ themeFallback.src })` } }
                 />
                 <div
                     className='absolute inset-0 bg-center bg-no-repeat bg-cover'
