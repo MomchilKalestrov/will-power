@@ -1,17 +1,18 @@
 'use client';
 import React from 'react';
 import { toast } from 'sonner';
-import { CirclePlus } from 'lucide-react';
+import ReactDOM from 'react-dom';
+import { PlusCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import {
     Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
     DialogTitle,
-    DialogTrigger
+    DialogClose,
+    DialogHeader,
+    DialogTrigger,
+    DialogContent,
+    DialogDescription
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,7 @@ const CreateComponentDialog: React.FC<Props> = ({
 }) => {
     const router = useRouter();
     const [ name, setName ] = React.useState<string>('');
+    const [ mounted, setMounted ] = React.useState<boolean>(false);
 
     const onPageCreated = React.useCallback(async () => {
         const response = await createComponent(name, type);
@@ -37,18 +39,24 @@ const CreateComponentDialog: React.FC<Props> = ({
         router.push('/admin/editor/' + name);
     }, [ name, type ]);
 
+    React.useEffect(() =>
+        void setMounted(true)
+    , []);
+
     const validInput =
         name === encodeURIComponent(name) &&
         name.length !== 0 &&
         !components.includes(name) &&
         !(name === 'admin' && type === 'page');
 
-    return (
+    if (!mounted) return (<></>);
+
+    return ReactDOM.createPortal(
         <Dialog>
             <DialogTrigger asChild>
-                <div className='w-48.5 aspect-[384/284.883] basis-64 grow max-w-96 text-center flex justify-center items-center rounded-xl border-2 border-dashed'>
-                    <CirclePlus className='opacity-20' size={ 32 } />
-                </div>
+                <Button variant='outline' size='icon'>
+                    <PlusCircle />
+                </Button>
             </DialogTrigger>
             <DialogContent className='max-w-[256px_!important]'>
                 <DialogHeader>
@@ -77,8 +85,9 @@ const CreateComponentDialog: React.FC<Props> = ({
                     </Button>
                 </div>
             </DialogContent>
-        </Dialog>
-    );
+        </Dialog>,
+        document.getElementById('components-portal')!
+    )
 };
 
 export default CreateComponentDialog;

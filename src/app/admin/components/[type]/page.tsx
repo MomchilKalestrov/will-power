@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation';
 import { getAllComponents } from '@/lib/db/actions';
 
 import ComponentCard from './componentCard';
-import CreatePageDialog from './createComponentDialog';
+import CreateComponentDialog from './createComponentDialog';
 
 const Page: NextPage<PageProps<'/admin/components/[type]'>> = ({ params }) => {
     const { type } = React.use(params) as { type: componentType };
@@ -27,7 +27,7 @@ const Page: NextPage<PageProps<'/admin/components/[type]'>> = ({ params }) => {
         return notFound();
 
     return (
-        <main className='flex gap-2 flex-wrap justify-center p-8'>
+        <main className='flex gap-2 flex-wrap justify-center content-start items-start overflow-y-scroll p-8 h-[calc(100dvh-var(--spacing)*16)]'>
             { components.map(component => (
                 <ComponentCard
                     key={ component }
@@ -35,7 +35,7 @@ const Page: NextPage<PageProps<'/admin/components/[type]'>> = ({ params }) => {
                     removeComponent={ name => setComponents(components.filter(component => component !== name)) }
                 />
             )) }
-            <CreatePageDialog components={ components } type={ type } />
+            <CreateComponentDialog components={ components } type={ type } />
         </main>
     )
 };

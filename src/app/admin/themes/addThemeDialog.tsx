@@ -34,12 +34,11 @@ const AddThemeDialog: React.FC = () => {
     }, [ file ]);
 
     return (
-
         <Dialog open={ dialogOpen } onOpenChange={ setDialogOpen }>
             <DialogTrigger asChild>
-                <div className='w-48.5 aspect-[384/276.883] basis-64 grow max-w-96 text-center flex justify-center items-center rounded-xl border-2 border-dashed'>
-                    <CirclePlus className='opacity-20' size={ 32 } />
-                </div>
+                <Button variant='outline' size='icon'>
+                    <CirclePlus />
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

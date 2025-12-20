@@ -2,6 +2,7 @@
 import React from 'react';
 import { toast } from 'sonner';
 import { NextPage } from 'next';
+import ReactDOM from 'react-dom';
 import { ServerCrash } from 'lucide-react';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
@@ -10,6 +11,7 @@ import { getAllUsers, updateUser, deleteUser, createUser } from '@/lib/db/action
 
 import UsersList from './usersList';
 import UserPanel from './userPanel';
+import AddUserDialog from './addUserDialog';
 
 const Page: NextPage = () => {
     const [ users, setUsers ] = React.useState<User[] | null | undefined>();
@@ -100,7 +102,12 @@ const Page: NextPage = () => {
                         if (newIndex !== -1) setSelectedIndex(newIndex);
                     } }
                     onUserAdd={ onUserAdd }
-                /> 
+                />
+                { /* Show the Dialog in the header instead */ }
+                { ReactDOM.createPortal(
+                    <AddUserDialog onUserAdd={ onUserAdd } />,
+                    document.getElementById('add-user-portal')!
+                ) }
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel className='pl-4 min-w-64 max-w-lg'>

@@ -25,9 +25,7 @@ const Header: React.FC = () => {
     
     return (
         <header className='h-16 px-4 border-b bg-background flex justify-between items-center gap-4'>
-            <p className='font-bold text-xl'>
-                { name }
-            </p>
+            <h2 className='font-bold text-xl'>{ name }</h2>
             <div className='flex gap-2'>
                 { path === '/admin/plugins' && <AddPluginDialog /> }
                 <Button size='icon'>

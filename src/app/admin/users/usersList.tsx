@@ -8,8 +8,7 @@ import {
     TableBody,
     TableCell,
     TableHead,
-    TableHeader,
-    TableFooter
+    TableHeader
 } from '@/components/ui/table';
 import {
     Select,
@@ -21,8 +20,6 @@ import {
 import { Input } from '@/components/ui/input';
 
 import { cn, hasAuthority } from '@/lib/utils';
-
-import AddUserDialog from './addUserDialog';
 
 export type SortFunction = Parameters<User[][ 'sort' ]>[ 0 ];
 
@@ -45,11 +42,13 @@ const Role: React.FC<{ role: User['role'] }> = ({ role }) => (
     <span className={ cn('text-xs py-1 px-2 font-bold rounded-sm', roles[ role ]) }>{ role }</span>
 );
 
-const UsersList: React.FC<{
+type Props = {
     users: User[];
     onUserSelect: (user: User) => void;
     onUserAdd: (user: Omit<User, 'id'> & { password: string }) => void;
-}> = ({ users, onUserSelect, onUserAdd }) => {
+};
+
+const UsersList: React.FC<Props> = ({ users, onUserSelect, onUserAdd }) => {
     const { data } = useSession();
     const [ searchBy, setSearchBy ] = React.useState<string>('');
     const sorters = React.useMemo<Record<string, SortFunction>>(
@@ -69,8 +68,8 @@ const UsersList: React.FC<{
     );
 
     return (
-        <>
-            <div className='flex gap-2 sticky top-0 bg-background z-10 pb-2'>
+        <div className='h-[calc(100dvh-var(--spacing)*32)] overflow-y-scroll flex flex-col gap-2'>
+            <div className='flex gap-2 sticky top-0 bg-background z-10'>
                 <Input
                     value={ searchBy }
                     onChange={ ({ target: { value } }) => setSearchBy(value) }
@@ -121,21 +120,8 @@ const UsersList: React.FC<{
                         </TableRow>
                     )) }
                 </TableBody>
-                {
-
-                    (data?.user as any)?.role === 'owner' &&
-                    <TableFooter>
-                        <TableRow>
-                            <TableCell>
-                                <AddUserDialog onUserAdd={ onUserAdd } />
-                            </TableCell>
-                            <TableCell />
-                            <TableCell />
-                        </TableRow>
-                    </TableFooter>
-                }
             </Table>
-        </>
+        </div>
     );
 };
 

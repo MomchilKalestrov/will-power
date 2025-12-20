@@ -107,7 +107,7 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
         <SidebarProvider>
             <Sidebar className='dark:bg-accent'>
                 <SidebarHeader className='flex flex-row items-center gap-2'>
-                    <p className='font-bold text-2xl grow text-center'>SeraphimCMS</p>
+                    <h1 className='font-bold text-2xl grow text-center'>SeraphimCMS</h1>
                 </SidebarHeader>
                 <SidebarContent className='grid grid-rows-[1fr_auto]'>
                     <SidebarGroup>

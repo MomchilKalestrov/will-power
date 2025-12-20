@@ -10,7 +10,7 @@ import connect from '@/lib/db';
 
 import User from '@/models/user';
 
-const getAllUsers = async (): serverActionResponse<User[] | null> => {
+const getAllUsers = async (): serverActionResponse<User[]> => {
     if (!await getCurrentUser())
         return {
             success: false,

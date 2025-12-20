@@ -8,7 +8,6 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 import Header from './header';
 
-
 //@ts-ignore
 import '../globals.css';
 
