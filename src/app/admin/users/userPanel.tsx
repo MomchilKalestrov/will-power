@@ -78,11 +78,10 @@ const UserPanel: React.FC<Props> = ({ user, onChange, onDelete }) => {
             <Select
                 value={ userState?.role }
                 disabled={ !canEdit }
-                onValueChange={ (role) => {
-                    console.log(data, role);
-                    if (!hasAuthority((data?.user as any).role, role as User['role'])) return;
-                    setUserState({ ...userState!, role: role as User['role'] });
-                } }
+                onValueChange={ role =>
+                    hasAuthority((data?.user as any).role, role as User['role']) &&
+                        setUserState({ ...userState!, role: role as User['role'] })
+                }
             >
             <SelectTrigger value={ userState?.role } className='w-full mb-2 capitalize'>
                 <SelectValue placeholder='Role' />

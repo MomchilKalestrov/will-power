@@ -66,8 +66,7 @@ const ComponentCard: React.FC<Props> = ({
     const onDelete = React.useCallback((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.stopPropagation();
         
-        const button = event.target as HTMLButtonElement | null;
-        if (!button) return;
+        const button = event.currentTarget satisfies HTMLButtonElement;
 
         button.disabled = true;
 

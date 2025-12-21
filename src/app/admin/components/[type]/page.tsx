@@ -1,56 +1,38 @@
-'use client';
-import React from 'react';
-import { toast } from 'sonner';
-import ReactDOM from 'react-dom';
-import { Rat } from 'lucide-react';
+
 import type { NextPage } from 'next';
 import { notFound } from 'next/navigation';
+import { Rat, ServerCrash } from 'lucide-react';
 
 import { getAllComponents } from '@/lib/db/actions';
 
-import ComponentCard from './componentCard';
-import CreateComponentDialog from './createComponentDialog';
+import Client from './client';
 
-const Page: NextPage<PageProps<'/admin/components/[type]'>> = ({ params }) => {
-    const { type } = React.use(params) as { type: componentType };
-    const [ components, setComponents ] = React.useState<string[]>([]);
 
-    React.useEffect(() => {
-        if (!type) return;
-        getAllComponents(type)
-            .then(result => {
-                if (!result.success)
-                    return toast(`Failed to get ${ type }s: ` + result.reason);
-                setComponents(result.value);
-            });
-    }, [ type ]);
-
+const Page: NextPage<PageProps<'/admin/components/[type]'>> = async ({ params }) => {
+    const { type } = await params as { type: componentType };
+    
     if (![ 'header', 'page', 'footer', 'component' ].includes(type))
         return notFound();
 
-    if (components.length === 0)
+    const response = await getAllComponents(type);
+
+    if (!response.success)
         return (
-            <div className='w-full h-[calc(100dvh-var(--spacing)*16)] flex justify-center items-center flex-col opacity-30'>
-                <Rat className='size-27' />
-                <p className='text-xl'>No { type }s here...</p>
+            <div className='w-full h-full flex justify-center items-center flex-col opacity-30'>
+                <ServerCrash className='size-27' />
+                <p className='text-xl'>Failed to get { type }s...</p>
             </div>
         );
 
-    return (
-        <main className='flex gap-2 flex-wrap justify-center content-start items-start overflow-y-scroll p-8 h-[calc(100dvh-var(--spacing)*16)]'>
-            { components.map(component => (
-                <ComponentCard
-                    key={ component }
-                    name={ component }
-                    removeComponent={ name => setComponents(components.filter(component => component !== name)) }
-                />
-            )) }
-            { ReactDOM.createPortal(
-                <CreateComponentDialog components={ components } type={ type } />,
-                document.getElementById('components-portal')!
-            ) }
-        </main>
-    )
+    if (response.value.length === 0)
+        return (
+            <div className='w-full h-[calc(100dvh-var(--spacing)*16)] flex justify-center items-center flex-col opacity-30'>
+                <Rat className='size-27' />
+                <p className='text-xl'>No { type }s here. Why don't you create one?</p>
+            </div>
+        );
+
+    return (<Client initialComponents={ response.value } />);
 };
 
 export default Page;

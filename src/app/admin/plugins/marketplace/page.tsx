@@ -19,7 +19,7 @@ const PLUGIN_COUNT_PER_PAGE = 10;
 
 const Page: NextPage = () => {
     const [ page, setPage ] = React.useState<number>(0);
-    const [ plugins, setPlugins ] = React.useState<strippedPlugins | undefined | null>(undefined);
+    const [ plugins, setPlugins ] = React.useState<strippedPlugins | undefined | null>();
     const [ query, setQuery ] = React.useState<string>('');
 
     const onSearch = React.useCallback(() => {
@@ -58,7 +58,7 @@ const Page: NextPage = () => {
             </div>
         );
 
-    if (!plugins)
+    if (plugins === undefined)
         return (
             <div className='h-[calc(100dvh-var(--spacing)*16)] p-8 box-border flex justify-center items-center'>
                 <Spinner className='size-9 opacity-50' />

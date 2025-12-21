@@ -5,6 +5,7 @@ import { NextPage } from 'next';
 import ReactDOM from 'react-dom';
 import { ServerCrash } from 'lucide-react';
 
+import { Spinner } from '@/components/ui/spinner';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
 import { getAllUsers, updateUser, deleteUser, createUser } from '@/lib/db/actions';
@@ -89,8 +90,12 @@ const Page: NextPage = () => {
             </div>
         );
 
-    if (!users)
-        return (<></>);
+    if (users === undefined)
+        return (
+            <div className='h-[calc(100dvh-var(--spacing)*16)]'>
+                <Spinner />
+            </div>
+        );
 
     return (
         <ResizablePanelGroup direction='horizontal' className='p-8'>

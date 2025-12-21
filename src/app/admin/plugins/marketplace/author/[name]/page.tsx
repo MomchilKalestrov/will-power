@@ -14,7 +14,7 @@ type author = (Awaited<ReturnType<typeof getAuthor>> & { success: true; })[ 'val
 
 const Page: NextPage<PageProps<'/admin/plugins/marketplace/author/[name]'>> = ({ params }) => {
     const { name } = React.use(params);
-    const [ author, setAuthor ] = React.useState<author>();
+    const [ author, setAuthor ] = React.useState<author | undefined>();
 
     React.useEffect(() => {
         getAuthor(decodeURIComponent(name)).then(response =>
@@ -24,7 +24,7 @@ const Page: NextPage<PageProps<'/admin/plugins/marketplace/author/[name]'>> = ({
         );
     }, [ name ]);
 
-    if (!author)
+    if (author === undefined)
         return (
             <div className='h-[calc(100dvh-var(--spacing)*16)] p-8 box-border flex justify-center items-center'>
                 <Spinner className='size-9 opacity-50' />

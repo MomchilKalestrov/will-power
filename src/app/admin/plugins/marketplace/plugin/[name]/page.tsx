@@ -71,7 +71,7 @@ const Page: NextPage<PageProps<'/admin/plugins/marketplace/plugin/[name]'>> = ({
     }, [ plugin ]);
         
 
-    if (!plugin)
+    if (plugin === undefined)
         return (
             <div className='h-[calc(100dvh-var(--spacing)*16)] p-8 box-border flex justify-center items-center'>
                 <Spinner className='size-9 opacity-50' />

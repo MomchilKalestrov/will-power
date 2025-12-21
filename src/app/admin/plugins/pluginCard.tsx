@@ -14,19 +14,15 @@ import defaultPluginThumbnail from './defaultPlugin.svg';
 const PluginCard: React.FC<{ plugin: plugin }> = ({ plugin }) => {
     const { togglePlugin, removePlugin } = usePlugins();
 
-    const onToggle = React.useCallback(async () => {
-        if (!togglePlugin) return;
+    const onToggle = React.useCallback(async () =>
+        toast(await togglePlugin(plugin.name)),
+        [ togglePlugin, plugin ]
+    );
 
-        const response = await togglePlugin(plugin.name);
-        toast(response);
-    }, [ togglePlugin, plugin ]);
-
-    const onDelete = React.useCallback(async () => {
-        if (!removePlugin) return;
-        
-        const response = await removePlugin(plugin.name);
-        toast(response);
-    }, [ removePlugin, plugin ]);
+    const onDelete = React.useCallback(async () =>
+        toast(await removePlugin(plugin.name)),
+        [ removePlugin, plugin ]
+    );
 
     return (
         <Card className='py-0 overflow-hidden basis-64 grow max-w-96 gap-0 relative'>
