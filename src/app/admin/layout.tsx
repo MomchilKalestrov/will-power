@@ -71,7 +71,10 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
             },
             'Variables': '/admin/variables',
             'Users': '/admin/users',
-            'Plugins': '/admin/plugins',
+            'Plugins': {
+                'Installed Plugins': '/admin/plugins',
+                'Marketplace': '/admin/plugins/marketplace'
+            },
             'Themes': '/admin/themes'
         };
 
