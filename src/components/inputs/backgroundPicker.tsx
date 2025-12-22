@@ -63,6 +63,7 @@ const BackgroundPicker: React.FC<Props> = ({
         const backgroundParts = initialBackground.split(' ').filter(part => part !== '/');
         backgroundParts[ 3 ] = backgroundParts[ 3 ] + ' ' + backgroundParts[ 4 ];
         backgroundParts.splice(4, 1);
+
         setBackground(backgroundParts as backgroundType);
     }, []);
 
@@ -72,6 +73,21 @@ const BackgroundPicker: React.FC<Props> = ({
         setBackground(newState);
         onChangeCallback(newState.slice(undefined, -1).join(' ') + ' / ' + newState[ newState.length - 1 ]);
     }, [ properties ]);
+
+    const onFilesOpen = React.useCallback(() => {
+        setFileSelectorOpen(true);
+        
+        selectFile('single', 'image')
+            .then(([ value ]) => {
+                onChange(`url("${ value.url }")`, 0);
+                setFileSelectorOpen(false);
+                setPopoverOpen(true);
+            })
+            .catch(() => {
+                setFileSelectorOpen(false);
+                setPopoverOpen(true);
+            });
+    }, [ selectFile ]);
 
     return (
         <Popover open={ popoverOpen || fileSelectorOpen } onOpenChange={ setPopoverOpen }>
@@ -83,28 +99,19 @@ const BackgroundPicker: React.FC<Props> = ({
             <PopoverContent className='grid gap-2 z-48'>
                 <button
                     className='rounded-sm overflow-hidden'
-                    onClick={ () => {
-                        setFileSelectorOpen(true);
-                        selectFile('single', 'image')
-                            .then(([ value ]) => {
-                                onChange(`url("${ value.url }")`, 0);
-                                setFileSelectorOpen(false);
-                                setPopoverOpen(true);
-                            })
-                            .catch(() => {
-                                setFileSelectorOpen(false);
-                                setPopoverOpen(true);
-                            });
-                    } }
+                    onClick={ onFilesOpen }
                 >
                     {
                         url
-                        ?   <Image
-                                src={ url.split('"')[ 1 ] }
-                                alt='background image'
-                                width={ 256 }
-                                height={ 128 }
+                        ?   <div
                                 className='aspect-2/1 w-full'
+                                style={ {
+                                    background: url,
+                                    backgroundRepeat: properties[ 0 ],
+                                    backgroundAttachment: properties[ 1 ],
+                                    backgroundPosition: properties[ 2 ],
+                                    backgroundSize: properties[ 3 ]
+                                } }
                             />
                         :   <div className='aspect-2/1 w-full bg-stone-100 dark:bg-zinc-800 flex justify-center content-center'>
                                 <CirclePlus />
@@ -120,7 +127,7 @@ const BackgroundPicker: React.FC<Props> = ({
                                     value={ properties[ index ]! }
                                     options={ value }
                                     id={ 'input-bg-' + key }
-                                    onChange={ (newValue: string) => onChange(newValue, index + 1) }
+                                    onChange={ value => onChange(value, index + 1) }
                                 />
                             </div>
                         </React.Fragment>

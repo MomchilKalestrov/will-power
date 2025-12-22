@@ -40,11 +40,11 @@ const RenderNode: React.FC<Props> = ({
         flag && onTreeLoadedCallback?.();
     }, []);
 
-    React.useEffect(() => {
-        getComponent(type)
+    React.useEffect(() =>
+        void getComponent(type)
             .then((value) => setComponent(() => (value ? value.Component : null)))
-            .catch(() => setComponent(null));
-    }, [ type ]);
+            .catch(() => setComponent(null))
+    , [ type ]);
 
     React.useEffect(() => {
         if (children.length === 0)
@@ -56,7 +56,8 @@ const RenderNode: React.FC<Props> = ({
         return null;
     };
 
-    if (Component === undefined) return null;
+    if (Component === undefined)
+        return (<></>);
 
     const newStyle: React.CSSProperties = {
         ...style,

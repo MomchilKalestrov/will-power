@@ -25,8 +25,6 @@ const BaseColorPicker: React.FC<{
     );
     
     const onColorChange = React.useCallback((event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (!event.currentTarget) return;
-        
         const rect = event.currentTarget.getBoundingClientRect();
         const x = event.clientX - rect.x;
         const y = event.clientY - rect.y;
@@ -41,8 +39,6 @@ const BaseColorPicker: React.FC<{
     }, [ onChange, h, a ]);
 
     const onOpacityChange = React.useCallback((event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (!event.currentTarget) return;
-
         const rect = event.currentTarget.getBoundingClientRect();
         const x = event.clientX - rect.x;
         const { width } = rect;
@@ -52,8 +48,6 @@ const BaseColorPicker: React.FC<{
     }, [ onChange, value ]);
 
     const onHueChange = React.useCallback((event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (!event.currentTarget) return;
-
         const rect = event.currentTarget.getBoundingClientRect();
         const x = event.clientX - rect.x;
         const { width } = rect;
@@ -154,7 +148,7 @@ const ColorPicker: React.FC<Props> = ({
     preview = false,
     noVars = false
 }) => {
-    const [ color, setColor ] = React.useState<string>();
+    const [ color, setColor ] = React.useState<string>('#ff0000ff');
     const { config } = useConfig();
     const [ variable, setVariable ] = React.useState<config[ 'variables' ][ number ]>();
     const [ variables, setVariables ] = React.useState<(config[ 'variables' ][ number ])[]>([]);
@@ -214,7 +208,7 @@ const ColorPicker: React.FC<Props> = ({
             </PopoverTrigger>
             <PopoverContent className={ `grid ${ showVars ? 'grid-cols-[1fr_9ch]' : 'grid-cols-1' } gap-2` }>
                 <BaseColorPicker
-                    value={ color || '#ff0000ff' }
+                    value={ color }
                     onChange={ onColorChange }
                 />
                 {

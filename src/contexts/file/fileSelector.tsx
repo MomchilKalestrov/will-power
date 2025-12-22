@@ -180,7 +180,7 @@ const FileSelector: React.FC<Props> = ({
     
     if (files === null)
         return (
-            <Dialog open={ visible } onOpenChange={ open => !open && onSelected(null) }>
+            <Dialog open={ visible } modal={ true } onOpenChange={ open => !open && onSelected(null) }>
                 <DialogContent
                     showCloseButton={ false }
                     className='max-w-full! w-[calc(100dvw-var(--spacing)*16)] h-[calc(100dvh-var(--spacing)*16)] grid grid-rows-[auto_auto_1fr_auto_auto] p-4 gap-0'

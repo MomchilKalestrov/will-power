@@ -242,7 +242,6 @@ const PropsFields: React.FC<Props> = ({
                             <div key={ key } className='grid gap-2'>
                                 <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
                                 <AdvancedTextarea
-                                    id={ `input-${ key }` }
                                     value={ currentValue }
                                     onChange={ (value) => handleChange(key, value, 'props') }
                                 />

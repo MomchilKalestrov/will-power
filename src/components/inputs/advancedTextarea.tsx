@@ -51,23 +51,18 @@ const formatting: ({
     { type: 'strikethrough', icon: <Strikethrough /> }
 ];
 
-type Props = {
-    id?: string | undefined;
-    value?: string | undefined;
-    onChange?: (value: string) => void;
-};
-
 const PageList: React.FC<{
     onChoosePage: (page: string) => void;
 }> = ({ onChoosePage }) => {
     const [ pages, setPages ] = React.useState<string[] | null>(null);
     const [ popoverOpen, setPopoverOpen ] = React.useState<boolean>(false);
 
-    React.useEffect(() => {
-        getAllComponents('page').then(response =>
-            response.success && setPages(response.value)
-        );
-    }, []);
+    React.useEffect(() =>
+        void getAllComponents('page')
+            .then(response =>
+                response.success && setPages(response.value)
+            )
+    , []);
 
     if (!pages) return;
 
@@ -190,10 +185,24 @@ const Toolbar: React.FC = () => {
             </div>
         </div>
     );
-}
+};
 
-const AdvancedTextarea: React.FC<Props> = ({ id, value, onChange }) => {
-    const namespace = React.useMemo(() => id || ('area-' + crypto.randomUUID()), [ id ]);
+type Props = {
+    value?: string | undefined;
+    onChange?: (value: string) => void;
+};
+
+const AdvancedTextarea: React.FC<Props> = ({ value, onChange }) => {
+    const namespace = React.useId();
+    
+    const handleChange = React.useCallback((_: EditorState, editor: LexicalEditor) =>
+        editor.update(() => {
+            onChange?.(
+                $generateHtmlFromNodes(editor, null)
+                    .replace(/<\s*\/?\s*(?:p|span|b|i)\b[^>]*>/gi, '')
+            )
+        })
+    , [ onChange ]);
 
     const initialConfig: InitialConfigType = {
         namespace,
@@ -215,9 +224,7 @@ const AdvancedTextarea: React.FC<Props> = ({ id, value, onChange }) => {
                         )
                     )
             ),
-        nodes: [
-            LinkNode
-        ],
+        nodes: [ LinkNode ],
         theme: {
             text: {
                 bold: 'font-bold',
@@ -228,15 +235,6 @@ const AdvancedTextarea: React.FC<Props> = ({ id, value, onChange }) => {
             link: 'text-[rgb(0,0,238)] underline'
         }
     };
-    
-    const handleChange = React.useCallback((_: EditorState, editor: LexicalEditor) => {
-        editor.update(() => {
-            onChange?.(
-                $generateHtmlFromNodes(editor, null)
-                    .replace(/<\s*\/?\s*(?:p|span|b|i)\b[^>]*>/gi, '')
-            )
-        });
-    }, [ onChange ]);
 
     return (
         <LexicalComposer initialConfig={ initialConfig }>
@@ -249,7 +247,11 @@ const AdvancedTextarea: React.FC<Props> = ({ id, value, onChange }) => {
                         contentEditable={ <ContentEditable className='outline-none' /> }
                     />
                     <HistoryPlugin />
-                    <LinkPlugin validateUrl={ (url) => url.startsWith('/') || url.startsWith('https://') || url.startsWith('http://') } />
+                    <LinkPlugin validateUrl={
+                        url => url.startsWith('/') ||
+                        url.startsWith('https://') ||
+                        url.startsWith('http://')
+                    } />
                     <OnChangePlugin onChange={ handleChange } />
                 </div>
             </div>

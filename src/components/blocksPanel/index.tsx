@@ -14,9 +14,9 @@ const ComponentButton: React.FC<Props & { type: string }> = ({ type, onNodeAdd }
     const { getComponent } = useComponents();
     const [ Data, setData ] = React.useState<componentData | null>();
 
-    React.useEffect(() => {
-        getComponent(type).then(setData);
-    }, [ type ]);
+    React.useEffect(() =>
+        void getComponent(type).then(setData)
+    , [ type ]);
 
     if (!Data) return (<></>);
 
