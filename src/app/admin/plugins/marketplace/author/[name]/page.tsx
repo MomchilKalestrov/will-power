@@ -16,13 +16,15 @@ const Page: NextPage<PageProps<'/admin/plugins/marketplace/author/[name]'>> = ({
     const { name } = React.use(params);
     const [ author, setAuthor ] = React.useState<author | undefined>();
 
-    React.useEffect(() => {
-        getAuthor(decodeURIComponent(name)).then(response =>
-            !response.success
-            ?   toast('Failed to load the author: ' + response.reason)
-            :   setAuthor(response.value)
-        );
-    }, [ name ]);
+    React.useEffect(() =>
+        void getAuthor(decodeURIComponent(name))
+            .then(response =>
+                !response.success
+                ?   toast('Failed to load the author: ' + response.reason)
+                :   setAuthor(response.value)
+            ),
+        [ name ]
+    );
 
     if (author === undefined)
         return (

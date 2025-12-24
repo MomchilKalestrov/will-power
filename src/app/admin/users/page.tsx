@@ -18,16 +18,17 @@ const Page: NextPage = () => {
     const [ users, setUsers ] = React.useState<User[] | null | undefined>();
     const [ selectedIndex, setSelectedIndex ] = React.useState<number | undefined>();
 
-    React.useEffect(() => {
-        getAllUsers()
+    React.useEffect(() =>
+        void getAllUsers()
             .then(response => {
                 if (!response.success) {
                     setUsers(null);
                     return toast('Failed to get users: ' + response.reason);
                 };
                 return setUsers(response.value);
-            });
-    }, []);
+            }),
+        []
+    );
 
     const onUserUpdate = React.useCallback(async (user: User & { password?: string; }) => {
         const response = await updateUser(user);

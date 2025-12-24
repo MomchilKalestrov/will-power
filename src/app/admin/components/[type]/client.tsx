@@ -16,9 +16,7 @@ const Client: React.FC<Props> = ({ initialComponents }) => {
     const [ components, setComponents ] = React.useState<string[]>(initialComponents);
     const [ mounted, setMounted ] = React.useState<boolean>(false);
 
-    React.useEffect(() =>
-        void setMounted(true)
-    , []);
+    React.useEffect(() => void setMounted(true), []);
 
     if (components.length === 0)
         return (

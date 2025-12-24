@@ -39,16 +39,17 @@ const Page: NextPage = () => {
             });
     }, [ query, plugins ]);
 
-    React.useEffect(() => {
-        getPlugins(page, PLUGIN_COUNT_PER_PAGE)
+    React.useEffect(() =>
+        void getPlugins(page, PLUGIN_COUNT_PER_PAGE)
             .then(response => {
                 if (response.success)
                     return setPlugins(response.value);
 
                 toast('Failed to load the plugins: ' + response.reason);
                 setPlugins(null);
-            });
-    }, [ page ]);
+            }),
+        [ page ]
+    );
 
     if (plugins === null)
         return (

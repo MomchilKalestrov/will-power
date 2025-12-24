@@ -48,10 +48,7 @@ const Page: NextPage = () => {
         router.replace(params.get('callbackUrl') ?? redirectPage);
     }, []);
     
-    React.useEffect(() => {
-        if (session.status === 'authenticated')
-            proceed();    
-    }, [ session ]);
+    React.useEffect(() => void (session.status === 'authenticated' && proceed()), [ session ]);
 
     const onSignIn = React.useCallback(async (data: FormData) => {
         const response = await signIn('credentials', { 

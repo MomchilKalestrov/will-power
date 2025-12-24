@@ -48,8 +48,8 @@ const ComponentCard: React.FC<Props> = ({
             });
     }, [ name ]);
 
-    React.useEffect(() => {
-        get(`preview-${ name }`)
+    React.useEffect(() =>
+        void get(`preview-${ name }`)
             .then((value: string | undefined) => {
                 if (!value) return createPreview();
                 
@@ -60,8 +60,9 @@ const ComponentCard: React.FC<Props> = ({
                     return createPreview();
                 
                 setPreview(value);
-            });
-    }, [ name, type ]);
+            }),
+        [ name, type ]
+    );
     
     const onDelete = React.useCallback((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.stopPropagation();

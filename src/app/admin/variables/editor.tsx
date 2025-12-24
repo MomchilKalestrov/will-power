@@ -25,9 +25,7 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
     const [ saveState, setSaveState ] = React.useState<boolean>(true);
     const [ mounted, setMounted ] = React.useState<boolean>(false);
 
-    React.useEffect(() =>
-        void setMounted(true)
-    , []);
+    React.useEffect(() => void setMounted(true), []);
 
     const editorParams = {
         config,

@@ -37,13 +37,15 @@ const Page: NextPage<PageProps<'/admin/plugins/marketplace/plugin/[name]'>> = ({
     const { addPlugin } = usePlugins();
     const [ plugin, setPlugin ] = React.useState<plugin>();
 
-    React.useEffect(() => {
-        getPlugin(decodeURIComponent(name)).then(response =>
-            !response.success
-            ?   toast('Failed to load the plugin: ' + response.reason)
-            :   setPlugin(response.value)
-        );
-    }, [ name ]);
+    React.useEffect(() =>
+        void getPlugin(decodeURIComponent(name))
+            .then(response =>
+                !response.success
+                ?   toast('Failed to load the plugin: ' + response.reason)
+                :   setPlugin(response.value)
+            ),
+        [ name ]
+    );
 
     const installPlugin = React.useCallback((url: string) => {
         fetch(url)

@@ -38,9 +38,7 @@ const CreateComponentDialog: React.FC<Props> = ({
         router.push('/admin/editor/' + name);
     }, [ name, type ]);
 
-    React.useEffect(() =>
-        void setMounted(true)
-    , []);
+    React.useEffect(() => void setMounted(true), []);
 
     const validInput =
         name === encodeURIComponent(name) &&

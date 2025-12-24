@@ -26,9 +26,7 @@ const UserPanel: React.FC<Props> = ({ user, onChange, onDelete }) => {
     const { status, data } = useSession();
     const [ userState, setUserState ] = React.useState<User & { password?: string } | undefined>();
 
-    React.useEffect(() => {
-        setUserState(user ? { ...user, password: undefined } : undefined);
-    }, [ user ]);
+    React.useEffect(() => void setUserState(user ? { ...user, password: undefined } : undefined), [ user ]);
 
     const canEdit =
         !!user &&
