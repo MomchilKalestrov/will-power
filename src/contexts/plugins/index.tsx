@@ -18,7 +18,7 @@ import * as componentActions from '@/lib/db/actions/component';
 type pluginInstance = plugin & z.infer<typeof pluginModuleSchema>;
 
 class WP {
-    components= componentActions;
+    components = componentActions;
     collections = collectionActions;
     config = configActions;
     storageURL = new URL(process.env.NEXT_PUBLIC_BLOB_URL!);
