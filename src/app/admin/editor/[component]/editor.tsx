@@ -20,7 +20,6 @@ import { useComponents } from '@/contexts/components';
 import { storage } from '@/lib/utils';
 import { saveComponent } from '@/lib/db/actions';
 
-
 import SettingsEditor from './settingsEditor';
 import ComponentHistoryMenu from './componentHistoryMenu';
 

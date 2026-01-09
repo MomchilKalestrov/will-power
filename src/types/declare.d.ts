@@ -127,7 +127,7 @@ declare global {
         enumerators: Record<string, { values: string[], icon?: boolean }>;
 
         acceptChildren: boolean;
-    }
+    };
 };
 
 declare module 'next-auth/jwt' {
