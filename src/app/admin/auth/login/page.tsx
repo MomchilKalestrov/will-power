@@ -32,17 +32,16 @@ const Page: NextPage = () => {
     const session = useSession();
 
     const proceed = React.useCallback(async () => {
-        // special exception for when loggin in for VSCode (to use the MCP server)
+        // special exception for when loggin in for VSCode
         if (params.get('redirect_uri')) {
             let url = params.get('redirect_uri')!;
             if (!url.endsWith('/'))
                 url += '/';
-            const newParams = {
-                state: params.get('state')!,
-                code: await getToken()
-            };
+            
+            const redirectUrl = new URL(url);
+            redirectUrl.searchParams.append('token', await getToken())
 
-            return router.replace(`${ url }?${ new URLSearchParams(newParams).toString() }`);
+            return router.replace(redirectUrl.toString());
         };
 
         router.replace(params.get('callbackUrl') ?? redirectPage);
@@ -50,13 +49,12 @@ const Page: NextPage = () => {
     
     React.useEffect(() => void (session.status === 'authenticated' && proceed()), [ session ]);
 
-    const onSignIn = React.useCallback(async (data: FormData) => {
-        const response = await signIn('credentials', { 
+    const onSignIn = React.useCallback(async (data: FormData) =>
+        void await signIn('credentials', { 
             username: data.get('username'),
             password: data.get('password')
-        });
-        if (response?.ok) proceed();
-    }, [ params ]);
+        })
+    , [ params ]);
     
     return (
         <main className='h-dvh w-dvw flex justify-center items-center'>
