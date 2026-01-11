@@ -1,6 +1,8 @@
 'use server';
 import type z from 'zod';
 import argon2 from 'argon2';
+import { decode } from 'next-auth/jwt';
+import { headers } from 'next/headers';
 import { getServerSession } from 'next-auth';
 
 import { hasAuthority } from '@/lib/utils';
@@ -85,9 +87,23 @@ const getUser = async (username: string): serverActionResponse<User | null> => {
 
 const getCurrentUser = async (): Promise<User | null> => {    
     try {
+        await connect();
+
         const session = await getServerSession();
-        if (!session) return null;
-        return await User.findOne({ username: session.user?.name });
+        if (session?.user.name)
+            return await User.findOne({ username: session?.user.name });
+
+        const header = await headers();
+        const authorization = header.get('Authorization');
+        if (!authorization?.startsWith('Bearer ')) return null;
+
+        const token = await decode({
+            token: authorization.split(' ').pop()!,
+            secret: process.env.NEXTAUTH_SECRET!
+        })
+        if (token?.name) return await User.findOne({ username: token.name });
+
+        return null;
     } catch (error) {
         console.error('[db] getCurrentUser error:', error);
         return null;
