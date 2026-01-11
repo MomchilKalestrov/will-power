@@ -2,11 +2,12 @@
 import React from 'react';
 import { toast } from 'sonner';
 import { NextPage } from 'next';
-import ReactDOM from 'react-dom';
 import { ServerCrash } from 'lucide-react';
 
 import { Spinner } from '@/components/ui/spinner';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+
+import Portal from '@/components/portal';
 
 import { getAllUsers, updateUser, deleteUser, createUser } from '@/lib/db/actions';
 
@@ -109,11 +110,9 @@ const Page: NextPage = () => {
                     } }
                     onUserAdd={ onUserAdd }
                 />
-                { /* Show the Dialog in the header instead */ }
-                { ReactDOM.createPortal(
-                    <AddUserDialog onUserAdd={ onUserAdd } />,
-                    document.getElementById('add-user-portal')!
-                ) }
+                <Portal parent='add-user-portal'>
+                    <AddUserDialog onUserAdd={ onUserAdd } />
+                </Portal>
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel className='pl-4 min-w-64 max-w-lg'>
