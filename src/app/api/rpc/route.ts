@@ -1,6 +1,7 @@
 import z from 'zod';
 import { type NextRequest, NextResponse } from 'next/server';
 
+import * as blobs from '@/lib/actions/blob';
 import * as config from '@/lib/actions/config';
 import * as collections from '@/lib/actions/collections';
 
@@ -18,11 +19,15 @@ const methods = {
     users,
     components,
     config,
-    collections
+    collections,
+    blobs
 } as any as Record<string, Record<string, (...params: any[]) => serverActionResponse<any>>>;
 
 const respond = (data: any, status: number) =>
-    new NextResponse(JSON.stringify(data), { status });
+    new NextResponse(JSON.stringify({
+        jsonrpc: '2.0',
+        ...data
+    }), { status });
 
 const POST = async (request: NextRequest) => {
     let rpcCall: z.infer<typeof jsonRPCSchema>;
@@ -45,7 +50,6 @@ const POST = async (request: NextRequest) => {
     const namespace = methods[ namespaceName ];
     if (!namespace)
         return respond({
-            jsonrpc: '2.0',
             error: {
                 code: -32601,
                 message: 'Method not found'
@@ -56,7 +60,6 @@ const POST = async (request: NextRequest) => {
     const method = namespace[ methodName ];
     if (!method)
         return respond({
-            jsonrpc: '2.0',
             error: {
                 code: -32601,
                 message: 'Method not found'
@@ -68,13 +71,11 @@ const POST = async (request: NextRequest) => {
 
     if (response.success)
         return respond({
-            jsonrpc: '2.0',
             result: response.value,
             id: rpcCall.id
         }, 200);
     else if (response.reason.includes('Server error'))
         return respond({
-            jsonrpc: '2.0',
             error: {
                 code: -32000,
                 message: 'Server error'
@@ -83,7 +84,6 @@ const POST = async (request: NextRequest) => {
         }, 500);
     else
         return respond({
-            jsonrpc: '2.0',
             error: {
                 code: -32602,
                 message: 'Invalid params'
