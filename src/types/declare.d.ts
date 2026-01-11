@@ -1,5 +1,3 @@
-import type { ListBlobResultBlob } from '@vercel/blob';
-
 declare global {
     type timestamp = number;
     type componentType = 'header' | 'page' | 'footer' | 'component';
@@ -116,8 +114,6 @@ declare global {
         type: 'custom';
         structure: objectProperty;
     });
-    
-    type BlobInformation = ListBlobResultBlob;
 
     interface NodeMetadata {
         props: Record<string, prop>;
@@ -129,13 +125,5 @@ declare global {
         acceptChildren: boolean;
     };
 };
-
-declare module 'next-auth/jwt' {
-    interface JWT {
-        id?: string;
-        role?: string;
-        name?: string;
-    }
-}
 
 export {};
