@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import Logo from '@/components/icons/logo';
 import TreePanel from '@/components/treePanel';
 import BlockPanel from '@/components/blocksPanel';
+import SettingsEditor from '@/components/settingsPanel';
 import PropertiesPanel from '@/components/propertiesPanel';
 
 import useNodeTree from '@/hooks/useNodeTree';
@@ -20,7 +21,6 @@ import { useComponents } from '@/contexts/components';
 import { storage } from '@/lib/utils';
 import { saveComponent } from '@/lib/db/actions';
 
-import SettingsEditor from './settingsEditor';
 import ComponentHistoryMenu from './componentHistoryMenu';
 
 type Props = {
