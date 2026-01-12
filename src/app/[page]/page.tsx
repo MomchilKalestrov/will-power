@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 import RenderNode from '@/components/renderNode';
 
-import { getComponentByName, getMatchingComponents } from '@/lib/db/actions';
+import { getComponentByName, getMatchingComponents } from '@/lib/db/actions/component';
 
 export const generateMetadata = async ({ params }: PageProps<'/[page]'>): Promise<Metadata> => {
     const { page } = await params;

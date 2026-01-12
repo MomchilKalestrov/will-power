@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 
-import { getConfig, setConfig as setBackendConfig } from '@/lib/actions';
+import { getConfig, setConfig as setBackendConfig } from '@/lib/actions/config';
 
 const ConfigCTX = React.createContext<{
     config: config,

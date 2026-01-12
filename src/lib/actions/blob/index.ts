@@ -1,5 +1,5 @@
 'use server';
-import { getCurrentUser } from '@/lib/db/actions';
+import { getCurrentUser } from '@/lib/db/actions/user';
 
 declare global {
     var cachedBlobList: BlobInformation[] | undefined;

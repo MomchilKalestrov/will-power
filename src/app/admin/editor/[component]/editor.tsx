@@ -19,7 +19,7 @@ import useNodeTree from '@/hooks/useNodeTree';
 import { useComponents } from '@/contexts/components';
 
 import { storage } from '@/lib/utils';
-import { saveComponent } from '@/lib/db/actions';
+import { saveComponent } from '@/lib/db/actions/component';
 
 import ComponentHistoryMenu from './componentHistoryMenu';
 

@@ -1,9 +1,7 @@
 import { Metadata, NextPage } from 'next';
 import { notFound } from 'next/navigation';
 
-import { FileSelectorProvider } from '@/contexts/file';
-
-import { getComponentByName } from '@/lib/db/actions';
+import { getComponentByName } from '@/lib/db/actions/component';
 
 import Editor from './editor';
 
@@ -18,11 +16,7 @@ const Page: NextPage<PageProps<'/admin/editor/[component]'>> = async ({ params }
     if (!component.success)
         return notFound();
     
-    return (
-        <FileSelectorProvider>
-            <Editor component={ component.value } />
-        </FileSelectorProvider>
-    );
+    return (<Editor component={ component.value } />);
 };
 
 export default Page;

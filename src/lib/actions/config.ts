@@ -3,7 +3,7 @@ import { hasAuthority } from '@/lib/utils';
 import { updateConfigSchema } from '@/lib/zodSchemas';
 
 import connect from '@/lib/db';
-import { getCurrentUser } from '@/lib/db/actions';
+import { getCurrentUser } from '@/lib/db/actions/user';
 
 import Config from '@/models/config';
 

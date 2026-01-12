@@ -1,6 +1,8 @@
 import React from 'react';
-import { getAllComponents, getComponentByName } from '@/lib/db/actions/';
+
 import RenderNode from '@/components/renderNode';
+
+import { getAllComponents, getComponentByName } from '@/lib/db/actions/component';
 
 const metadata: NodeMetadata = {
     props: {

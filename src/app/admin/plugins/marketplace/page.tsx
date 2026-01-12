@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { ButtonGroup } from '@/components/ui/button-group';
 
-import { getPlugins, getPluginsByQuery } from '@/lib/actions';
+import { getPlugins, getPluginsByQuery } from '@/lib/actions/marketplace';
 
 import PluginCard from './pluginCard';
 

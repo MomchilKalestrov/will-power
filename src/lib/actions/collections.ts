@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import { hasAuthority } from '@/lib/utils';
 
 import connect from '@/lib/db';
-import { getCurrentUser } from '@/lib/db/actions';
+import { getCurrentUser } from '@/lib/db/actions/user';
 
 const isAuthenticated = async (): Promise<boolean> => {
     const user = await getCurrentUser();

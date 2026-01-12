@@ -39,7 +39,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-import { getAllComponents } from '@/lib/db/actions';
+import { getAllComponents } from '@/lib/db/actions/component';
 
 const formatting: ({
     type: TextFormatType,

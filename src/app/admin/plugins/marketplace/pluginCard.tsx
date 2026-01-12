@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useDialog } from '@/contexts/dialog';
 import { usePlugins } from '@/contexts/plugins';
 
-import { getPlugins } from '@/lib/actions';
+import { getPlugins } from '@/lib/actions/marketplace';
 
 type strippedPlugin = (Awaited<ReturnType<typeof getPlugins>> & { success: true; })[ 'value' ][ number ];
 

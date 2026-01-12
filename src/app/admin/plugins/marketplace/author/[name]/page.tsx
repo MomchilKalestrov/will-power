@@ -8,7 +8,7 @@ import { Verified } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { Separator } from '@/components/ui/separator';
 
-import { getAuthor } from '@/lib/actions';
+import { getAuthor } from '@/lib/actions/marketplace';
 
 type author = (Awaited<ReturnType<typeof getAuthor>> & { success: true; })[ 'value' ];
 

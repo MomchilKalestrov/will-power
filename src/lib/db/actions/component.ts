@@ -6,7 +6,7 @@ import {
 } from '@/lib/zodSchemas';
 
 import connect from '@/lib/db';
-import { getCurrentUser } from '@/lib/db/actions';
+import { getCurrentUser } from '@/lib/db/actions/user';
 
 import Component from '@/models/component';
 

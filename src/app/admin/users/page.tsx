@@ -9,7 +9,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 
 import Portal from '@/components/portal';
 
-import { getAllUsers, updateUser, deleteUser, createUser } from '@/lib/db/actions';
+import { getAllUsers, updateUser, deleteUser, createUser } from '@/lib/db/actions/user';
 
 import UsersList from './usersList';
 import UserPanel from './userPanel';
@@ -100,7 +100,7 @@ const Page: NextPage = () => {
         );
 
     return (
-        <ResizablePanelGroup direction='horizontal' className='p-8'>
+        <ResizablePanelGroup className='p-8'>
             <ResizablePanel className='pr-4'>
                 <UsersList
                     users={ users }

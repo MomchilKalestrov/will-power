@@ -23,7 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
-import { getBlobList, addBlob, deleteBlob } from '@/lib/actions';
+import { getBlobList, addBlob, deleteBlob } from '@/lib/actions/blob';
 
 import DirectoryViewer from './directoryViewer';
 import SelectedFilePanel from './selectedFilePanel';

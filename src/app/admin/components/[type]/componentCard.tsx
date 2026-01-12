@@ -13,7 +13,7 @@ import { Card, CardFooter } from '@/components/ui/card';
 import screenshot from '@/lib/screenshot';
 import { cn, storage } from '@/lib/utils';
 
-import { deleteComponent } from '@/lib/db/actions';
+import { deleteComponent } from '@/lib/db/actions/component';
 
 import headerFallback from './defaultHeader.svg';
 import pageFallback from './defaultPage.svg';

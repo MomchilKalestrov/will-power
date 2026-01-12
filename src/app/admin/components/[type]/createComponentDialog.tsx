@@ -16,7 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
-import { createComponent } from '@/lib/db/actions';
+import { createComponent } from '@/lib/db/actions/component';
 
 type Props = {
     components: string[];

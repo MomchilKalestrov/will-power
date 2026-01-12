@@ -3,7 +3,7 @@ import type { NextPage } from 'next';
 import { notFound } from 'next/navigation';
 import { ServerCrash } from 'lucide-react';
 
-import { getAllComponents } from '@/lib/db/actions';
+import { getAllComponents } from '@/lib/db/actions/component';
 
 import Client from './client';
 

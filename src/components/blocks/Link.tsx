@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import { getAllComponents } from '@/lib/db/actions';
+
+import { getAllComponents } from '@/lib/db/actions/component';
+
 import { metadata as buttonMetadata } from './Button';
 import defaults from './defaults.module.css';
 

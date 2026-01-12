@@ -9,7 +9,7 @@ import useNodeTree from '@/hooks/useNodeTree';
 
 import { storage } from '@/lib/utils';
 
-import { getComponentByName } from '@/lib/db/actions';
+import { getComponentByName } from '@/lib/db/actions/component';
 
 const Page: NextPage<PageProps<'/admin/viewer/[component]'>> = ({ params }) => {
     const router = useRouter();

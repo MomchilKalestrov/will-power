@@ -13,7 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { useDialog } from '@/contexts/dialog';
 import { usePlugins } from '@/contexts/plugins';
 
-import { getPlugin } from '@/lib/actions';
+import { getPlugin } from '@/lib/actions/marketplace';
 
 type plugin = (Awaited<ReturnType<typeof getPlugin>> & { success: true; })[ 'value' ];
 

@@ -15,7 +15,7 @@ import {
     SelectTrigger 
 } from '@/components/ui/select';
 
-import { getAllComponents } from '@/lib/db/actions';
+import { getAllComponents } from '@/lib/db/actions/component';
 
 type Props = {
     component: Component;

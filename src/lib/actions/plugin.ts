@@ -3,9 +3,11 @@ import AdmZip from 'adm-zip';
 
 import { hasAuthority } from '@/lib/utils';
 import { pluginMetadataSchema } from '@/lib/zodSchemas';
-import { addBlob, deleteBlob, setConfig, getConfig } from '@/lib/actions';
 
-import { getCurrentUser } from '@/lib/db/actions';
+import { addBlob, deleteBlob } from '@/lib/actions/blob';
+import { setConfig, getConfig } from '@/lib/actions/config';
+
+import { getCurrentUser } from '@/lib/db/actions/user';
 
 const isAuthenticated = async (): Promise<boolean> => {
     const user = await getCurrentUser();
