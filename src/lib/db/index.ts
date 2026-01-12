@@ -1,19 +1,19 @@
-import mongoose from "mongoose";
+'use server';
+import mongoose from 'mongoose';
 
 declare global {
     var mongoose: {
         conn: mongoose.Mongoose | null;
         promise: Promise<mongoose.Mongoose> | null;
     };
-}
+};
 
 let cached = globalThis.mongoose;
 
-if (!cached) {
+if (!cached)
     cached = globalThis.mongoose = { conn: null, promise: null };
-}
 
-async function dbConnect() {
+async function connect() {
     const MONGODB_URI = process.env.MONGODB_URI!;
 
     if (!MONGODB_URI) {
@@ -43,4 +43,4 @@ async function dbConnect() {
     return cached.conn;
 }
 
-export default dbConnect;
+export default connect;
