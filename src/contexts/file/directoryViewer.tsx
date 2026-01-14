@@ -4,6 +4,8 @@ import { Rat } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
+import { formats } from './fileFormats';
+
 type Props = {
     directoryNode: fileNode;
     files: Record<string, BlobInformation>;
@@ -16,12 +18,6 @@ type Props = {
 type fileNode = {
     isFile: boolean;
     children?: Record<string, fileNode>;
-};
-
-const formats: Record<string, string[]> = {
-    image: [ 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp' ],
-    video: [ 'mp4', 'webm', 'ogg' ],
-    font: [ 'ttf', 'otf', 'woff', 'woff2' ]
 };
 
 const DirectoryViewer: React.FC<Props> = ({

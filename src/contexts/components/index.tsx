@@ -48,9 +48,9 @@ const ComponentsProvider: React.FC<React.PropsWithChildren> = ({ children }) => 
                 .map(({ components }) => components)
                 .flat()
                 .filter(Boolean)
-                .map((component: any) => [
-                    component.metadata.name,
-                    component
+                .map(component => [
+                    component!.metadata.name,
+                    component as componentData
                 ])
         )
     , [ plugins ]);

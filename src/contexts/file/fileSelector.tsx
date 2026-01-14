@@ -29,14 +29,7 @@ import DirectoryViewer from './directoryViewer';
 import SelectedFilePanel from './selectedFilePanel';
 import AddFileDialog from './addFileDialog';
 
-type fileTypes = 'image' | 'video' | 'font' | 'all';
-type fileCount = 'single' | 'multiple' | 'none';
-
-const formats: Record<string, string[]> = {
-    image: [ 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', '/' ],
-    video: [ 'mp4', 'webm', 'ogg', '/' ],
-    font: [ 'ttf', 'otf', 'woff', 'woff2', '/' ]
-};
+import { formats, type fileTypes, type fileCount } from './fileFormats';
 
 const filterFiles = (files: BlobInformation[], fileType: fileTypes): BlobInformation[] =>
     fileType === 'all'
@@ -177,75 +170,9 @@ const FileSelector: React.FC<Props> = ({
             .catch(() => toast('Failed to upload file.')),
         []
     );
-    
-    if (files === null)
-        return (
-            <Dialog open={ visible } modal={ true } onOpenChange={ open => !open && onSelected(null) }>
-                <DialogContent
-                    showCloseButton={ false }
-                    className='max-w-full! w-[calc(100dvw-var(--spacing)*16)] h-[calc(100dvh-var(--spacing)*16)] grid grid-rows-[auto_auto_1fr_auto_auto] p-4 gap-0'
-                >
-                    <DialogHeader className='flex flex-row justify-between items-center'>
-                        <div className='flex gap-2 items-center'>
-                            <AddFileDialog
-                                onSend={ onFileAdd }
-                                accepts={
-                                    fileCount !== 'none'
-                                    ?   formats[ fileType ]
-                                            .map(format => '.' + format)
-                                            .join(',')
-                                    :   undefined
-                                }
-                            />
-                            <DialogTitle className='text-xl'>
-                                <DialogDescription>
-                                    { fileCount !== 'none' && 'Select file' + (fileCount === 'multiple' ? 's' : '') }
-                                </DialogDescription>
-                            </DialogTitle>
-                        </div>
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                { cwd.map((path, index, { length }) => (
-                                    <React.Fragment key={ 'path-' + index }>
-                                        <BreadcrumbItem>
-                                            <BreadcrumbLink onClick={ () => {
-                                                setCwd(state => state.slice(0, index + 1));
-                                                if (fileCount === 'none')
-                                                    setSelectedFiles(new Set());
-                                            } }>
-                                                {
-                                                    length - 1 === index
-                                                    ?   <BreadcrumbPage>{ path }</BreadcrumbPage>
-                                                    :   path
-                                                }
-                                            </BreadcrumbLink>
-                                        </BreadcrumbItem>
-                                        { index < length - 1 && <BreadcrumbSeparator /> }
-                                    </React.Fragment>
-                                )) }
-                            </BreadcrumbList>
-                        </Breadcrumb>
-                        <Button
-                            size='icon'
-                            variant='outline'
-                            onClick={ () => onSelected(null) }
-                        ><X /></Button>
-                    </DialogHeader>
-                    <Separator className='my-4' />
-                    <div className='min-h-0 grid grid-cols-[1fr_auto] overflow-hidden'>
-                        <ServerCrash className='size-27' />
-                        <p className='text-xl'>Failed to get files...</p>
-                    </div>
-                </DialogContent>
-            </Dialog>
-        );
 
-    let directoryNode: fileNode | undefined = tree;
-    if (directoryNode)
-        for (let i = 0; i < cwd.length; i++)
-            directoryNode = directoryNode?.children![ cwd[ i ] ];
-
-    return (
+    // instead of passing 50 different attributes, just put it in the same context ¯\_(ツ)_/¯
+    const FileSelectorDialog: React.FC<React.PropsWithChildren> = ({ children }) => (
         <Dialog open={ visible } onOpenChange={ open => !open && onSelected(null) }>
             <DialogContent
                 showCloseButton={ false }
@@ -256,7 +183,7 @@ const FileSelector: React.FC<Props> = ({
                         <AddFileDialog
                             onSend={ onFileAdd }
                             accepts={
-                                fileCount !== 'none'
+                                fileCount !== 'none' && fileType !== 'all'
                                 ?   formats[ fileType ]
                                         .map(format => '.' + format)
                                         .join(',')
@@ -298,69 +225,90 @@ const FileSelector: React.FC<Props> = ({
                     ><X /></Button>
                 </DialogHeader>
                 <Separator className='my-4' />
-                <div className='min-h-0 grid grid-cols-[1fr_auto] overflow-hidden'>
-                    {
-                        files === undefined
-                        ?   <div className='w-full flex items-center justify-center'>Loading...</div>
-                        :   <DirectoryViewer
-                                files={ files }
-                                directoryNode={ directoryNode ?? { isFile: false, children: {} } }
-                                path={ cwd.join('/') }
-                                selectedFiles={ selectedFiles }
-                                onFileSelect={ pathname => {
-                                    const newSet = new Set<string>(selectedFiles);
-                                    if (newSet.has(pathname))
-                                        newSet.delete(pathname);
-                                    else {
-                                        if (fileCount !== 'multiple')
-                                            newSet.clear();
-                                        newSet.add(pathname);
-                                    }
-                                    setSelectedFiles(newSet);
-                                } }
-                                onDirectorySelect={ name => {
-                                    setCwd(state => [ ...state, name ]);
-                                    if (fileCount === 'none')
-                                        setSelectedFiles(new Set());
-                                } }
-                            />
-                    }
-                    {
-                        (lastSelectedFile !== undefined && files !== undefined) &&
-                        <SelectedFilePanel
-                            file={ files[ lastSelectedFile ] }
-                            onSelect={ 
-                                fileCount !== 'none'
-                                ?   () => onSelected(Object.values(files).filter(({ pathname }) =>
-                                    selectedFiles.has(pathname)
-                                ))
-                                :   undefined
-                            }
-                            onDelete={ onDelete }
-                        />
-                    }
-                </div>
-                {
-                    selectedFiles.size !== 0 && fileCount === 'multiple' &&
-                    <>
-                        <Separator className='my-4' />
-                        <DialogFooter>
-                            { [ ...selectedFiles ].map(file => (
-                                <Badge
-                                    key={ files![ file ].pathname }
-                                    variant='outline'
-                                    className='flex gap-1'
-                                    onClick={ () => onRemoveSelect(file) }
-                                >
-                                    <X />
-                                    { files![ file ].pathname.split('/').pop() }
-                                </Badge>
-                            )) }
-                        </DialogFooter>
-                    </>
-                }
+                { children }
             </DialogContent>
         </Dialog>
+    )
+    
+    if (files === null)
+        return (
+            <FileSelectorDialog>
+                <div className='min-h-0 grid grid-cols-[1fr_auto] overflow-hidden'>
+                    <ServerCrash className='size-27' />
+                    <p className='text-xl'>Failed to get files...</p>
+                </div>
+            </FileSelectorDialog>
+        );
+
+    let directoryNode: fileNode | undefined = tree;
+    if (directoryNode)
+        for (let i = 0; i < cwd.length; i++)
+            directoryNode = directoryNode?.children![ cwd[ i ] ];
+
+    return (
+        <FileSelectorDialog>
+            <div className='min-h-0 grid grid-cols-[1fr_auto] overflow-hidden'>
+                {
+                    files === undefined
+                    ?   <div className='w-full flex items-center justify-center'>Loading...</div>
+                    :   <DirectoryViewer
+                            files={ files }
+                            directoryNode={ directoryNode ?? { isFile: false, children: {} } }
+                            path={ cwd.join('/') }
+                            selectedFiles={ selectedFiles }
+                            onFileSelect={ pathname => {
+                                const newSet = new Set<string>(selectedFiles);
+                                if (newSet.has(pathname))
+                                    newSet.delete(pathname);
+                                else {
+                                    if (fileCount !== 'multiple')
+                                        newSet.clear();
+                                    newSet.add(pathname);
+                                }
+                                setSelectedFiles(newSet);
+                            } }
+                            onDirectorySelect={ name => {
+                                setCwd(state => [ ...state, name ]);
+                                if (fileCount === 'none')
+                                    setSelectedFiles(new Set());
+                            } }
+                        />
+                }
+                {
+                    (lastSelectedFile !== undefined && files !== undefined) &&
+                    <SelectedFilePanel
+                        file={ files[ lastSelectedFile ] }
+                        onSelect={ 
+                            fileCount !== 'none'
+                            ?   () => onSelected(Object.values(files).filter(({ pathname }) =>
+                                selectedFiles.has(pathname)
+                            ))
+                            :   undefined
+                        }
+                        onDelete={ onDelete }
+                    />
+                }
+            </div>
+            {
+                selectedFiles.size !== 0 && fileCount === 'multiple' &&
+                <>
+                    <Separator className='my-4' />
+                    <DialogFooter>
+                        { [ ...selectedFiles ].map(file => (
+                            <Badge
+                                key={ files![ file ].pathname }
+                                variant='outline'
+                                className='flex gap-1'
+                                onClick={ () => onRemoveSelect(file) }
+                            >
+                                <X />
+                                { files![ file ].pathname.split('/').pop() }
+                            </Badge>
+                        )) }
+                    </DialogFooter>
+                </>
+            }
+        </FileSelectorDialog>
     );
 };
 

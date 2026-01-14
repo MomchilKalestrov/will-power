@@ -2,9 +2,8 @@
 import React from 'react';
 
 import FileSelector from './fileSelector';
+import type { fileTypes, fileCount } from './fileFormats';
 
-type fileTypes = 'image' | 'video' | 'font' | 'all';
-type fileCount = 'single' | 'multiple' | 'none';
 type selectFileFunctionType = (fileCount: fileCount, fileType?: fileTypes) => Promise<BlobInformation[]>;
 
 const FileSelectorCTX = React.createContext<{
