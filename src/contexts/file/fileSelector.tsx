@@ -3,33 +3,17 @@ import React from 'react';
 import { toast } from 'sonner';
 import { ServerCrash, X } from 'lucide-react';
 
-import {
-    Dialog,
-    DialogTitle,
-    DialogFooter,
-    DialogHeader,
-    DialogContent,
-    DialogDescription
-} from '@/components/ui/dialog';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator
-} from '@/components/ui/breadcrumb';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { DialogFooter } from '@/components/ui/dialog';
 
 import { getBlobList, addBlob, deleteBlob } from '@/lib/actions/blob';
 
 import DirectoryViewer from './directoryViewer';
 import SelectedFilePanel from './selectedFilePanel';
-import AddFileDialog from './addFileDialog';
 
 import { formats, type fileTypes, type fileCount } from './fileFormats';
+import FileSelectorDialog from './fileSelectorDialog';
 
 const filterFiles = (files: BlobInformation[], fileType: fileTypes): BlobInformation[] =>
     fileType === 'all'
@@ -105,9 +89,24 @@ const FileSelector: React.FC<Props> = ({
         selectedFiles.size > 0
         ?   [ ...selectedFiles ].pop()
         :   undefined,
-        [ files, selectedFiles ]
+        [ selectedFiles ]
     );
     const [ cwd, setCwd ] = React.useState<string[]>([ 'assets' ]);
+
+    const accepts = React.useMemo(() =>
+        fileCount !== 'none' && fileType !== 'all'
+        ?   formats[ fileType ]
+                .map(format => '.' + format)
+                .join(',')
+        :   undefined,
+        [ fileCount, fileType ]
+    );
+
+    const onPathClick = React.useCallback((index: number) => {
+        setCwd(state => state.slice(0, index + 1));
+        if (fileCount === 'none')
+            setSelectedFiles(new Set());
+    }, [ fileCount ]);
 
     React.useEffect(() => {
         getBlobList()
@@ -168,71 +167,21 @@ const FileSelector: React.FC<Props> = ({
                 });
             })
             .catch(() => toast('Failed to upload file.')),
-        []
+        [ cwd ]
     );
-
-    // instead of passing 50 different attributes, just put it in the same context ¯\_(ツ)_/¯
-    const FileSelectorDialog: React.FC<React.PropsWithChildren> = ({ children }) => (
-        <Dialog open={ visible } onOpenChange={ open => !open && onSelected(null) }>
-            <DialogContent
-                showCloseButton={ false }
-                className='max-w-full! w-[calc(100dvw-var(--spacing)*16)] h-[calc(100dvh-var(--spacing)*16)] grid grid-rows-[auto_auto_1fr_auto_auto] p-4 gap-0'
-            >
-                <DialogHeader className='flex flex-row justify-between items-center'>
-                    <div className='flex gap-2 items-center'>
-                        <AddFileDialog
-                            onSend={ onFileAdd }
-                            accepts={
-                                fileCount !== 'none' && fileType !== 'all'
-                                ?   formats[ fileType ]
-                                        .map(format => '.' + format)
-                                        .join(',')
-                                :   undefined
-                            }
-                        />
-                        <DialogTitle className='text-xl'>
-                            <DialogDescription>
-                                { fileCount !== 'none' && 'Select file' + (fileCount === 'multiple' ? 's' : '') }
-                            </DialogDescription>
-                        </DialogTitle>
-                    </div>
-                    <Breadcrumb>
-                        <BreadcrumbList>
-                            { cwd.map((path, index, { length }) => (
-                                <React.Fragment key={ 'path-' + index }>
-                                    <BreadcrumbItem>
-                                        <BreadcrumbLink onClick={ () => {
-                                            setCwd(state => state.slice(0, index + 1));
-                                            if (fileCount === 'none')
-                                                setSelectedFiles(new Set());
-                                        } }>
-                                            {
-                                                length - 1 === index
-                                                ?   <BreadcrumbPage>{ path }</BreadcrumbPage>
-                                                :   path
-                                            }
-                                        </BreadcrumbLink>
-                                    </BreadcrumbItem>
-                                    { index < length - 1 && <BreadcrumbSeparator /> }
-                                </React.Fragment>
-                            )) }
-                        </BreadcrumbList>
-                    </Breadcrumb>
-                    <Button
-                        size='icon'
-                        variant='outline'
-                        onClick={ () => onSelected(null) }
-                    ><X /></Button>
-                </DialogHeader>
-                <Separator className='my-4' />
-                { children }
-            </DialogContent>
-        </Dialog>
-    )
     
     if (files === null)
         return (
-            <FileSelectorDialog>
+            <FileSelectorDialog
+                visible={ visible }
+                onClose={ () => onSelected(null) }
+                fileType={ fileType }
+                fileCount={ fileCount }
+                accepts={ accepts }
+                cwd={ cwd }
+                onPathClick={ onPathClick }
+                onFileAdd={ onFileAdd }
+            >
                 <div className='min-h-0 grid grid-cols-[1fr_auto] overflow-hidden'>
                     <ServerCrash className='size-27' />
                     <p className='text-xl'>Failed to get files...</p>
@@ -246,7 +195,16 @@ const FileSelector: React.FC<Props> = ({
             directoryNode = directoryNode?.children![ cwd[ i ] ];
 
     return (
-        <FileSelectorDialog>
+        <FileSelectorDialog
+            visible={ visible }
+            onClose={ () => onSelected(null) }
+            fileType={ fileType }
+            fileCount={ fileCount }
+            accepts={ accepts }
+            cwd={ cwd }
+            onPathClick={ onPathClick }
+            onFileAdd={ onFileAdd }
+        >
             <div className='min-h-0 grid grid-cols-[1fr_auto] overflow-hidden'>
                 {
                     files === undefined
