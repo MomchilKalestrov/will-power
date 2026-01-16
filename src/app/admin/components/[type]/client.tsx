@@ -37,7 +37,7 @@ const Client: React.FC<Props> = ({ initialComponents }) => {
                 />
             )) }
             <Portal parent='components-portal'>
-                <CreateComponentDialog components={ components } type={ type } />,
+                <CreateComponentDialog components={ components } type={ type } />
             </Portal>
         </main>
     );
