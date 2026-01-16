@@ -74,6 +74,11 @@ const propStructure: z.ZodType<any> = z.lazy(() =>
             type: z.literal('array'),
             key: z.string(),
             structure: propStructure
+        }),
+        z.object({
+            type: z.literal('file'),
+            key: z.string(),
+            format: z.enum([ 'font', 'all', 'image', 'video', 'audio' ])
         })
     ])
 );
@@ -89,6 +94,12 @@ const propSchema = z.discriminatedUnion('type', [
         default: z.any().optional(),
         condition: editorVisibilityCondition.optional(),
         structure: propStructure
+    }),
+    z.object({
+        type: z.literal('file'),
+        format: z.enum([ 'font', 'all', 'image', 'video', 'audio' ]),
+        default: z.any().optional(),
+        condition: editorVisibilityCondition.optional()
     })
 ]);
 

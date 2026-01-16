@@ -1,3 +1,5 @@
+import { type fileTypes } from '@/contexts/file/fileFormats';
+
 declare global {
     type timestamp = number;
     type componentType = 'header' | 'page' | 'footer' | 'component';
@@ -91,7 +93,7 @@ declare global {
     };
 
     type objectProperty = {
-        type: 'string' | 'enum' | 'number' | 'object' | 'array';
+        type: 'string' | 'enum' | 'number' | 'object' | 'array' | 'file';
         key: string;
     } & ({
         type: 'number' | 'string' | 'enum';
@@ -102,10 +104,13 @@ declare global {
     } | {
         type: 'array';
         structure: objectProperty;
+    } | {
+        type: 'file';
+        format: fileTypes;
     });
 
     type prop = {
-        type: 'string' | 'number' | 'custom' | 'enum' | 'line' | 'code';
+        type: 'string' | 'number' | 'custom' | 'enum' | 'line' | 'code' | 'file';
         default?: any;
         condition?: editorVisibilityCondition;
     } & ({
@@ -113,6 +118,9 @@ declare global {
     } | {
         type: 'custom';
         structure: objectProperty;
+    } | {
+        type: 'file';
+        format: fileTypes;
     });
 
     interface NodeMetadata {

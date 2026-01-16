@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 
+import FileInput from '@/components/inputs/fileInput';
 import CodeInput from '@/components/inputs/codeInput';
 import CssKeywordInput from '@/components/inputs/cssKeywordInput';
 import AdvancedTextarea from '@/components/inputs/advancedTextarea';
@@ -144,57 +145,72 @@ const ObjectProperty: React.FC<{
                     </CollapsibleContent>
                 </Collapsible>
             );
-            case 'array':
-                return (
-                    <div className='space-y-2 mb-2'>
-                        {
-                            showName &&
-                            <Label className='capitalize'>{ name }</Label>
-                        }
-                        <div className='pl-2 border-l'>
-                            { (currentValue as any[]).map((v, index) => (
-                                <React.Fragment key={ index }>
-                                    <ObjectProperty
-                                        property={ property.structure }
-                                        enumerators={ enumerators }
-                                        value={ v }
-                                        showName={ false }
-                                        handleChange={ (_, value) => {
-                                            const newArray = [ ...currentValue ];
-                                            newArray[ index ] = value;
-                                            handleChange(property.key, newArray);
-                                        } }
-                                    />
-                                    {
-                                        (property.structure.type === 'object' ||
-                                        property.structure.type === 'array') &&
-                                        <Separator className='my-2' />
-                                    }
-                                </React.Fragment>
-                            )) }
-                            <div className='flex gap-2'>
-                                <Button
-                                    className='grow'
-                                    onClick={ () =>
-                                        handleChange(property.key, [
-                                            ...currentValue || [],
-                                            defaultValue[ property.key ][ 0 ]
-                                        ])
-                                    }
-                                ><Plus /></Button>
-                                <Button
-                                    variant='destructive'
-                                    className='grow'
-                                    onClick={ () =>
-                                        handleChange(property.key, [
-                                            ...(currentValue as any[] ?? []).slice(0, -1)
-                                        ])
-                                    }
-                                ><Trash2 /></Button>
-                            </div>
+        case 'array':
+            return (
+                <div className='space-y-2 mb-2'>
+                    {
+                        showName &&
+                        <Label className='capitalize'>{ name }</Label>
+                    }
+                    <div className='pl-2 border-l'>
+                        { (currentValue as any[]).map((v, index) => (
+                            <React.Fragment key={ index }>
+                                <ObjectProperty
+                                    property={ property.structure }
+                                    enumerators={ enumerators }
+                                    value={ v }
+                                    showName={ false }
+                                    handleChange={ (_, value) => {
+                                        const newArray = [ ...currentValue ];
+                                        newArray[ index ] = value;
+                                        handleChange(property.key, newArray);
+                                    } }
+                                />
+                                {
+                                    (property.structure.type === 'object' ||
+                                    property.structure.type === 'array') &&
+                                    <Separator className='my-2' />
+                                }
+                            </React.Fragment>
+                        )) }
+                        <div className='flex gap-2'>
+                            <Button
+                                className='grow'
+                                onClick={ () =>
+                                    handleChange(property.key, [
+                                        ...currentValue || [],
+                                        defaultValue[ property.key ][ 0 ]
+                                    ])
+                                }
+                            ><Plus /></Button>
+                            <Button
+                                variant='destructive'
+                                className='grow'
+                                onClick={ () =>
+                                    handleChange(property.key, [
+                                        ...(currentValue as any[] ?? []).slice(0, -1)
+                                    ])
+                                }
+                            ><Trash2 /></Button>
                         </div>
                     </div>
-                );
+                </div>
+            );
+        case 'file':
+            return (
+                <div className='grid gap-2 mb-2'>
+                    {
+                        showName &&
+                        <Label htmlFor={ `input-${ property.key }` } className='capitalize'>{ name }</Label>
+                    }
+                    <FileInput
+                        id={ `input-${ property.key }` }
+                        value={ currentValue ?? '' }
+                        type={ property.format }
+                        onChange={ value => handleChange(property.key, value) }
+                    />
+                </div>
+            );
     };
 };
 
@@ -303,6 +319,18 @@ const PropsFields: React.FC<Props> = ({
                                     handleChange={ (_, value) =>{
                                         handleChange(key, value, 'props')
                                     }}
+                                />
+                            </div>
+                        );
+                    case 'file':
+                        return (
+                            <div key={ key } className='grid gap-2'>
+                                <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
+                                <FileInput
+                                    id={ `input-${ key }` }
+                                    value={ currentValue ?? '' }
+                                    type={ prop.format }
+                                    onChange={ value => handleChange(key, value, 'props') }
                                 />
                             </div>
                         );

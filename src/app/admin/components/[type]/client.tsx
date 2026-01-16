@@ -22,7 +22,7 @@ const Client: React.FC<Props> = ({ initialComponents }) => {
                 <Rat className='size-27' />
                 <p className='text-xl'>No { type }s here. Why don't you create one?</p>
                 <Portal parent='components-portal'>
-                    <CreateComponentDialog components={ components } type={ type } />,
+                    <CreateComponentDialog components={ components } type={ type } />
                 </Portal>
             </div>
         );

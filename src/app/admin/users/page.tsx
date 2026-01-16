@@ -94,7 +94,7 @@ const Page: NextPage = () => {
 
     if (users === undefined)
         return (
-            <div className='h-[calc(100dvh-var(--spacing)*16)]'>
+            <div className='h-[calc(100dvh-var(--spacing)*16)] flex justify-center items-center'>
                 <Spinner />
             </div>
         );
