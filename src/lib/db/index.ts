@@ -26,8 +26,9 @@ async function connect() {
         return cached.conn;
     }
     if (!cached.promise) {
-        const opts = {
+        const opts: mongoose.ConnectOptions = {
             bufferCommands: false,
+            autoSelectFamily: false
         };
         cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
             return mongoose;

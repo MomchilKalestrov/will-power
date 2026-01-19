@@ -106,6 +106,7 @@ declare global {
         structure: objectProperty;
     } | {
         type: 'file';
+        default: any;
         format: fileTypes;
     });
 

@@ -30,7 +30,8 @@ const nextConfig: NextConfig = {
     images: {
         remotePatterns: [ new URL('https://5r8xi2igslacumom.public.blob.vercel-storage.com/**') ]
     },
-    devIndicators: false
+    devIndicators: false,
+    output: 'standalone'
 };
 
 export default nextConfig;
