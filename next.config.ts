@@ -31,7 +31,10 @@ const nextConfig: NextConfig = {
         remotePatterns: [ new URL('https://5r8xi2igslacumom.public.blob.vercel-storage.com/**') ]
     },
     devIndicators: false,
-    output: 'standalone'
+    output: 'standalone',
+    turbopack: {
+        root: '.'
+    }
 };
 
 export default nextConfig;
