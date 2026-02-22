@@ -192,17 +192,51 @@ type Props = {
     onChange?: (value: string) => void;
 };
 
+const RefPlugin: React.FC<{
+    ref: React.RefObject<LexicalEditor | null>;
+}> = ({ ref }) => {
+    const [ editor ] = useLexicalComposerContext();
+    ref.current = editor;
+    return null;
+};
+
 const AdvancedTextarea: React.FC<Props> = ({ value, onChange }) => {
     const namespace = React.useId();
+    const editorRef = React.useRef<LexicalEditor>(null); 
     
     const handleChange = React.useCallback((_: EditorState, editor: LexicalEditor) =>
-        editor.update(() => {
+        editor.update(() =>
             onChange?.(
                 $generateHtmlFromNodes(editor, null)
                     .replace(/<\s*\/?\s*(?:p|span|b|i)\b[^>]*>/gi, '')
             )
-        })
+        )
     , [ onChange ]);
+
+    React.useEffect(() => {
+        if (!editorRef.current) return;
+
+        editorRef.current.update(() => {
+            // To do: find a better way to check when the value was externally updated
+            const current =
+                $generateHtmlFromNodes(editorRef.current!, null)
+                    .replace(/<\s*\/?\s*(?:p|span|b|i)\b[^>]*>/gi, '');
+            
+            if (current !== value)
+                $getRoot()
+                    .clear()
+                    .append(
+                        ...$generateNodesFromDOM(
+                            editorRef.current!,
+                            new DOMParser()
+                                .parseFromString(
+                                    `<p>${ value }</p>`,
+                                    'text/html'
+                                )
+                        )
+                    );
+        });
+    }, [ value ]);
 
     const initialConfig: InitialConfigType = {
         namespace,
@@ -253,6 +287,7 @@ const AdvancedTextarea: React.FC<Props> = ({ value, onChange }) => {
                         url.startsWith('http://')
                     } />
                     <OnChangePlugin onChange={ handleChange } />
+                    <RefPlugin ref={ editorRef } />
                 </div>
             </div>
         </LexicalComposer>
