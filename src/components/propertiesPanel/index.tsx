@@ -35,7 +35,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
             [ property ]: {
                 ...(node[ property ] || {}),
                 [ key ]: value,
-            },
+            }
         }),
         [ onNodeUpdate, node ]
     );

@@ -21,38 +21,44 @@ type Props = {
     noVars?: boolean;
 };
 
+const DEFAULT_TYPEFACES = [
+    'Arial',
+    'Verdana',
+    'Tahoma',
+    'Trebuchet MS',
+    'Times New Roman',
+    'Georgia',
+    'Garamond',
+    'Courier New',
+    'Brush Script MT'
+];
+
+const DEFAULT_FONT: font = {
+    family: 'Times New Roman',
+    style: 'normal',
+    size: '1rem',
+    weight: 'normal',
+    fallback: 'sans-serif'
+};
+
 const FontInput: React.FC<Props> = ({
     value: initialFont,
     onChange: onChangeCallback,
     noVars
 }) => {
     const { config } = useConfig();
-    const [ variable, setVariable ] = React.useState<fontVariable | undefined>(undefined);
-    const [ variables, setVariables ] = React.useState<fontVariable[]>([]); 
-    const [ typefaces, setTypefaces ] = React.useState<string[]>([]);
-    const [ font, setFont ] = React.useState<font>();
-
-    React.useEffect(() => {
-        const variables = config.variables.filter(variable => variable.type === 'font');
-        setVariables(variables);
-
-        setTypefaces(
-            config
+    const variables = React.useMemo(() => config.variables.filter(variable => variable.type === 'font'), [ config ]);
+    const typefaces = React.useMemo(() =>
+        config
             .fonts
                 .map(({ family }) => family)
-                .concat([
-                    'Arial',
-                    'Verdana',
-                    'Tahoma',
-                    'Trebuchet MS',
-                    'Times New Roman',
-                    'Georgia',
-                    'Garamond',
-                    'Courier New',
-                    'Brush Script MT'
-                ])
-        );
+                .concat(DEFAULT_TYPEFACES),
+        [ config ]
+    );
+    const [ variable, setVariable ] = React.useState<fontVariable | undefined>();
+    const [ font, setFont ] = React.useState<font>(DEFAULT_FONT);
 
+    React.useEffect(() => {
         if (typeof initialFont === 'object')
             return setFont(initialFont);
 
@@ -62,31 +68,31 @@ const FontInput: React.FC<Props> = ({
         const variableId = initialFont.substring(6, initialFont.length - 1);
         const variable = variables.find(({ id }) => variableId === id);
 
-        setVariable(variable);
-        setFont(variable || {
-            family: 'Times New Roman',
-            style: 'normal',
-            size: '1rem',
-            weight: 'normal',
-            fallback: 'sans-serif'
-        });
+        if (variable) {
+            setVariable(variable);
+            setFont(variable);
+        };
     }, []);
 
     const onVariableChange = React.useCallback((value: string) => {
         const newVariable = variables.find(({ id }) => id === value);
         if (!newVariable) return;
+
         setFont(newVariable);
         setVariable(newVariable);
         onChangeCallback(`var(--${ newVariable.id })`);
     }, [ variables, onChangeCallback ]);
 
     const updateFont = React.useCallback((key: string, value: string) => {
-        if (variable)
-            setVariable(undefined);
-        const newFont: font = { ...font!, [ key ]: value };
+        if (variable) setVariable(undefined);
+        
+        console.log(font, key, value);
+        const newFont: font = { ...font, [ key ]: value };
         setFont(newFont);
         onChangeCallback(fontToCss(newFont));
     }, [ font, variable, onChangeCallback ]);
+
+    console.log(font);
 
     if (!font) return null;
 

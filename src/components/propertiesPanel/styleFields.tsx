@@ -45,7 +45,7 @@ const StyleFields: React.FC<Props> = ({
                     <AccordionItem value={ key } key={ key } className='w-full'>
                         <AccordionTrigger>{ key }</AccordionTrigger>
                         <AccordionContent className='flex flex-col gap-2'>
-                            { styles.map((style) => {
+                            { styles.map(style => {
                                 const currentValue = node.style?.[ style.key ] ?? style.default;
 
                                 if (!isPanelPropertyVisible(node, metadata, style.condition, 'styles')) return;

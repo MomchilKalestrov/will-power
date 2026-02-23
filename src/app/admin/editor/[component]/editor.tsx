@@ -183,8 +183,8 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                                     node={ selectedNode }
                                     metadata={ nodeMetadata }
                                     onNodeUpdate={ (id, data) => {
-                                        setSelectedNode((state) => ({ ...state!, ...data }));
                                         updateNode(id, data);
+                                        setSelectedNode(state => ({ ...state!, ...data }));
                                     } }
                                 />
                             :   settingsOpen

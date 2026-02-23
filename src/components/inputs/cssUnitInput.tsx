@@ -54,19 +54,19 @@ const CssUnitInput: React.FC<Props> = ({ value, units, onChange, count = 1, allo
                 .join(' ');
             onChange(combined);
         }
-    }, []);
+    }, [ onChange, count ]);
 
     const handleValueChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const newValues = [ ...currentValues ];
         newValues[ index ] = e.target.value;
         setCurrentValues(newValues);
         triggerChange(newValues, currentUnit);
-    }, [ currentValues, currentUnit ]);
+    }, [ currentValues, currentUnit, triggerChange ]);
 
     const handleUnitChange = React.useCallback((newUnit: string) => {
         setCurrentUnit(newUnit);
         triggerChange(currentValues, newUnit);
-    }, [ currentValues ]);
+    }, [ currentValues, triggerChange, setCurrentUnit ]);
 
     return (
         <div className='flex items-center gap-2'>
