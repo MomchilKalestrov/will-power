@@ -31,4 +31,4 @@ const Component: React.FC<React.PropsWithChildren<Props>> = ({
 );
 
 export { metadata, Component };
-export { Heading as Icon } from 'lucide-react';
+export { Image as Icon } from 'lucide-react';
