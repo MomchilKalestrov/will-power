@@ -28,23 +28,18 @@ const ColorPicker: React.FC<Props> = ({
 }) => {
     const [ color, setColor ] = React.useState<string>('#ffffffff');
     const { config } = useConfig();
+    const variables = React.useMemo(() => config.variables.filter(variable => variable.type === 'color'), [ config ]);
     const [ variable, setVariable ] = React.useState<config[ 'variables' ][ number ]>();
-    const [ variables, setVariables ] = React.useState<(config[ 'variables' ][ number ])[]>([]);
 
     React.useEffect(() => {
-        if (!initialColor.startsWith('#')) return;
-        setColor(initialColor);
-    }, []);
+        if (initialColor.startsWith('#'))
+            return setColor(initialColor);
 
-    React.useEffect(() => {
-        const variables = config.variables.filter(variable => variable.type === 'color');
-        setVariables(variables);
-        
-        if (color || !initialColor.startsWith('var(--')) return;
         const variableId = initialColor.substring(6, initialColor.length - 1);
         const variable = variables.find(variable => variableId === variable.id);
         
         if (!variable) return;
+        
         setVariable(variable);
         setColor(variable.color);
     }, []);
