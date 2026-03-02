@@ -72,7 +72,7 @@ const FontInput: React.FC<Props> = ({
             setVariable(variable);
             setFont(variable);
         };
-    }, []);
+    }, [ initialFont ]);
 
     const onVariableChange = React.useCallback((value: string) => {
         const newVariable = variables.find(({ id }) => id === value);

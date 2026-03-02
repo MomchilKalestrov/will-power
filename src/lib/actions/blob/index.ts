@@ -129,6 +129,7 @@ const deleteBlob = async (path: string): serverActionResponse<boolean> => {
                 value: true
             };
 
+        await adapter.deleteBlob(path);
         global.cachedBlobList = blobs.filter(b => !toDelete.some(d => d.pathname === b.pathname));
         
         return {

@@ -21,12 +21,15 @@ type Props = {
 const CssUnitInput: React.FC<Props> = ({ value, units, onChange, count = 1, allowCustom = true }) => {
     const [ currentValues, setCurrentValues ] = React.useState<string[]>([]);
     const [ currentUnit, setCurrentUnit ] = React.useState<string>('');
+    // we gotta sort cause we get problems like `rem` being prematurely detected as `em`
+    const sortedUnits = React.useMemo(() => [ ...units ].sort((a, b) => b.length - a.length), [ units ]);
 
     React.useEffect(() => {
         let detectedUnit: string;
+        console.log(sortedUnits)
         if (value.length !== 0)
             if (!value.includes('('))
-                detectedUnit = units.find(unit => value && value.includes(unit)) || 'custom';
+                detectedUnit = sortedUnits.find(unit => value && value.endsWith(unit)) || 'custom';
             else
                 detectedUnit = 'custom';
         else

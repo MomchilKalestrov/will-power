@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { getAllComponents } from '@/lib/db/actions/component';
 
@@ -45,20 +45,23 @@ const Component: React.FC<React.PropsWithChildren<Props>> = ({
     title = 'Link',
     children,
     ...props
-}) =>(
-    <button
-        { ...props }
-        className={ defaults.Button }
-    >
-        {
-            page
-            ?   <Link href={ page }>
-                    { title }{ children }
-                </Link>
-            :   <>{ title }{ children }</>
-        }
-    </button>
-);
+}) => {
+    const router = useRouter(); 
+
+    return (
+        <button
+            { ...props }
+            className={ defaults.Button }
+            onClick={
+                window.location.href.includes('/admin/viewer/')
+                ?   undefined
+                :   () => page && router.push(page)
+            }
+        >
+            { title }{ children }
+        </button>
+    );
+};
 
 export { metadata, Component };
 export { ExternalLink as Icon } from 'lucide-react';

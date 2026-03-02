@@ -40,7 +40,7 @@ const ShadowPicker: React.FC<Props> = ({
         setBlur(blur);
         setSpread(spread);
         setColor(color);
-    }, []);
+    }, [ initialShadow ]);
 
     type ShadowChangeParams = {
         inset?: boolean,

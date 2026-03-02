@@ -64,6 +64,9 @@ const DirectoryViewer: React.FC<Props> = ({
                                 alt={ pathname }
                                 key={ pathname }
                                 className='w-[96] h-[96]'
+                                style={ {
+                                    background: 'repeating-conic-gradient(#CCC8 0% 25%, transparent 0% 50%) 50% / 20px 20px'
+                                } }
                             />
                         </Button>
                     );

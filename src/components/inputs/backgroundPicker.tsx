@@ -65,7 +65,7 @@ const BackgroundPicker: React.FC<Props> = ({
         backgroundParts.splice(4, 1);
 
         setBackground(backgroundParts as backgroundType);
-    }, []);
+    }, [ initialBackground ]);
 
     const onChange = React.useCallback((newValue: string, index: number) => {
         const newState: backgroundType = [ url, ...properties ];

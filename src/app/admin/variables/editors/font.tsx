@@ -54,11 +54,12 @@ const FontEditor: React.FC<Props> = ({ config, setConfig }) => {
             )
         }));
 
-    const handleRemoveFont = (index: number) =>
+    const handleRemoveFont = (id: string) => {
         setConfig((prev) => ({
             ...prev,
-            variables: prev.variables.filter((_, i) => i !== index)
+            variables: prev.variables.filter((v) => v.id !== id)
         }));
+    }
 
     const handleAddFont = () =>
         name.length > 3 &&
@@ -150,7 +151,7 @@ const FontEditor: React.FC<Props> = ({ config, setConfig }) => {
                         noVars={ true }
                         onChange={ (changes) => handleFontChange(font.id, cssToFont(changes)) }
                     />
-                    <Button variant='outline' size='icon' onClick={() => handleRemoveFont(index)}>
+                    <Button variant='outline' size='icon' onClick={() => handleRemoveFont(font.id)}>
                         <Trash2 />
                     </Button>
                 </div>

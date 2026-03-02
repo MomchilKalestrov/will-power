@@ -64,7 +64,10 @@ class storage {
     };
 
     static set = (key: string, value: any) =>
-        localStorage.setItem(key, typeof value !== 'object' ? value.toString() : JSON.stringify(value))
+        localStorage.setItem(key, typeof value !== 'object' ? value.toString() : JSON.stringify(value));
+
+    static del = (key: string) =>
+        localStorage.removeItem(key);
 };
 
 class cookies {

@@ -42,7 +42,7 @@ const ColorPicker: React.FC<Props> = ({
         
         setVariable(variable);
         setColor(variable.color);
-    }, []);
+    }, [ initialColor ]);
 
     const onVariableChange = React.useCallback((variableId: string) => {
         const newVariable = variables.find(({ id }) => id === variableId);

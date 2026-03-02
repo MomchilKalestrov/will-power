@@ -29,6 +29,11 @@ const metadata: NodeMetadata = {
             default: 'none',
             in: 'Styling'
         },
+        border: {
+            type: 'border',
+            default: '2px solid #ffffff',
+            in: 'Styling'
+        },
         borderRadius: {
             type: 'css-units',
             default: '0px 0px 0px 0px',
@@ -219,7 +224,11 @@ const Component: React.FC<React.PropsWithChildren<Props>> = ({
 }) =>(
     <button
         { ...props }
-        onClick={ () => eval(onClick) }
+        onClick={
+            window.location.href.includes('/admin/viewer/')
+            ?   undefined
+            :   () => eval(onClick)
+        }
         className={ defaults.Button }
     >{ title }{ children }</button>
 );

@@ -73,7 +73,7 @@ declare global {
     };
 
     type style = {
-        type: 'string' | 'css-units' | 'shadow' | 'background' | 'color' | 'keyword' | 'font';
+        type: 'string' | 'css-units' | 'shadow' | 'background' | 'color' | 'keyword' | 'font' | 'border';
         default: string;
         condition?: editorVisibilityCondition;
         in: string;
@@ -82,7 +82,7 @@ declare global {
         count?: number;
         units: string[];
     } | {
-        type: 'string' | 'shadow' | 'background' | 'color' | 'keyword' | 'font';
+        type: 'string' | 'shadow' | 'background' | 'color' | 'keyword' | 'font' | 'border';
     });
 
     type attribute = {

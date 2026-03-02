@@ -47,7 +47,7 @@ const style = z.discriminatedUnion('type', [
     units: z.array(z.string())
   }),
   z.object({
-    type: z.enum([ 'string','shadow','background','color','keyword','font' ]),
+    type: z.enum([ 'string','shadow','background','color','keyword','font','border' ]),
     ...styleBase
   })
 ]);

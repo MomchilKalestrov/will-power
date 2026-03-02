@@ -77,6 +77,7 @@ const ComponentCard: React.FC<Props> = ({
                 if (!response.success)
                     return toast(`Failed to delete the ${ type }: ` + response.reason);
                 removeComponent(name);
+                storage.del(name);
             });
     }, [ name, type ]);
 

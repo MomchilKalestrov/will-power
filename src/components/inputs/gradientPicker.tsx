@@ -49,7 +49,7 @@ const GradientPicker: React.FC<Props> = ({
             setGradientRotation(posOrRot.substring(0, posOrRot.length - 3));
         else
             setGradientPosition(posOrRot.split(' ').slice(1).join(' '));
-    }, []);
+    }, [ initialGradient ]);
     
     type GradientChangeParams = {
         type?: 'linear' | 'radial';

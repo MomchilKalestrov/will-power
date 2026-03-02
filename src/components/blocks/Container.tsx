@@ -30,6 +30,11 @@ const metadata: NodeMetadata = {
             default: 'none',
             in: 'Styling'
         },
+        border: {
+            type: 'border',
+            default: '',
+            in: 'Styling'
+        },
         borderRadius: {
             type: 'css-units',
             default: '0px 0px 0px 0px',
@@ -38,6 +43,12 @@ const metadata: NodeMetadata = {
             in: 'Styling'
         },
         width: {
+            type: 'css-units',
+            default: '100%',
+            units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
+            in: 'Sizing',
+        },
+        maxWidth: {
             type: 'css-units',
             default: '100%',
             units: [ 'px', 'cm', 'in', 'em', 'rem', 'vw', 'vh', '%' ],
@@ -134,15 +145,6 @@ const metadata: NodeMetadata = {
                 value: 'flex'
             }
         },
-        alignItems: {
-            type: 'keyword',
-            default: 'stretch',
-            in: 'Layout',
-            condition: {
-                key: 'display',
-                value: 'flex'
-            }
-        },
         flexWrap: {
             type: 'keyword',
             default: 'nowrap',
@@ -170,6 +172,46 @@ const metadata: NodeMetadata = {
                 key: 'display',
                 value: 'grid'
             }
+        },
+        // both
+        justifyItems: {
+            type: 'keyword',
+            default: 'normal',
+            in: 'Layout',
+            condition: {
+                key: 'display',
+                value: 'grid',
+                or: {
+                    key: 'display',
+                    value: 'grid'
+                }
+            }
+        },
+        alignItems: {
+            type: 'keyword',
+            default: 'stretch',
+            in: 'Layout',
+            condition: {
+                key: 'display',
+                value: 'flex',
+                or: {
+                    key: 'display',
+                    value: 'grid'
+                }
+            }
+        },
+        alignContent: {
+            type: 'keyword',
+            default: 'normal',
+            in: 'Layout',
+            condition: {
+                key: 'display',
+                value: 'grid',
+                or: {
+                    key: 'display',
+                    value: 'grid'
+                }
+            }
         }
     },
     enumerators: {
@@ -183,7 +225,7 @@ const metadata: NodeMetadata = {
             icon: true
         },
         alignItems: {
-            values: [ 'stretch', 'flex-start', 'flex-end', 'center', 'baseline' ],
+            values: [ 'stretch', 'start', 'end', 'center', 'baseline' ],
             icon: true
         },
         flexWrap: {
@@ -200,6 +242,12 @@ const metadata: NodeMetadata = {
         },
         type: {
             values: [ 'div', 'section', 'aside', 'nav', 'header', 'footer' ]            
+        },
+        justifyItems: {
+            values: [ 'normal', 'stretch', 'center', 'start', 'end' ]            
+        },
+        alignContent: {
+            values: [ 'normal', 'stretch', 'center', 'start', 'end' ]
         }
     },
     acceptChildren: true

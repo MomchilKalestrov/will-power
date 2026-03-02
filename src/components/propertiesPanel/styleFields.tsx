@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 
 import FontInput from '@/components/inputs/fontInput';
 import ColorPicker from '@/components/inputs/colorPicker';
+import BorderPicker from '@/components/inputs/borderPicker';
 import ShadowPicker from '@/components/inputs/shadowPicker';
 import CssUnitInput from '@/components/inputs/cssUnitInput';
 import GradientPicker from '@/components/inputs/gradientPicker';
@@ -151,7 +152,24 @@ const StyleFields: React.FC<Props> = ({
                                                     />
                                                     <Button
                                                         size='icon'
-                                                        className='size-8 p-2'
+                                                        variant={ currentValue === 'unset' ? 'outline' : 'ghost' }
+                                                        onClick={ () => handleChange(style.key, 'unset', 'style') }
+                                                    ><Ban /></Button>
+                                                </div>
+                                            </div>
+                                        )
+                                    case 'border':
+                                        return (
+                                            <div key={ style.key } className='flex items-center flex-wrap justify-between gap-2'>
+                                                <Label htmlFor={ style.key } className='capitalize w-32'>{ style.name }</Label>
+                                                <div className='flex-grow flex justify-end gap-2'>
+                                                    <BorderPicker
+                                                        value={ currentValue }
+                                                        selected={ currentValue !== 'unset' }
+                                                        onChange={ (newValue) => handleChange(style.key, newValue, 'style') }
+                                                    />
+                                                    <Button
+                                                        size='icon'
                                                         variant={ currentValue === 'unset' ? 'outline' : 'ghost' }
                                                         onClick={ () => handleChange(style.key, 'unset', 'style') }
                                                     ><Ban /></Button>
