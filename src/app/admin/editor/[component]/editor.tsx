@@ -158,12 +158,24 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
         
         addNode(parentId, rewriteAllIds(data));
     }, [ selectedNode ]);
+
+    const onDelete = React.useCallback(() => {
+        if (!selectedNode) return;
+
+        setSelectedNode(undefined);
+        removeNode(selectedNode.id);
+    }, [ selectedNode, removeNode ]);
     
     React.useEffect(() => {
         const wrapper = (event: KeyboardEvent) => {
-            if (!event.ctrlKey) return;
+            if (
+                !event.ctrlKey ||
+                !(document.activeElement as HTMLElement)?.isContentEditable
+            ) return;
+            
             if (event.code === 'KeyV') onPaste();
-            if (event.code === 'KeyC') onCopy();
+            else if (event.code === 'KeyC') onCopy();
+            else if (event.code === 'Delete') onDelete(); 
         };
     
         if (iframeRef.current)
@@ -268,10 +280,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                                     }
                                 } }
                                 hasSelectedNode={ !!selectedNode }
-                                onDelete={ () => {
-                                    setSelectedNode(undefined);
-                                    removeNode(selectedNode!.id);
-                                } }
+                                onDelete={ onDelete }
                                 onMoveUp={ () => moveNodeUp(selectedNode!.id) }
                                 onMoveDown={ () => moveNodeDown(selectedNode!.id) }
                             />
