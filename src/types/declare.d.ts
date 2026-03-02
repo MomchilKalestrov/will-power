@@ -14,6 +14,7 @@ declare global {
     
     interface ComponentNode {
         id: string;
+        name: string;
         type: string;
         style?: Record<string, string>;
         attributes?: Record<string, string>;

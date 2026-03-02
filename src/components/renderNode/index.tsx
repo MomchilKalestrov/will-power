@@ -16,6 +16,7 @@ type Props = {
 const RenderNode: React.FC<Props> = ({
     node: {
         id,
+        name,
         children = [],
         type,
         attributes = {},
@@ -71,7 +72,7 @@ const RenderNode: React.FC<Props> = ({
     };
     
     return (
-        <Component { ...{ ...attributes, ...props, style: newStyle, id } }>
+        <Component { ...{ ...attributes, ...props, style: newStyle, id: name } }>
             { children.map((child) => (
                 <RenderNode
                     depth={ depth + 1 }

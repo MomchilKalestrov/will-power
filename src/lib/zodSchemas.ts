@@ -207,6 +207,7 @@ export const componentNameSchema = z.string().min(1).refine(name => name === enc
 export const componentNodeSchema: z.ZodType<any> = z.lazy(() =>
     z.object({
         id: z.string(),
+        name: z.string(),
         type: z.string(),
         style: z.record(z.string(), z.string()),
         attributes: z.record(z.string(), z.string()),

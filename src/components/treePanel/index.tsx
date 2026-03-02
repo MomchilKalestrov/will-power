@@ -91,7 +91,7 @@ const TreePanelNode: React.FC<Props> = ({ node, selectedNodeId, onParentChange: 
                         :   <div className='w-4' />
                     }
                     <Icon />
-                    <span className='ml-2 truncate'>{ node.id }</span>
+                    <span className='ml-2 truncate'>{ node.name }</span>
                 </div>
             </div>
             {

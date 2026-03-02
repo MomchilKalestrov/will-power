@@ -19,6 +19,7 @@ import useNodeTree from '@/hooks/useNodeTree';
 import { useComponents } from '@/contexts/components';
 
 import { storage } from '@/lib/utils';
+import { componentNodeSchema } from '@/lib/zodSchemas';
 import { saveComponent } from '@/lib/db/actions/component';
 
 import ComponentHistoryMenu from './componentHistoryMenu';
@@ -34,10 +35,9 @@ const colors: Record<componentType, [ string, string ]> = {
     component: [ 'var(--color-rose-900)', 'var(--color-rose-300)' ]
 };
 
-const randomId = (): string => Math.floor(Math.random() * 9999).toString().padStart(4, '0');
-
 const newNode = (type: string, acceptChildren: boolean): ComponentNode => ({
-    id: type + '-' + randomId(),
+    id: crypto.randomUUID(),
+    name: type.toLowerCase(),
     type,
     style: {},
     attributes: {},
@@ -132,6 +132,49 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
         if (updatedNode)
             setSelectedNode(updatedNode);
     }, [ tree, findNode, selectedNode ]);
+
+    const onCopy = React.useCallback(() => {
+        window.focus();
+        if (selectedNode !== undefined)
+            navigator.clipboard.writeText(JSON.stringify(selectedNode));
+    }, [ selectedNode ]);
+
+    const onPaste = React.useCallback(async () => {
+        window.focus();
+        const rewriteAllIds = (node: ComponentNode) => {
+            node.id = crypto.randomUUID();
+            node.children?.forEach(rewriteAllIds);
+            return node;
+        };
+
+        const text = await navigator.clipboard.readText();
+        const json = JSON.parse(text);
+        const data: ComponentNode = componentNodeSchema.parse(json);
+
+        const parentId =
+            selectedNode !== undefined && selectedNode.acceptChildren
+            ?   selectedNode.id
+            :   'root';
+        
+        addNode(parentId, rewriteAllIds(data));
+    }, [ selectedNode ]);
+    
+    React.useEffect(() => {
+        const wrapper = (event: KeyboardEvent) => {
+            if (!event.ctrlKey) return;
+            if (event.code === 'KeyV') onPaste();
+            if (event.code === 'KeyC') onCopy();
+        };
+    
+        if (iframeRef.current)
+            iframeRef.current.contentWindow?.addEventListener('keydown', wrapper);
+        window.addEventListener('keydown', wrapper);
+        return () => {
+            if (iframeRef.current)
+                iframeRef.current.contentWindow?.removeEventListener('keydown', wrapper);
+            window.removeEventListener('keydown', wrapper);
+        };
+    }, [ onCopy, onPaste, iframeRef ]);
     
     if (!tree) return null;
 

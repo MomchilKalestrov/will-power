@@ -24,9 +24,8 @@ import { getObjectPropertyDefault } from '@/lib/propsFiller';
 type Props = {
     metadata: NodeMetadata;
     node: ComponentNode;
-    nodeId: string;
     handleChange: (key: string, value: any, property: 'props') => void;
-    onIdChange: (id: string) => void;
+    onNameChange: (name: string) => void;
 };
 
 const ObjectProperty: React.FC<{
@@ -217,127 +216,113 @@ const ObjectProperty: React.FC<{
 const PropsFields: React.FC<Props> = ({
     metadata,
     node,
-    nodeId,
     handleChange,
-    onIdChange
-}) => {
-    const [ editableId, setEditableId ] = React.useState<string>(nodeId);
-
-    React.useEffect(() => {
-        setEditableId(nodeId);
-    }, [ nodeId ]);
-
-    return (
-        <>
-            <h3 className='text-lg font-bold mb-2'>{ node.type } Properties</h3>
-            <div className='flex items-center flex-wrap justify-between gap-2'>
-                <Label htmlFor='input-id' className='capitalize w-8'>Id</Label>
-                <div className='grow'>
-                    <Input
-                        id='input-id'
-                        type='text'
-                        value={ editableId }
-                        onChange={ (e) => setEditableId(e.target.value) }
-                        onBlur={ () => onIdChange(editableId) }
-                        onKeyDown={ e => {
-                            if (e.key === 'Enter')
-                                onIdChange(editableId);
-                        } }
-                    />
-                </div>
+    onNameChange
+}) => (
+    <>
+        <h3 className='text-lg font-bold mb-2'>{ node.type } Properties</h3>
+        <div className='flex items-center flex-wrap justify-between gap-2'>
+            <Label htmlFor='input-id' className='capitalize w-8'>Id</Label>
+            <div className='grow'>
+                <Input
+                    id='input-id'
+                    type='text'
+                    value={ node.name }
+                    onChange={ e => onNameChange(e.target.value) }
+                />
             </div>
-            { Object.entries(metadata.props).map(([ key, prop ]) => {
-                const currentValue = node.props?.[ key ] ?? prop.default;
-                const name = key.replace(/([A-Z])/g, ' $1');
+        </div>
+        { Object.entries(metadata.props).map(([ key, prop ]) => {
+            const currentValue = node.props?.[ key ] ?? prop.default;
+            const name = key.replace(/([A-Z])/g, ' $1');
 
-                if (!isPanelPropertyVisible(node, metadata, prop.condition, 'props')) return;
+            if (!isPanelPropertyVisible(node, metadata, prop.condition, 'props')) return;
 
-                switch (prop.type) {
-                    case 'string':
-                        return (
-                            <div key={ key } className='grid gap-2'>
-                                <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
-                                <AdvancedTextarea
+            switch (prop.type) {
+                case 'string':
+                    return (
+                        <div key={ key } className='grid gap-2'>
+                            <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
+                            <AdvancedTextarea
+                                value={ currentValue }
+                                onChange={ (value) => handleChange(key, value, 'props') }
+                            />
+                        </div>
+                    );
+                case 'enum':
+                    const options = metadata.enumerators[ key ]?.values;
+                    if (!options || options.length === 0) return null;
+
+                    return (
+                        <div key={ key } className='flex items-center flex-wrap justify-between gap-2'>
+                            <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
+                            <div className='grow'>
+                                <CssKeywordInput
                                     value={ currentValue }
-                                    onChange={ (value) => handleChange(key, value, 'props') }
-                                />
-                            </div>
-                        );
-                    case 'enum':
-                        const options = metadata.enumerators[ key ]?.values;
-                        if (!options || options.length === 0) return null;
-
-                        return (
-                            <div key={ key } className='flex items-center flex-wrap justify-between gap-2'>
-                                <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
-                                <div className='grow'>
-                                    <CssKeywordInput
-                                        value={ currentValue }
-                                        options={ options }
-                                        id={ 'input-' + key }
-                                        onChange={ (newValue) =>
-                                            handleChange(key, newValue, 'props')
-                                        }
-                                    />
-                                </div>
-                            </div>
-                        );
-                    case 'number':
-                    case 'line':
-                        return (
-                            <div key={ key } className='grid gap-2'>
-                                <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
-                                <Input
-                                    id={ `input-${ key }` }
-                                    value={ currentValue }
-                                    type={ prop.type === 'line' ? 'text' : prop.type }
-                                    onChange={ ({ target: { value } }) =>
-                                        handleChange(key, value, 'props')
+                                    options={ options }
+                                    id={ 'input-' + key }
+                                    onChange={ (newValue) =>
+                                        handleChange(key, newValue, 'props')
                                     }
                                 />
                             </div>
-                        );
-                    case 'code':
-                        return (
-                            <div key={ key } className='grid gap-2'>
-                                <Label className='capitalize'>{ name }</Label>
-                                <CodeInput
-                                    value={ currentValue }
-                                    onChange={ value => handleChange(key, value || '', 'props') }
-                                />
-                            </div>
-                        );
-                    case 'custom':
-                        return (
-                            <div key={ key } className='grid gap-2'>
-                                <ObjectProperty
-                                    property={ prop.structure }
-                                    enumerators={ metadata.enumerators }
-                                    value={ {
-                                        [ prop.structure.key ]: currentValue
-                                    } }
-                                    handleChange={ (_, value) =>{
-                                        handleChange(key, value, 'props')
-                                    }}
-                                />
-                            </div>
-                        );
-                    case 'file':
-                        return (
-                            <div key={ key } className='grid gap-2'>
-                                <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
-                                <FileInput
-                                    id={ `input-${ key }` }
-                                    value={ currentValue ?? '' }
-                                    type={ prop.format }
-                                    onChange={ value => handleChange(key, value, 'props') }
-                                />
-                            </div>
-                        );
-                };
-            }) }
-        </>
-    );
-};
+                        </div>
+                    );
+                case 'number':
+                case 'line':
+                    return (
+                        <div key={ key } className='grid gap-2'>
+                            <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
+                            <Input
+                                id={ `input-${ key }` }
+                                value={ currentValue }
+                                type={ prop.type === 'line' ? 'text' : prop.type }
+                                onChange={ ({ target: { value } }) =>
+                                    handleChange(key, value, 'props')
+                                }
+                            />
+                        </div>
+                    );
+                case 'code':
+                    return (
+                        <div key={ key } className='grid gap-2'>
+                            <Label className='capitalize'>{ name }</Label>
+                            <CodeInput
+                                value={ currentValue }
+                                onChange={ value => handleChange(key, value || '', 'props') }
+                            />
+                        </div>
+                    );
+                case 'custom':
+                    return (
+                        <div key={ key } className='grid gap-2'>
+                            <ObjectProperty
+                                property={ prop.structure }
+                                enumerators={ metadata.enumerators }
+                                value={ {
+                                    [ prop.structure.key ]: currentValue
+                                } }
+                                handleChange={ (_, value) =>{
+                                    handleChange(key, value, 'props')
+                                }}
+                            />
+                        </div>
+                    );
+                case 'file':
+                    return (
+                        <div key={ key } className='grid gap-2'>
+                            <Label htmlFor={ `input-${ key }` } className='capitalize'>{ name }</Label>
+                            <FileInput
+                                id={ `input-${ key }` }
+                                value={ currentValue ?? '' }
+                                type={ prop.format }
+                                onChange={ value => handleChange(key, value, 'props') }
+                            />
+                        </div>
+                    );
+            };
+        }) }
+    </>
+);
 
 export default PropsFields;

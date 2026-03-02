@@ -45,9 +45,8 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ node, metadata, onNod
             <PropsFields
                 metadata={ metadata }
                 node={ node }
-                nodeId={ node.id }
                 handleChange={ handleChange }
-                onIdChange={ id => onNodeUpdate(node.id, { id }) }
+                onNameChange={ name => onNodeUpdate(node.id, { name }) }
             />
             <Separator />
             {

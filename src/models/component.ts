@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const componentNodeSchema = new mongoose.Schema<ComponentNode>({
     id: { type: String, required: true },
+    name: { type: String, required: true },
     type: { type: String, required: true },
     style: { type: Object, of: String, default: {} },
     attributes: { type: Object, of: String, default: {} },
@@ -41,6 +42,7 @@ const componentSchema = new mongoose.Schema<Component>({
         required: true,
         default: {
             id: 'root',
+            name: 'root',
             type: 'Container',
             style: {},
             attributes: {},
