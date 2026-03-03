@@ -109,8 +109,9 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
         setComponent(component);
     }, [ component ]);
 
-    const onSave = React.useCallback(async ({ currentTarget: button }: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        button.disabled = true;
+    const onSave = React.useCallback(async (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        if (event?.currentTarget)
+            event.currentTarget.disabled = true;
         
         del(`preview-${ component.name }`);
         const response = await saveComponent({
@@ -118,7 +119,8 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
             rootNode: tree
         })
 
-        button.disabled = false;
+        if (event?.currentTarget)
+            event.currentTarget.disabled = false;
         toast(response.success ? 'Saved.' : ('Failed to save: ' + response.reason));
     }, [ component, tree ]);
     
@@ -139,6 +141,15 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
         if (selectedNode !== undefined)
             navigator.clipboard.writeText(JSON.stringify(selectedNode));
     }, [ selectedNode ]);
+
+    const onCut = React.useCallback(() => {
+        window.focus();
+        if (selectedNode !== undefined) {
+            navigator.clipboard.writeText(JSON.stringify(selectedNode));
+            removeNode(selectedNode.id);
+            setSelectedNode(undefined);
+        };
+    }, [ selectedNode, removeNode ]);
 
     const onPaste = React.useCallback(async () => {
         window.focus();
@@ -175,6 +186,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
             ) return;
             
             if (event.code === 'KeyV') onPaste();
+            else if (event.code === 'KeyX') onCut();
             else if (event.code === 'KeyC') onCopy();
             else if (event.code === 'Delete') onDelete(); 
         };
@@ -193,19 +205,20 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
 
     return (
         <>
+            <ContextMenu
+                onSave={ onSave }
+                onCut={ onCut }
+                onCopy={ onCopy }
+                onPaste={ onPaste }
+                onDelete={ onDelete }
+                viewerRef={ iframeRef }
+            />
             <header
                 className='h-16 w-full px-4 border-b bg-background flex justify-between items-center gap-4 shrink-0'
                 style={ {
                     '--primary': colors[ component.type ][ document.body.classList.contains('dark') ? 1 : 0 ]
                 } as React.CSSProperties }
             >
-                <ContextMenu
-                    onSave={ () => null }
-                    onCopy={ () => null }
-                    onPaste={ () => null }
-                    onDelete={ () => null }
-                    viewerRef={ iframeRef }
-                />
                 <section className='flex gap-2'>
                     <Button size='icon'>
                         <Link href='/admin/components/page'><Logo /></Link>

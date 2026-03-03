@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Clipboard, Copy, Save, Trash2 } from 'lucide-react';
+import { Clipboard, Copy, Save, Scissors, Trash2 } from 'lucide-react';
 import React from 'react';
 
 type Props = {
     onSave: () => void;
+    onCut: () => void;
     onCopy: () => void;
     onPaste: () => void;
     onDelete: () => void;
@@ -13,6 +14,7 @@ type Props = {
 
 const ContextMenu: React.FC<Props> = ({
     onSave,
+    onCut,
     onCopy,
     onPaste,
     onDelete,
@@ -93,6 +95,9 @@ const ContextMenu: React.FC<Props> = ({
         <Card className='p-2 gap-0 fixed hidden z-100' ref={ cardRef }>
             <Button variant='ghost' onClick={ wrapper(onSave) }>
                 <Save />Save
+            </Button>
+            <Button variant='ghost' onClick={ wrapper(onCopy) }>
+                <Scissors />Cut
             </Button>
             <Button variant='ghost' onClick={ wrapper(onCopy) }>
                 <Copy />Copy
