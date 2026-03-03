@@ -23,7 +23,7 @@ const authorResponseSchema = z.object({
     plugins: z.array(z.string())
 });
 
-const URL = process.env.NEXT_PUBLIC_MARKETPLACE_URL ?? 'https://localhost:8080';
+const URL = process.env.NEXT_PUBLIC_MARKETPLACE_URL ?? 'https://seraphimcms-marketplace.vercel.app';
 
 export const getPlugins = async (
     page: number = 0,

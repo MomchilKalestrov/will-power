@@ -294,8 +294,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                                 onParentChange={ (childId, newParentId) => {
                                     try {
                                         reparentNode(childId, newParentId);
-                                    } catch (error: Error & any) {
-                                        // like fuck you typescript, why can't I write `Error` instead of `Error & any`
+                                    } catch (error: any) {
                                         if (error.message !== 'The new parent node does not accept children.')
                                             throw error;
                                     }
