@@ -23,7 +23,6 @@ const Overlay: React.FC<Props> = ({ id, zIndex }) => {
     }, [ id ]);
 
     const onDragEnter = React.useCallback((event: React.DragEvent<HTMLSpanElement>) => {
-        event.preventDefault();
         if (event.dataTransfer?.getData('text/plain') !== id)
             event.currentTarget.setAttribute('data-dragged-over', 'true');
     }, [ id ]);
@@ -31,7 +30,6 @@ const Overlay: React.FC<Props> = ({ id, zIndex }) => {
     const onDragOver = React.useCallback((event: React.DragEvent<HTMLSpanElement>) => event.preventDefault(), []);
 
     const onDragLeave = React.useCallback((event: React.DragEvent<HTMLSpanElement>) => {
-        event.preventDefault();
         event.currentTarget.setAttribute('data-dragged-over', 'false');
     }, []);
 

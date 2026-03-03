@@ -65,11 +65,6 @@ const TreePanelNode: React.FC<Props> = ({ node, selectedNodeId, onParentChange: 
 
     const hasChildren = Array.isArray(node.children) && node.children.length > 0;
 
-    const handleToggleExpand = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setIsExpanded(!isExpanded);
-    };
-
     const child = (
         <div className='text-sm text-muted-foreground'>
             <div
@@ -86,7 +81,7 @@ const TreePanelNode: React.FC<Props> = ({ node, selectedNodeId, onParentChange: 
                         hasChildren
                         ?   <ChevronRight
                                 className={ cn('h-4 w-4 transition-transform', isExpanded && 'rotate-90') }
-                                onClick={ handleToggleExpand }
+                                onClick={ () => setIsExpanded(!isExpanded) }
                             />
                         :   <div className='w-4' />
                     }

@@ -23,6 +23,7 @@ import { componentNodeSchema } from '@/lib/zodSchemas';
 import { saveComponent } from '@/lib/db/actions/component';
 
 import ComponentHistoryMenu from './componentHistoryMenu';
+import ContextMenu from './contextMenu';
 
 type Props = {
     component: Component;
@@ -198,6 +199,13 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                     '--primary': colors[ component.type ][ document.body.classList.contains('dark') ? 1 : 0 ]
                 } as React.CSSProperties }
             >
+                <ContextMenu
+                    onSave={ () => null }
+                    onCopy={ () => null }
+                    onPaste={ () => null }
+                    onDelete={ () => null }
+                    viewerRef={ iframeRef }
+                />
                 <section className='flex gap-2'>
                     <Button size='icon'>
                         <Link href='/admin/components/page'><Logo /></Link>
