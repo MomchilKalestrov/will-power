@@ -26,7 +26,6 @@ const CssUnitInput: React.FC<Props> = ({ value, units, onChange, count = 1, allo
 
     React.useEffect(() => {
         let detectedUnit: string;
-        console.log(sortedUnits)
         if (value.length !== 0)
             if (!value.includes('('))
                 detectedUnit = sortedUnits.find(unit => value && value.endsWith(unit)) || 'custom';

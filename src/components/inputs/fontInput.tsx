@@ -92,8 +92,6 @@ const FontInput: React.FC<Props> = ({
         onChangeCallback(fontToCss(newFont));
     }, [ font, variable, onChangeCallback ]);
 
-    console.log(font);
-
     if (!font) return null;
 
     const showVars = (variables.length !== 0) && !noVars;

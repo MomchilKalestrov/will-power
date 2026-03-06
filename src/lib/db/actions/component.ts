@@ -104,7 +104,6 @@ const saveComponent = async (component: Partial<Component>): serverActionRespons
         };
     
     try {
-        console.log(JSON.stringify(component.rootNode?.children?.[0].children?.[0].children?.[2], null, '\t'))
         const model = componentSchema.parse(component);
         const { name, ...data } = model;
 
