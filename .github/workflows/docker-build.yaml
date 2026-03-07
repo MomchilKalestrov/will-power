@@ -1,0 +1,28 @@
+name: Build Docker Image for Release
+
+on:
+  release:
+    types: [ published ]
+
+permissions:
+  contents: write
+
+jobs:
+  build-docker-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t seraphimcms-${{ github.ref_name }} .
+
+      - name: Export Docker image
+        run: docker save seraphimcms-${{ github.ref_name }} -o seraphimcms-${{ github.ref_name }}.tar
+
+      - name: Upload Docker image to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: seraphimcms-${{ github.ref_name }}.tar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
