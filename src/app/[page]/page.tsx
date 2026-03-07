@@ -25,9 +25,9 @@ const Page: NextPage<PageProps<'/[page]'>> = async ({ params }) => {
     const footers = await getMatchingComponents(pageName, 'footer');
     
     if (!headers.success)
-        console.log('Warning: getMatchingComponents(pageName, \'header\') failed: ' + headers.reason);
+        console.warn('Warning: getMatchingComponents(pageName, \'header\') failed: ' + headers.reason);
     if (!footers.success)
-        console.log('Warning: getMatchingComponents(pageName, \'footer\') failed: ' + footers.reason);
+        console.warn('Warning: getMatchingComponents(pageName, \'footer\') failed: ' + footers.reason);
 
     return (
         <>

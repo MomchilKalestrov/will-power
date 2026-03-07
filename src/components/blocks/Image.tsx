@@ -24,10 +24,18 @@ const Component: React.FC<React.PropsWithChildren<Props>> = ({
 }) => (
     children
     ?   <div { ...props }>
-            <img { ...props } src={ process.env.NEXT_PUBLIC_BLOB_URL + '/' + url } />
+            <img
+                { ...props }
+                alt={ (props as any).id ?? url  }
+                src={ process.env.NEXT_PUBLIC_BLOB_URL + '/' + url }
+            />
             { children }
         </div>
-    :   <img { ...props } src={ process.env.NEXT_PUBLIC_BLOB_URL + '/' + url } />
+    :   <img
+            { ...props }
+            alt={ (props as any).id ?? url  }
+            src={ process.env.NEXT_PUBLIC_BLOB_URL + '/' + url }
+        />
 );
 
 export { metadata, Component };

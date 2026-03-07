@@ -100,8 +100,10 @@ type Props = {
     code?: string;
 };
 
-const Component: React.FC<Props> = ({
-    code = '<div></div>'
+const Component: React.FC<React.PropsWithChildren<Props>> = ({
+    code = '<div></div>',
+    children,
+    ...props
 }) => {
     const wrapper = document.createElement('div');
     wrapper.innerHTML = code;
@@ -134,6 +136,7 @@ const Component: React.FC<Props> = ({
                 }
                 return acc;
             }, {}),
+        ...props,
         dangerouslySetInnerHTML: {
             __html: node.innerHTML
         }

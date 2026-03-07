@@ -109,18 +109,13 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
         setComponent(component);
     }, [ component ]);
 
-    const onSave = React.useCallback(async (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        if (event?.currentTarget)
-            event.currentTarget.disabled = true;
-        
+    const onSave = React.useCallback(async () => {        
         del(`preview-${ component.name }`);
         const response = await saveComponent({
             ...component,
             rootNode: tree
         })
 
-        if (event?.currentTarget)
-            event.currentTarget.disabled = false;
         toast(response.success ? 'Saved.' : ('Failed to save: ' + response.reason));
     }, [ component, tree ]);
     

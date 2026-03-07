@@ -16,13 +16,13 @@ const ColorPreview: React.FC<Props> = ({ config }) => {
     );
     
     return (
-        <div className='flex flex-wrap gap-4'>
+        <div className='flex flex-wrap content-start gap-4'>
             { colorVariables.map(({ id, color, name }) => {
                 const [ h, s, l ] = hexToHsl(color);
                 const foregroundHex = hslToHex(h, s / 2, l > 50 ? 20 : 80);
 
                 return(
-                    <div key={ id } className='basis-32 grow max-w-64 text-center'>
+                    <div key={ id } className='basis-48 grow max-w-64 text-center'>
                         <Card
                             className='w-full aspect-video flex justify-end items-start p-4 gap-2'
                             style={ { backgroundColor: color, color: foregroundHex } }

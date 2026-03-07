@@ -241,7 +241,7 @@ const metadata: NodeMetadata = {
             icon: false
         },
         type: {
-            values: [ 'div', 'section', 'aside', 'nav', 'header', 'footer' ]            
+            values: [ 'div', 'section', 'main', 'aside', 'nav', 'header', 'footer' ]            
         },
         justifyItems: {
             values: [ 'normal', 'stretch', 'center', 'start', 'end' ]            
@@ -254,7 +254,7 @@ const metadata: NodeMetadata = {
 };
 
 type Props = {
-    type?: 'div' | 'section' | 'aside' | 'nav' | 'header' | 'footer';
+    type?: 'div' | 'section' | 'main' | 'aside' | 'nav' | 'header' | 'footer';
 };
 
 const Component: React.FC<React.PropsWithChildren<Props>> = ({

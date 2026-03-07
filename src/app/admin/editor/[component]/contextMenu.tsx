@@ -105,7 +105,7 @@ const ContextMenu: React.FC<Props> = ({
             <Button variant='ghost' onClick={ wrapper(onPaste) }>
                 <Clipboard />Paste
             </Button>
-            <Button variant='ghost' className='text-destructive' onClick={ wrapper(onDelete) }>
+            <Button variant='ghost' className='text-destructive hover:text-destructive hover:bg-destructive/25!' onClick={ wrapper(onDelete) }>
                 <Trash2 />Delete
             </Button>
         </Card>
