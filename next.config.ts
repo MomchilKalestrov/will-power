@@ -32,7 +32,7 @@ const nextConfig: NextConfig = {
     },
     devIndicators: false,
     output: 'standalone',
-    turbopack: { root: '.' }
+    turbopack: { root: __dirname }
 };
 
 export default nextConfig;
