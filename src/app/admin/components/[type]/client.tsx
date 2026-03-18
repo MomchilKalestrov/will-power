@@ -2,6 +2,7 @@
 import React from 'react';
 import { Rat } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import Portal from '@/components/portal';
 
@@ -14,13 +15,14 @@ type Props = {
 
 const Client: React.FC<Props> = ({ initialComponents }) => {
     const { type }: { type: componentType; } = useParams();
+    const t = useTranslations('Admin.Components');
     const [ components, setComponents ] = React.useState<string[]>(initialComponents);
 
     if (components.length === 0)
         return (
             <div className='w-full h-[calc(100dvh-var(--spacing)*16)] flex justify-center items-center flex-col opacity-30'>
                 <Rat className='size-27' />
-                <p className='text-xl'>No { type }s here. Why don't you create one?</p>
+                <p className='text-xl'>{ t('noComponents', { type }) }</p>
                 <Portal parent='components-portal'>
                     <CreateComponentDialog components={ components } type={ type } />
                 </Portal>

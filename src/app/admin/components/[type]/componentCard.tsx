@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { get, set } from 'idb-keyval';
 import { Trash2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardFooter } from '@/components/ui/card';
@@ -37,6 +38,7 @@ const ComponentCard: React.FC<Props> = ({
     removeComponent
 }) => {
     const { type }: { type: componentType; } = useParams();
+    const t = useTranslations('Admin.Components');
     const [ preview, setPreview ] = React.useState<typeof pageFallback | string>(fallbacks[ type ]);
 
     const createPreview = React.useCallback(() => {
@@ -75,7 +77,7 @@ const ComponentCard: React.FC<Props> = ({
             .then(response => {
                 button.disabled = false;
                 if (!response.success)
-                    return toast(`Failed to delete the ${ type }: ` + response.reason);
+                    return toast(t('failedDelete', { type, reason: response.reason }));
                 removeComponent(name);
                 storage.del(name);
             });
@@ -96,7 +98,7 @@ const ComponentCard: React.FC<Props> = ({
             <CardFooter className='p-4 flex gap-2 justify-between items-center'>
                 <p className='font-medium text-lg grow text-left'>{ name }</p>
                 <Button variant='outline'>
-                    <Link href={ '/admin/editor/' + name }>Edit</Link>
+                    <Link href={ '/admin/editor/' + name }>{ t('editButton') }</Link>
                 </Button>
                 <Button
                     variant='destructive'

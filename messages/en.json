@@ -1,0 +1,27 @@
+{
+    "Admin": {
+        "Login": {
+            "title": "Login",
+            "welcomeTitle": "Login to WillPower",
+            "welcomeDesc": "Enter your username and password",
+            "labelName": "Username",
+            "labelPassword": "Password",
+            "submitButton": "Login",
+            "errorWrong": "Wrong name or password"
+        },
+        "Components": {
+            "noComponents": "No components found",
+            "failedDelete": "Failed to delete the {type}: {reason}",
+            "editButton": "Edit",
+            "failedCreate": "Failed to create the {type}: {reason}",
+            "createNew": "Create new {type}",
+            "giveName": "Give the new {type} a name. The name cannot be changed after creation.",
+            "namePlaceholder": "Name",
+            "invalidName": "Name is invalid",
+            "closeButton": "Close",
+            "createButton": "Create",
+            "metadataTitle": "{type}s",
+            "headerTitle": "{type}s"
+        }
+    }
+}

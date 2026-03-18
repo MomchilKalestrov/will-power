@@ -14,10 +14,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-
-const errors: Record<string, string> = {
-    'CredentialsSignin': 'Invalid credentials. Please try again.'
-};
+import { useTranslations } from 'next-intl';
 
 const redirectPage: string = '/admin/components/page';
 
@@ -27,6 +24,7 @@ const getToken = async (): Promise<string> => {
 };
 
 const Page: NextPage = () => {
+    const t = useTranslations('Admin.Login');
     const params = useSearchParams();
     const router = useRouter();
     const session = useSession();
@@ -60,21 +58,21 @@ const Page: NextPage = () => {
         <main className='h-dvh w-dvw flex justify-center items-center'>
             <Card>
                 <CardHeader>
-                    <CardTitle>Login</CardTitle>
+                    <CardTitle>{ t('title') }</CardTitle>
                     <CardDescription>
                         {
                             params.has('error')
                             ?   <p className='text-red-900'>
-                                    { errors[ params.get('error')! ] }
+                                    { t('errorWrong') }
                                 </p>
-                            :   'Enter your credentials'
+                            :   t('welcomeDesc')
                         }
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form action={ onSignIn } className='grid gap-4'>
                         <section className='grid gap-2'>
-                            <Label htmlFor='username'>Username</Label>
+                            <Label htmlFor='username'>{ t('labelName') }</Label>
                             <Input
                                 name='username'
                                 id='username'
@@ -82,7 +80,7 @@ const Page: NextPage = () => {
                             />
                         </section>
                         <section className='grid gap-2'>
-                            <Label htmlFor='password'>Password</Label>
+                            <Label htmlFor='password'>{ t('labelPassword') }</Label>
                             <Input
                                 name='password'
                                 id='password'
@@ -90,7 +88,7 @@ const Page: NextPage = () => {
                                 required={ true }
                             />
                         </section>
-                        <Button>Log in</Button>
+                        <Button>{ t('submitButton') }</Button>
                     </form>
                 </CardContent>
             </Card>

@@ -3,6 +3,7 @@ import React from 'react';
 import { toast } from 'sonner';
 import { PlusCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import {
     Dialog,
@@ -28,15 +29,16 @@ const CreateComponentDialog: React.FC<Props> = ({
     type
 }) => {
     const router = useRouter();
+    const t = useTranslations('Admin.Components');
     const [ name, setName ] = React.useState<string>('');
     const [ mounted, setMounted ] = React.useState<boolean>(false);
 
     const onPageCreated = React.useCallback(async () => {
         const response = await createComponent(name, type);
         if(!response.success)
-            return toast(`Failed to create the ${ type }: ` + response.reason);
+            return toast(t('failedCreate', { type, reason: response.reason }));
         router.push('/admin/editor/' + name);
-    }, [ name, type ]);
+    }, [ name, type, t ]);
 
     React.useEffect(() => void setMounted(true), []);
 
@@ -57,28 +59,28 @@ const CreateComponentDialog: React.FC<Props> = ({
             </DialogTrigger>
             <DialogContent className='max-w-[256px_!important]'>
                 <DialogHeader>
-                    <DialogTitle>Create new { type }</DialogTitle>
+                    <DialogTitle>{ t('createNew', { type }) }</DialogTitle>
                     <DialogDescription>
-                        Give the new { type } a name. The name cannot be changed after creation.
+                        { t('giveName', { type }) }
                     </DialogDescription>
                 </DialogHeader>
                 <div className='grid gap-2 grid-cols-[auto_1fr]'>
                     <Input
                         className='col-span-full'
                         id='input-new-page-name'
-                        placeholder='Name'
+                        placeholder={ t('namePlaceholder') }
                         value={ name }
                         onChange={ ({ target: { value } }) => setName(value.toLowerCase()) }
                     />
                     {
                         !validInput &&
-                        <p className='col-span-full text-xs font-medium text-red-900'>Name is invalid</p>
+                        <p className='col-span-full text-xs font-medium text-red-900'>{ t('invalidName') }</p>
                     }
                     <DialogClose asChild>
-                        <Button variant='outline'>Close</Button>
+                        <Button variant='outline'>{ t('closeButton') }</Button>
                     </DialogClose>
                     <Button disabled={ !validInput } onClick={ onPageCreated }>
-                        Create
+                        { t('createButton') }
                     </Button>
                 </div>
             </DialogContent>

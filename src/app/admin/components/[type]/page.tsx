@@ -2,6 +2,7 @@
 import type { NextPage } from 'next';
 import { notFound } from 'next/navigation';
 import { ServerCrash } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 import { getAllComponents } from '@/lib/db/actions/component';
 
@@ -14,13 +15,14 @@ const Page: NextPage<PageProps<'/admin/components/[type]'>> = async ({ params })
     if (![ 'header', 'page', 'footer', 'component' ].includes(type))
         return notFound();
 
+    const t = await getTranslations('Admin.Components');
     const response = await getAllComponents(type);
 
     if (!response.success)
         return (
             <div className='w-full h-full flex justify-center items-center flex-col opacity-30'>
                 <ServerCrash className='size-27' />
-                <p className='text-xl'>Failed to get { type }s...</p>
+                <p className='text-xl'>{ t('failedFetch', { type }) }</p>
             </div>
         );
 
