@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { Minus, Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -27,6 +28,7 @@ const GradientPicker: React.FC<Props> = ({
     selected = true,
     onChange: onChangeCallback
 }) => {
+    const t = useTranslations('Inputs');
     const [ gradientType, setGradientType ] = React.useState<'linear' | 'radial'>('linear');
     const [ gradientPosition, setGradientPosition ] = React.useState<string>('center center');
     const [ gradientRotation, setGradientRotation ] = React.useState<string>('0');
@@ -89,7 +91,7 @@ const GradientPicker: React.FC<Props> = ({
                 </Button>
             </PopoverTrigger>
             <PopoverContent className='grid grid-cols-2 gap-2'>
-                <Label htmlFor='input-gradient-type' className='capitalize w-32'>Type</Label>
+                <Label htmlFor='input-gradient-type' className='capitalize w-32'>{ t('type') }</Label>
                 <CssKeywordInput
                     value={ gradientType }
                     options={ [ 'linear', 'radial' ] }
@@ -102,7 +104,7 @@ const GradientPicker: React.FC<Props> = ({
                 {
                     gradientType === 'linear'
                     ?   <React.Fragment>
-                            <Label htmlFor='input-gradient-rotation' className='capitalize w-32'>Rotation</Label>
+                            <Label htmlFor='input-gradient-rotation' className='capitalize w-32'>{ t('rotation') }</Label>
                             <Input
                                 type='number'
                                 id='input-gradient-rotation'
@@ -117,7 +119,7 @@ const GradientPicker: React.FC<Props> = ({
                             />
                         </React.Fragment>
                     :   <React.Fragment>
-                            <Label htmlFor='input-gradient-position' className='capitalize w-32'>Position</Label>
+                            <Label htmlFor='input-gradient-position' className='capitalize w-32'>{ t('position') }</Label>
                             <CssKeywordInput
                                 value={ gradientPosition }
                                 options={ positions }
@@ -131,7 +133,7 @@ const GradientPicker: React.FC<Props> = ({
                 }
                 { gradientColors.map((value, index) => (
                     <React.Fragment key={ index }>
-                        <Label>Color { gradientColors.length - index }</Label>
+                        <Label>{ t('color') } { gradientColors.length - index }</Label>
                         <ColorPicker
                             value={ value }
                             onChange={ (newValue) => updateColors(newValue, index) }

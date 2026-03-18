@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import {
     Trash2,
     ChevronUp,
@@ -124,6 +125,7 @@ const TreePanel: React.FC<Props & {
     hasSelectedNode,
     ...props
 }) => {
+    const t = useTranslations('TreePanel');
     return (
         <div className='h-full flex flex-col gap-2'>
             <div className='overflow-y-scroll flex-1'>
@@ -147,7 +149,7 @@ const TreePanel: React.FC<Props & {
                     className='flex-1'
                     onClick={ onDelete }
                     disabled={ !hasSelectedNode }
-                ><Trash2 /> Delete</Button>
+                ><Trash2 />{ t('delete') }</Button>
             </div>
         </div>
     )

@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { Loader, Plus, Trash2 } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
@@ -23,6 +24,7 @@ type Props = {
 };
 
 const SettingsEditor: React.FC<Props> = ({ component, onChange }) => {
+    const t = useTranslations('SettingsPanel');
     const onEntryChanged = React.useCallback((key: string, value: any) =>
         onChange({ [ key ]: value })
     , [ onChange ]);
@@ -33,10 +35,10 @@ const SettingsEditor: React.FC<Props> = ({ component, onChange }) => {
             getAllComponents('page')
                 .then(response => {
                     if (!response.success)
-                        return toast('Failed to fetch page names: ' + response.reason);
+                        return toast(t('failedFetch', { reason: response.reason }));
                     setPageNames(response.value);
                 });
-    }, [ component ]);
+    }, [ component, t ]);
 
     const onDisplayConditionChange = React.useCallback((condition: displayCondition, index: number) => {
         const newConditions = [ ...(component as Component & { type: 'header' }).displayCondition ];
@@ -55,11 +57,11 @@ const SettingsEditor: React.FC<Props> = ({ component, onChange }) => {
         component.type === 'page'
         ?   <div className='space-y-4'>
                 <div className='flex gap-2'>
-                    <Label htmlFor='title-input'>Title</Label>
+                    <Label htmlFor='title-input'>{ t('title') }</Label>
                     <Input
                         name='title-input'
                         id='title-input'
-                        placeholder='Title...'
+                        placeholder={ t('titlePlaceholder') }
                         value={ component.title }
                         onChange={ ({ currentTarget: { value } }) =>
                             onEntryChanged('title', value) 
@@ -70,11 +72,11 @@ const SettingsEditor: React.FC<Props> = ({ component, onChange }) => {
                     <Label
                         htmlFor='description-input'
                         className='col-span-full'
-                    >Description</Label>
+                    >{ t('description') }</Label>
                     <Textarea
                         name='description-input'
                         id='description-input'
-                        placeholder='Description...'
+                        placeholder={ t('descriptionPlaceholder') }
                         className='resize-y col-span-full'
                         value={ component.description }
                         onChange={ ({ currentTarget: { value } }) =>
@@ -84,7 +86,7 @@ const SettingsEditor: React.FC<Props> = ({ component, onChange }) => {
                 </div>
             </div>
         :   <div className='space-y-4'>
-                <Label>Display Conditions</Label>
+                <Label>{ t('displayConditions') }</Label>
                 <div>
                     { (component as Component & { type: 'header' }).displayCondition.map(({ show, name }, index) => (
                         <div className='flex gap-2 mb-2' key={ index }>
@@ -101,9 +103,9 @@ const SettingsEditor: React.FC<Props> = ({ component, onChange }) => {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value='all'>All</SelectItem>
-                                    <SelectItem disabled={ !pageNames } value='page'>Page</SelectItem>
-                                    <SelectItem disabled={ !pageNames } value='Exclude'>Exclude</SelectItem>
+                                    <SelectItem value='all'>{ t('all') }</SelectItem>
+                                    <SelectItem disabled={ !pageNames } value='page'>{ t('page') }</SelectItem>
+                                    <SelectItem disabled={ !pageNames } value='exclude'>{ t('exclude') }</SelectItem>
                                 </SelectContent>
                             </Select>
                             { show !== 'all' && (
@@ -130,7 +132,7 @@ const SettingsEditor: React.FC<Props> = ({ component, onChange }) => {
                                         }
                                         </SelectContent>
                                     </Select>
-                                :   <Label>ERROR!</Label>
+                                :   <Label>{ t('error') }</Label>
                             ) }
                             <Button
                                 variant='destructive'

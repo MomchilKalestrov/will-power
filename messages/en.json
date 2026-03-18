@@ -141,5 +141,43 @@
                 "themes": "Themes"
             }
         }
+    },
+    "Inputs": {
+        "custom": "custom",
+        "variables": "Variables",
+        "color": "Color",
+        "type": "Type",
+        "rotation": "Rotation",
+        "position": "Position",
+        "inset": "Inset",
+        "offset": "Offset",
+        "blur": "Blur",
+        "spread": "Spread",
+        "width": "Width",
+        "style": "Style",
+        "family": "Family",
+        "size": "Size",
+        "weight": "Weight",
+        "fallback": "Fallback"
+    },
+    "PropertiesPanel": {
+        "properties": "{type} Properties",
+        "id": "Id",
+        "styles": "Styles"
+    },
+    "SettingsPanel": {
+        "failedFetch": "Failed to fetch page names: {reason}",
+        "title": "Title",
+        "titlePlaceholder": "Title...",
+        "description": "Description",
+        "descriptionPlaceholder": "Description...",
+        "displayConditions": "Display Conditions",
+        "all": "All",
+        "page": "Page",
+        "exclude": "Exclude",
+        "error": "ERROR!"
+    },
+    "TreePanel": {
+        "delete": "Delete"
     }
 }

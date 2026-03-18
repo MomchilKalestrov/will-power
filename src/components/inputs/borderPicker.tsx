@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { SquareAsterisk } from 'lucide-react';
 
 import { Label } from '@/components/ui/label';
@@ -26,6 +27,7 @@ const BorderPicker: React.FC<Props> = ({
     selected = true,
     onChange: onChangeCallback
 }) => {
+    const t = useTranslations('Inputs');
     const [ borderWidth, setWidth ] = React.useState<string>('0px');
     const [ borderStyle, setStyle ] = React.useState<string>('solid');
     const [ borderColor, setColor ] = React.useState<string>('#000000ff');
@@ -60,7 +62,7 @@ const BorderPicker: React.FC<Props> = ({
                 </Button>
             </PopoverTrigger>
             <PopoverContent className='grid gap-2 grid-cols-[min-content_1fr]'>
-                <Label htmlFor='input-border-width' className='capitalize w-16'>Width</Label>
+                <Label htmlFor='input-border-width' className='capitalize w-16'>{ t('width') }</Label>
                 <CssUnitInput
                     value={ borderWidth }
                     units={ [ 'px', 'em', 'rem' ] }
@@ -69,7 +71,7 @@ const BorderPicker: React.FC<Props> = ({
                         onChange({ width });
                     } }
                 />
-                <Label htmlFor='input-border-style' className='capitalize w-16'>Style</Label>
+                <Label htmlFor='input-border-style' className='capitalize w-16'>{ t('style') }</Label>
                 <CssKeywordInput
                     value={ borderStyle }
                     options={ BORDER_STYLES }
@@ -79,7 +81,7 @@ const BorderPicker: React.FC<Props> = ({
                         onChange({ style });
                     } }
                 />
-                <Label htmlFor='input-border-color' className='capitalize w-16'>Color</Label>
+                <Label htmlFor='input-border-color' className='capitalize w-16'>{ t('color') }</Label>
                 <ColorPicker
                     value={ borderColor }
                     onChange={ (color) => {

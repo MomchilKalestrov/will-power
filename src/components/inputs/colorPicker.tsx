@@ -1,10 +1,11 @@
 'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { PaintbrushVertical } from 'lucide-react';
 import { HexAlphaColorPicker } from 'react-colorful';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
@@ -26,6 +27,7 @@ const ColorPicker: React.FC<Props> = ({
     preview = false,
     noVars = false
 }) => {
+    const t = useTranslations('Inputs');
     const [ color, setColor ] = React.useState<string>('#ffffffff');
     const { config } = useConfig();
     const variables = React.useMemo(() => config.variables.filter(variable => variable.type === 'color'), [ config ]);
@@ -90,7 +92,7 @@ const ColorPicker: React.FC<Props> = ({
                     showVars &&
                     <Select onValueChange={ onVariableChange } value={ variable?.id }>
                         <SelectTrigger className='w-full'>
-                            { variable?.name ?? 'Variables' }
+                            { variable?.name ?? t('variables') }
                         </SelectTrigger>
                         <SelectContent>
                             { variables.map((variable: config[ 'variables' ][ number ]) => (

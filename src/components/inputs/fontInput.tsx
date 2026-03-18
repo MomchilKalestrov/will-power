@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { CaseSensitive, Settings, Variable } from 'lucide-react';
 
 import { Label } from '@/components/ui/label';
@@ -46,6 +47,7 @@ const FontInput: React.FC<Props> = ({
     onChange: onChangeCallback,
     noVars
 }) => {
+    const t = useTranslations('Inputs');
     const { config } = useConfig();
     const variables = React.useMemo(() => config.variables.filter(variable => variable.type === 'font'), [ config ]);
     const typefaces = React.useMemo(() =>
@@ -134,7 +136,7 @@ const FontInput: React.FC<Props> = ({
                         </Popover>
                     </div>
                 }
-                <Label htmlFor='input-font-family'>Family</Label>
+                <Label htmlFor='input-font-family'>{ t('family') }</Label>
                 <Select onValueChange={ (value) => updateFont('family', value) } value={ font.family }>
                     <SelectTrigger id='input-font-family' className='w-full'>
                         { font.family }
@@ -147,14 +149,14 @@ const FontInput: React.FC<Props> = ({
                         )) }
                     </SelectContent>
                 </Select>
-                <Label htmlFor='input-font-family'>Style</Label>
+                <Label htmlFor='input-font-family'>{ t('style') }</Label>
                 <CssKeywordInput
                     value={ font.style }
                     onChange={ (value) => updateFont('style', value) }
                     options={ [ 'normal', 'italic' ] }
                     id='input-font-family'
                 />
-                <Label>Size</Label>
+                <Label>{ t('size') }</Label>
                 <CssUnitInput
                     value={ font.size }
                     onChange={ (value) => updateFont('size', value) }
@@ -162,14 +164,14 @@ const FontInput: React.FC<Props> = ({
                     units={ [ 'rem', 'em', 'px' ] }
                     allowCustom={ false }
                 />
-                <Label htmlFor='input-font-weight'>Weight</Label>
+                <Label htmlFor='input-font-weight'>{ t('weight') }</Label>
                 <CssKeywordInput
                     value={ font.weight }
                     onChange={ (value) => updateFont('weight', value) }
                     options={ [ 'lighter', 'normal', 'bold', 'bolder' ] }
                     id='input-font-weight'
                 />
-                <Label htmlFor='input-font-weight'>Fallback</Label>
+                <Label htmlFor='input-font-weight'>{ t('fallback') }</Label>
                 <CssKeywordInput
                     value={ font.fallback }
                     onChange={ (value) => updateFont('fallback', value) }

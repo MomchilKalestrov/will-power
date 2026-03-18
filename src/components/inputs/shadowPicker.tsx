@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { SquircleDashed } from 'lucide-react';
 
 import { Label } from '@/components/ui/label';
@@ -21,6 +22,7 @@ const ShadowPicker: React.FC<Props> = ({
     selected = true,
     onChange: onChangeCallback
 }) => {
+    const t = useTranslations('Inputs');
     const [ shadowInset,  setInset  ] = React.useState<boolean>(false);
     const [ shadowOffset, setOffset ] = React.useState<string>('0px 0px');
     const [ shadowBlur,   setBlur   ] = React.useState<string>('0px');
@@ -68,7 +70,7 @@ const ShadowPicker: React.FC<Props> = ({
                 </Button>
             </PopoverTrigger>
             <PopoverContent className='grid gap-2 grid-cols-[min-content_1fr]'>
-                <Label htmlFor='input-shadow-inset' className='capitalize w-16'>Inset</Label>
+                <Label htmlFor='input-shadow-inset' className='capitalize w-16'>{ t('inset') }</Label>
                 <Checkbox
                     className='justify-self-end'
                     id='input-shadow-inset'
@@ -79,7 +81,7 @@ const ShadowPicker: React.FC<Props> = ({
                         onChange({ inset });
                     } }
                 />
-                <Label htmlFor='input-shadow-offset' className='capitalize w-16'>Offset</Label>
+                <Label htmlFor='input-shadow-offset' className='capitalize w-16'>{ t('offset') }</Label>
                 <CssUnitInput
                     value={ shadowOffset }
                     count={ 2 }
@@ -89,7 +91,7 @@ const ShadowPicker: React.FC<Props> = ({
                         onChange({ offset });
                     } }
                 />
-                <Label htmlFor='input-shadow-blur' className='capitalize w-16'>Blur</Label>
+                <Label htmlFor='input-shadow-blur' className='capitalize w-16'>{ t('blur') }</Label>
                 <CssUnitInput
                     value={ shadowBlur }
                     units={ [ 'px', 'cm', 'in', 'em', 'rem' ] }
@@ -98,7 +100,7 @@ const ShadowPicker: React.FC<Props> = ({
                         onChange({ blur });
                     } }
                 />
-                <Label htmlFor='input-shadow-spread' className='capitalize w-16'>Spread</Label>
+                <Label htmlFor='input-shadow-spread' className='capitalize w-16'>{ t('spread') }</Label>
                 <CssUnitInput
                     value={ shadowSpread }
                     units={ [ 'px', 'cm', 'in', 'em', 'rem' ] }
@@ -107,7 +109,7 @@ const ShadowPicker: React.FC<Props> = ({
                         onChange({ spread })
                     } }
                 />
-                <Label htmlFor='input-shadow-color' className='capitalize w-16'>Color</Label>
+                <Label htmlFor='input-shadow-color' className='capitalize w-16'>{ t('color') }</Label>
                 <ColorPicker
                     value={ shadowColor }
                     onChange={ (color) => {

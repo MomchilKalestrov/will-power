@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 
 import {
     Select,
@@ -19,6 +20,7 @@ type Props = {
 };
 
 const CssUnitInput: React.FC<Props> = ({ value, units, onChange, count = 1, allowCustom = true }) => {
+    const t = useTranslations('Inputs');
     const [ currentValues, setCurrentValues ] = React.useState<string[]>([]);
     const [ currentUnit, setCurrentUnit ] = React.useState<string>('');
     // we gotta sort cause we get problems like `rem` being prematurely detected as `em`
@@ -105,7 +107,7 @@ const CssUnitInput: React.FC<Props> = ({ value, units, onChange, count = 1, allo
                             { unit }
                         </SelectItem>
                     )) }
-                    { allowCustom && <SelectItem value='custom'>custom</SelectItem> }
+                    { allowCustom && <SelectItem value='custom'>{ t('custom') }</SelectItem> }
                 </SelectContent>
             </Select>
         </div>
