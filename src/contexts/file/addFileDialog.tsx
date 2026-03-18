@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import {
     Dialog,
@@ -21,6 +22,7 @@ type Props = {
 };
 
 const AddFileDialog: React.FC<Props> = ({ onSend, accepts }) => {
+    const t = useTranslations('Contexts');
     const [ file, setFile ] = React.useState<File | undefined>();
     const [ dialogOpen, setDialogOpen ] = React.useState<boolean>(false);
     
@@ -34,12 +36,12 @@ const AddFileDialog: React.FC<Props> = ({ onSend, accepts }) => {
             </DialogTrigger>
             <DialogContent className='z-101'>
                 <DialogHeader>
-                    <DialogTitle>{ isDirectory ? 'Create' : 'Upload' }</DialogTitle>
+                    <DialogTitle>{ isDirectory ? t('create') : t('upload') }</DialogTitle>
                     <DialogDescription>
                         {
                             isDirectory
-                            ?   'Give the new directory a name.'
-                            :   'Select a file to add to the assets.'
+                            ?   t('giveDirectoryName')
+                            :   t('selectFileAdd')
                         }
                     </DialogDescription>
                 </DialogHeader>
@@ -69,7 +71,7 @@ const AddFileDialog: React.FC<Props> = ({ onSend, accepts }) => {
                         name='is-directory-checkbox'
                         id='is-directory-checkbox'
                     />
-                    <Label htmlFor='is-directory-checkbox'>Create directory</Label>
+                    <Label htmlFor='is-directory-checkbox'>{ t('createDirectory') }</Label>
                 </div>
                 <Button
                     onClick={ () => {
@@ -81,7 +83,7 @@ const AddFileDialog: React.FC<Props> = ({ onSend, accepts }) => {
                     } }
                     disabled={ isDirectory ? !directoryName : !file }
                     variant='outline'
-                >{ isDirectory ? 'Create' : 'Upload' }</Button>
+                >{ isDirectory ? t('create') : t('upload') }</Button>
             </DialogContent>
         </Dialog>
     );

@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 
 import { getConfig, setConfig as setBackendConfig } from '@/lib/actions/config';
 
@@ -15,6 +16,7 @@ const useConfig = () => {
 };
 
 const ConfigProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+    const t = useTranslations('Contexts');
     const [ config, setConfig ] = React.useState<config | null | undefined>();
     
     React.useEffect(() => {
@@ -26,14 +28,13 @@ const ConfigProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     }, []);
 
     const updateConfig = React.useCallback(async (newConfig: Partial<config>, updateBackend: boolean = true) => {
-        if (updateBackend) {
+        if (updateBackend)
             await setBackendConfig(newConfig);
-        };
         setConfig({ ...config!, ...newConfig });
     }, [ config ]);
 
     if (config === null)
-        return (<p>FATAL ERROR. CANNOT LOAD SERVER CONFIGURATION.</p>);
+        return (<p>{ t('fatalError') }</p>);
 
     if (!config)
         return (<></>);

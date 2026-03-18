@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 
 import { useConfig } from '@/contexts/config';
 
@@ -20,6 +21,7 @@ const useThemes = () => {
 };
 
 const ThemesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+    const t = useTranslations('Contexts');
     const { config, updateConfig } = useConfig();
 
     const addTheme = React.useCallback(async (theme: Blob): Promise<string> => {
@@ -29,38 +31,38 @@ const ThemesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         const response = await themeActions.addTheme(data);
         
         if (!response.success)
-            return 'Failed to add the theme: ' + response.reason;
+            return t('failedAddTheme', { reason: response.reason });
 
         updateConfig({
             themes: [ ...config.themes, response.value.name ]
         }, false);
 
-        return 'Successfully added the theme.';
-    }, [ config, updateConfig ]);
+        return t('addedTheme');
+    }, [ config, updateConfig, t ]);
 
     const removeTheme = React.useCallback(async (name: string): Promise<string> => {
         const response = await themeActions.removeTheme(name);
 
         if (!response.success)
-            return 'Failed to remove the theme: ' + response.reason;
+            return t('failedRemoveTheme', { reason: response.reason });
 
         updateConfig({
             themes: config.themes.filter(theme => theme !== name)
         }, false);
         
-        return `${ name } has been deleted.`;
-    }, [ config, updateConfig ]);
+        return t('deletedName', { name });
+    }, [ config, updateConfig, t ]);
 
     const selectTheme = React.useCallback(async (name: string): Promise<string> => {
         const response = await themeActions.selectTheme(name);
 
         if (!response.success)
-            return 'Failed to select the theme: ' + response.reason;
+            return t('failedSelectTheme', { reason: response.reason });
 
         updateConfig({ theme: name }, false);
 
-        return `${ name } has been selected as the theme.`;
-    }, [ updateConfig ]);
+        return t('selectedTheme', { name });
+    }, [ updateConfig, t ]);
 
     return (
         <ThemesCTX.Provider value={ { addTheme, removeTheme, selectTheme, themes: config.themes, theme: config.theme } }>

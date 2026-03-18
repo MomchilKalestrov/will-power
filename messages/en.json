@@ -179,5 +179,38 @@
     },
     "TreePanel": {
         "delete": "Delete"
+    },
+    "Contexts": {
+        "fatalError": "FATAL ERROR. CANNOT LOAD SERVER CONFIGURATION.",
+        "failedDelete": "Failed to delete the blob: {reason}",
+        "failedDeleteDefault": "Failed to delete the blob.",
+        "failedUpload": "Failed to upload file: {reason}",
+        "failedUploadDefault": "Failed to upload file.",
+        "failedGet": "Failed to get files...",
+        "loading": "Loading...",
+        "selectFile": "Select file",
+        "selectFiles": "Select files",
+        "create": "Create",
+        "upload": "Upload",
+        "giveDirectoryName": "Give the new directory a name.",
+        "selectFileAdd": "Select a file to add to the assets.",
+        "createDirectory": "Create directory",
+        "noFiles": "No files here...",
+        "name": "Name:",
+        "size": "Size:",
+        "url": "URL:",
+        "delete": "Delete",
+        "select": "Select",
+        "failedAddPlugin": "Failed to add the plugin: {reason}",
+        "addedPlugin": "Successfully added the plugin.",
+        "failedRemovePlugin": "Failed to remove the plugin: {reason}",
+        "deletedName": "{name} has been deleted.",
+        "errorReason": "Error: {reason}.",
+        "toggledPlugin": "{name} has been toggled {status}.",
+        "failedAddTheme": "Failed to add the theme: {reason}",
+        "addedTheme": "Successfully added the theme.",
+        "failedRemoveTheme": "Failed to remove the theme: {reason}",
+        "failedSelectTheme": "Failed to select the theme: {reason}",
+        "selectedTheme": "{name} has been selected as the theme."
     }
 }

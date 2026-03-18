@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -24,35 +25,38 @@ const SelectedFilePanel: React.FC<Props> = ({
     onSelect,
     onDelete,
     file
-}) => (
-    <section className='flex'>
-        <Separator orientation='vertical' className='mx-4' />
-        <div className='w-64 grow flex flex-col justify-between'>
-            <section className='grid gap-2'>
-                <p>
-                    <strong>Name:</strong><br></br>
-                    { file.pathname.split('/').pop() }
-                </p>
-                <p>
-                    <strong>Size:</strong><br></br>
-                    { toFileSize(file.size) }
-                </p>
-                <div>
-                    <p><strong>URL:</strong></p>
-                    <div className='overflow-scroll w-64'>
-                        <code className='text-nowrap'>{ file.url }</code>
+}) => {
+    const t = useTranslations('Contexts');
+    return (
+        <section className='flex'>
+            <Separator orientation='vertical' className='mx-4' />
+            <div className='w-64 grow flex flex-col justify-between'>
+                <section className='grid gap-2'>
+                    <p>
+                        <strong>{ t('name') }</strong><br></br>
+                        { file.pathname.split('/').pop() }
+                    </p>
+                    <p>
+                        <strong>{ t('size') }</strong><br></br>
+                        { toFileSize(file.size) }
+                    </p>
+                    <div>
+                        <p><strong>{ t('url') }</strong></p>
+                        <div className='overflow-scroll w-64'>
+                            <code className='text-nowrap'>{ file.url }</code>
+                        </div>
                     </div>
+                </section>
+                <div className='grid gap-2'>
+                    <Button
+                        variant='destructive'
+                        onClick={ onDelete }
+                    >{ t('delete') }</Button>
+                    { onSelect && <Button onClick={ onSelect }>{ t('select') }</Button> }
                 </div>
-            </section>
-            <div className='grid gap-2'>
-                <Button
-                    variant='destructive'
-                    onClick={ onDelete }
-                >Delete</Button>
-                { onSelect && <Button onClick={ onSelect }>Select</Button> }
             </div>
-        </div>
-    </section>
-);
+        </section>
+    );
+};
 
 export default SelectedFilePanel;

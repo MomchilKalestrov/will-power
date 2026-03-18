@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { ServerCrash, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
@@ -77,6 +78,7 @@ const FileSelector: React.FC<Props> = ({
     fileCount,
     visible
 }) => {
+    const t = useTranslations('Contexts');
     const [ selectedFiles, setSelectedFiles ] = React.useState<Set<string>>(new Set<string>());
     const [ files, setFiles ] = React.useState<Record<string, BlobInformation> | null | undefined>();
     const tree = React.useMemo(() =>
@@ -128,7 +130,7 @@ const FileSelector: React.FC<Props> = ({
         deleteBlob(lastSelectedFile!)
             .then(response => {
                 if (!response.success)
-                    return toast('Failed to delete the blob: ' + response.reason);
+                    return toast(t('failedDelete', { reason: response.reason }));
                 setSelectedFiles(state => {
                     const newSet = new Set(state);
                     newSet.delete(lastSelectedFile!);
@@ -140,8 +142,8 @@ const FileSelector: React.FC<Props> = ({
                     return newState;
                 });
             })
-            .catch(() => toast('Failed to delete the blob.')),
-        [ lastSelectedFile ]
+            .catch(() => toast(t('failedDeleteDefault'))),
+        [ lastSelectedFile, t ]
     );
 
     const onRemoveSelect = React.useCallback((pathname: string) => 
@@ -159,15 +161,15 @@ const FileSelector: React.FC<Props> = ({
         })
             .then(response => {
                 if (!response.success)
-                    return toast('Failed to upload file: ' + response.reason);
+                    return toast(t('failedUpload', { reason: response.reason }));
                 setFiles(state => {
                     const newState = { ...state };
                     newState[ response.value.pathname ] = response.value;
                     return newState;
                 });
             })
-            .catch(() => toast('Failed to upload file.')),
-        [ cwd ]
+            .catch(() => toast(t('failedUploadDefault'))),
+        [ cwd, t ]
     );
     
     if (files === null)
@@ -184,7 +186,7 @@ const FileSelector: React.FC<Props> = ({
             >
                 <div className='min-h-0 grid grid-cols-[1fr_auto] overflow-hidden'>
                     <ServerCrash className='size-27' />
-                    <p className='text-xl'>Failed to get files...</p>
+                    <p className='text-xl'>{ t('failedGet') }</p>
                 </div>
             </FileSelectorDialog>
         );
@@ -208,7 +210,7 @@ const FileSelector: React.FC<Props> = ({
             <div className='min-h-0 grid grid-cols-[1fr_auto] overflow-hidden'>
                 {
                     files === undefined
-                    ?   <div className='w-full flex items-center justify-center'>Loading...</div>
+                    ?   <div className='w-full flex items-center justify-center'>{ t('loading') }</div>
                     :   <DirectoryViewer
                             files={ files }
                             directoryNode={ directoryNode ?? { isFile: false, children: {} } }

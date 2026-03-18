@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Rat } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 
@@ -27,11 +28,13 @@ const DirectoryViewer: React.FC<Props> = ({
     onFileSelect,
     onDirectorySelect,
     path
-}) => (
+}) => {
+    const t = useTranslations('Contexts');
+    return (
     Object.keys(directoryNode.children || {}).length === 0
     ?   <div className='w-full h-full flex justify-center items-center flex-col opacity-30'>
             <Rat className='size-27' />
-            <p className='text-xl'>No files here...</p>
+            <p className='text-xl'>{ t('noFiles') }</p>
         </div>
     :   <div className='h-full w-full min-h-0 flex flex-wrap content-start justify-start items-start gap-2 overflow-auto'>
             { Object.entries(directoryNode.children!).map(([ name, { isFile } ]) => {
@@ -81,5 +84,6 @@ const DirectoryViewer: React.FC<Props> = ({
             }) }
         </div>
 );
+};
 
 export default DirectoryViewer;

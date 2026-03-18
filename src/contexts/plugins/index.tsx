@@ -3,6 +3,7 @@ import type z from 'zod';
 import React from 'react';
 import { toast } from 'sonner';
 import ReactDom from 'react-dom';
+import { useTranslations } from 'next-intl';
 import ReactJsxRuntime from 'react/jsx-runtime';
 
 import { useConfig } from '@/contexts/config';
@@ -52,6 +53,7 @@ const usePlugins = () => {
 };
 
 const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+    const t = useTranslations('Contexts');
     const { config, updateConfig } = useConfig();
     const [ plugins, setPlugins ] = React.useState<Map<string, pluginInstance>>();
     const [ pluginsToInstall, setPluginsToInstall ] = React.useState<Set<string>>(new Set());
@@ -108,7 +110,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         const response = await pluginActions.addPlugin(data);
         
         if (!response.success)
-            return 'Failed to add the plugin: ' + response.reason;
+            return t('failedAddPlugin', { reason: response.reason });
 
         await updateConfig({
             plugins: [ ...config.plugins, response.value ]
@@ -116,27 +118,27 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
         setPluginsToInstall(state => new Set([ ...state, response.value.name ]));
 
-        return 'Successfully added the plugin.';
-    }, [ config, updateConfig ]);
+        return t('addedPlugin');
+    }, [ config, updateConfig, t ]);
 
     const removePlugin = React.useCallback(async (name: string): Promise<string> => {
         const response = await pluginActions.removePlugin(name);
 
         if (!response.success)
-            return 'Failed to remove the plugin: ' + response.reason;
+            return t('failedRemovePlugin', { reason: response.reason });
 
         updateConfig({
             plugins: config.plugins.filter(plugin => plugin.name !== name)
         }, false);
         
-        return `${ name } has been deleted.`;
-    }, [ config, updateConfig ]);
+        return t('deletedName', { name });
+    }, [ config, updateConfig, t ]);
 
     const togglePlugin = React.useCallback(async (name: string): Promise<string> => {
         const response = await pluginActions.togglePlugin(name);
 
         if (!response.success)
-            return `Error: ${ response.reason }.`;
+            return t('errorReason', { reason: response.reason });
 
         const newPlugins = [ ...config.plugins ];
         const index = newPlugins.findIndex(plugin => plugin.name === name);
@@ -144,8 +146,8 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
         updateConfig({ plugins: newPlugins }, false);
 
-        return `${ name } has been toggled ${ newPlugins[ index ].enabled ? 'on' : 'off' }.`;
-    }, [ config, updateConfig ]);
+        return t('toggledPlugin', { name, status: newPlugins[ index ].enabled ? 'on' : 'off' });
+    }, [ config, updateConfig, t ]);
     
     if (!plugins) return (<></>);
 
