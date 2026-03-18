@@ -2,6 +2,7 @@
 import React from 'react';
 import { toast } from 'sonner';
 import { NextPage } from 'next';
+import { useTranslations } from 'next-intl';
 import { ChevronLeft, ChevronRight, Search, ServerCrash } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,7 @@ type strippedPlugins = (Awaited<ReturnType<typeof getPlugins>> & { success: true
 const PLUGIN_COUNT_PER_PAGE = 10;
 
 const Page: NextPage = () => {
+    const t = useTranslations('Admin.Plugins');
     const [ page, setPage ] = React.useState<number>(0);
     const [ plugins, setPlugins ] = React.useState<strippedPlugins | undefined | null>();
     const [ query, setQuery ] = React.useState<string>('');
@@ -29,7 +31,7 @@ const Page: NextPage = () => {
         getPluginsByQuery(query, 0, PLUGIN_COUNT_PER_PAGE)
             .then(response => {
                 if (!response.success) {
-                    toast('Failed to query the plugins: ' + response.reason);
+                    toast(t('failedQuery', { reason: response.reason }));
                     setPlugins(backupPlugins);
                     return;
                 };
@@ -37,7 +39,7 @@ const Page: NextPage = () => {
                 setPage(0);
                 setPlugins(response.value);
             });
-    }, [ query, plugins ]);
+    }, [ query, plugins, t ]);
 
     React.useEffect(() =>
         void getPlugins(page, PLUGIN_COUNT_PER_PAGE)
@@ -45,17 +47,17 @@ const Page: NextPage = () => {
                 if (response.success)
                     return setPlugins(response.value);
 
-                toast('Failed to load the plugins: ' + response.reason);
+                toast(t('failedLoad', { reason: response.reason }));
                 setPlugins(null);
             }),
-        [ page ]
+        [ page, t ]
     );
 
     if (plugins === null)
         return (
             <div className='h-[calc(100dvh-var(--spacing)*16)] flex justify-center items-center flex-col opacity-30'>
                 <ServerCrash className='size-27' />
-                <p className='text-xl'>Failed to connect to marketplace...</p>
+                <p className='text-xl'>{ t('failedConnect') }</p>
             </div>
         );
 
@@ -97,7 +99,7 @@ const Page: NextPage = () => {
                     <Input
                         value={ query }
                         onChange={ ({ currentTarget: { value } }) => setQuery(value) }
-                        placeholder='Seach...'
+                        placeholder={ t('searchPlaceholder') }
                     />
                     <Button
                         size='icon'

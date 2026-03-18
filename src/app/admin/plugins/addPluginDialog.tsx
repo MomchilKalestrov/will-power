@@ -2,6 +2,7 @@
 import React from 'react';
 import { toast } from 'sonner';
 import { CirclePlus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import {
     Dialog,
@@ -17,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { usePlugins } from '@/contexts/plugins';
 
 const AddPluginDialog: React.FC = () => {
+    const t = useTranslations('Admin.Plugins');
     const { addPlugin } = usePlugins();
     const [ file, setFile ] = React.useState<File | undefined>();
     const [ dialogOpen, setDialogOpen ] = React.useState<boolean>(false);
@@ -43,13 +45,11 @@ const AddPluginDialog: React.FC = () => {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Upload</DialogTitle>
+                    <DialogTitle>{ t('upload') }</DialogTitle>
                     <DialogDescription>
-                        Select an <code>.zip</code> archive to upload as a plugin.
-                        The archive must contain a <code>metadata.json</code>{ ' ' }
-                        and <code>index.js</code> file inside.
-                        <strong className='text-destructive'>DO NOT TRUST RANDOM PLUGINS YOU FOUND ON THE WEB!</strong>
-                        <strong className='text-destructive'>THE DEVELOPERS ARE NOT RESPONSIBLE FOR ANY DAMAGES!</strong>
+                        { t.rich('uploadDesc', { code: chunks => <code>{ chunks }</code> }) }
+                        <strong className='text-destructive'>{ t('warning1') }</strong>
+                        <strong className='text-destructive'>{ t('warning2') }</strong>
                     </DialogDescription>
                 </DialogHeader>
                 <Input
@@ -57,14 +57,14 @@ const AddPluginDialog: React.FC = () => {
                     accept='.zip'
                     multiple={ false }
                     onChange={ ({ currentTarget: { files } }) =>
-                        setFile([...files!][0])
+                        setFile([ ...files! ][ 0 ])
                     }
                 />
                 <Button
                     onClick={ onSend }
                     disabled={ !file }
                     variant='outline'
-                >Upload</Button>
+                >{ t('upload') }</Button>
             </DialogContent>
         </Dialog>
     );

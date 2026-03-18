@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { RotateCcw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -21,6 +22,7 @@ type Props = {
 };
 
 const Editor: React.FC<Props> = ({ initialConfig }) => {
+    const t = useTranslations('Admin.Variables');
     const { updateConfig } = useConfig();
     const [ config, setConfig ] = React.useState<config>(initialConfig);
     const [ saveState, setSaveState ] = React.useState<boolean>(true);
@@ -49,7 +51,7 @@ const Editor: React.FC<Props> = ({ initialConfig }) => {
                             delete copy.themes;
                             updateConfig(copy);
                         } }
-                    >Save</Button>
+                    >{ t('save') }</Button>
                 </div>
             </Portal>
             <main className='p-8 overflow-y-scroll bg-background h-[calc(100dvh-var(--spacing)*16)]'>

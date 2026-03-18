@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
+import { getTranslations } from 'next-intl/server';
 import { Metadata, NextComponentType, NextPageContext } from 'next';
 
 import { hasAuthority } from '@/lib/utils';
@@ -11,8 +12,9 @@ import Header from './header';
 //@ts-ignore
 import '../globals.css';
 
-export const metadata: Metadata = {
-    title: 'Plugins'
+export const generateMetadata = async (): Promise<Metadata> => {
+    const t = await getTranslations('Admin.Plugins');
+    return { title: t('title') };
 };
 
 const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin/plugins'>> = async ({ children }) => {

@@ -2,6 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { Download, ExternalLink } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -19,6 +20,7 @@ type Props = {
 };
 
 const PluginCard: React.FC<Props> = ({ plugin }) => {
+    const t = useTranslations('Admin.Plugins');
     const { showDialog } = useDialog();
     const { addPlugin } = usePlugins();
 
@@ -29,21 +31,21 @@ const PluginCard: React.FC<Props> = ({ plugin }) => {
                 const toastText = await addPlugin(blob);
                 toast(toastText);
             })
-            .catch(() => toast('Failed to install the plugin.'));
-    }, []);
+            .catch(() => toast(t('failedInstall')));
+    }, [ t ]);
 
     const onInstallRequest = React.useCallback(() => {
         showDialog(
-            'Confirm',
-            `Are you sure you want to install "${ plugin.name }"?`,
+            t('confirm'),
+            t('confirmInstall', { name: plugin.name }),
             [
-                { text: 'No', variant: 'default' },
-                { text: 'Yes', variant: 'outline' }
+                { text: t('no'), variant: 'default' },
+                { text: t('yes'), variant: 'outline' }
             ]
         )
-            .then(value => value === 'Yes' && installPlugin(plugin.downloadUrl))
+            .then(value => value === t('yes') && installPlugin(plugin.downloadUrl))
             .catch(() => null);
-    }, [ plugin ]);
+    }, [ plugin, t ]);
     
     return (
         <Card className='w-full max-w-72'>

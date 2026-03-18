@@ -3,6 +3,7 @@ import React from 'react';
 import { toast } from 'sonner';
 import { NextPage } from 'next';
 import { ServerCrash } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Spinner } from '@/components/ui/spinner';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
@@ -16,6 +17,7 @@ import UserPanel from './userPanel';
 import AddUserDialog from './addUserDialog';
 
 const Page: NextPage = () => {
+    const t = useTranslations('Admin.Users');
     const [ users, setUsers ] = React.useState<User[] | null | undefined>();
     const [ selectedIndex, setSelectedIndex ] = React.useState<number | undefined>();
 
@@ -24,19 +26,19 @@ const Page: NextPage = () => {
             .then(response => {
                 if (!response.success) {
                     setUsers(null);
-                    return toast('Failed to get users: ' + response.reason);
+                    return toast(t('failedGet', { reason: response.reason }));
                 };
                 return setUsers(response.value);
             }),
-        []
+        [t]
     );
 
     const onUserUpdate = React.useCallback(async (user: User & { password?: string; }) => {
         const response = await updateUser(user);
 
         if (!response.success)
-            return toast('Failed to update the user: ' + response.reason);
-        toast('Updated the user.');
+            return toast(t('failedUpdate', { reason: response.reason }));
+        toast(t('updated'));
         
         setUsers((state) => {            
             const newState = [ ...state! ];
@@ -48,14 +50,14 @@ const Page: NextPage = () => {
             
             return newState;
         });
-    }, [ selectedIndex ]);
+    }, [ selectedIndex, t ]);
 
     const onUserDelete = React.useCallback(async () => {
         const response = await deleteUser(users![ selectedIndex! ].id);
 
         if (!response.success)
-            return toast('Failed to delete the user: ' + response.reason);
-        toast('Deleted the user.');
+            return toast(t('failedDelete', { reason: response.reason }));
+        toast(t('deleted'));
 
         setUsers(state => {            
             const newState = [ ...state! ];
@@ -63,14 +65,14 @@ const Page: NextPage = () => {
 
             return newState;
         })
-    }, [ users, selectedIndex ]);
+    }, [ users, selectedIndex, t ]);
 
     const onUserAdd = React.useCallback(async (user: Omit<User, 'id'> & { password: string }) => {
         const response = await createUser(user);
 
         if (!response.success)
-            return toast('Failed to create a new user: ' + response.reason);
-        toast('Created a new user.');
+            return toast(t('failedCreate', { reason: response.reason }));
+        toast(t('created'));
         
         setUsers(state => {
             const newState = [ ...state! ];
@@ -82,13 +84,13 @@ const Page: NextPage = () => {
 
             return newState;
         });
-    }, []);
+    }, [ t ]);
 
     if (users === null)
         return (
             <div className='w-full h-full flex justify-center items-center flex-col opacity-30'>
                 <ServerCrash className='size-27' />
-                <p className='text-xl'>Failed to get users...</p>
+                <p className='text-xl'>{ t('failedGetGeneral') }</p>
             </div>
         );
 

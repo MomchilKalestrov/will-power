@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,6 +21,7 @@ type Props = {
 };
 
 const FontEditor: React.FC<Props> = ({ config, setConfig }) => {
+    const t = useTranslations('Admin.Variables');
     const [ name, setName ] = React.useState<string>('');
     const [ newFont, setNewFont ] = React.useState<font>({
         family: 'Times New Roman',
@@ -79,18 +81,18 @@ const FontEditor: React.FC<Props> = ({ config, setConfig }) => {
     return (
         <section className='space-y-4'>
             <div className='flex items-center justify-between'>
-                <h2 className='text-xl font-bold h-min'>Font Styles</h2>
+                <h2 className='text-xl font-bold h-min'>{ t('fontStylesTitle') }</h2>
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button variant='outline' size='icon'><Plus /></Button>
                     </PopoverTrigger>
                     <PopoverContent align='end' className='grid grid-cols-[auto_1fr] gap-2 gap-x-4 p-4'>
-                        <Label htmlFor='input-font-name'>Name</Label>
+                        <Label htmlFor='input-font-name'>{ t('name') }</Label>
                         <Input
                             defaultValue={ name }
                             onChange={ ({ target: { value } }) => setName(value) }
                         />
-                        <Label htmlFor='input-font-family'>Family</Label>
+                        <Label htmlFor='input-font-family'>{ t('family') }</Label>
                         <Select onValueChange={ (family) => setNewFont({ ...newFont, family }) }>
                             <SelectTrigger id='input-font-family' className='w-full' value={ newFont.family }>
                                 { newFont.family }
@@ -103,28 +105,28 @@ const FontEditor: React.FC<Props> = ({ config, setConfig }) => {
                                 )) }
                             </SelectContent>
                         </Select>
-                        <Label htmlFor='input-font-style'>Style</Label>
+                        <Label htmlFor='input-font-style'>{ t('style') }</Label>
                         <CssKeywordInput
                             id='input-font-style'
                             value={ newFont.style }
                             options={ [ 'normal', 'italic' ] }
                             onChange={ (style) => setNewFont({ ...newFont, style: style as 'normal' | 'italic' }) }
                             />
-                        <Label>Size</Label>
+                        <Label>{ t('size') }</Label>
                         <CssUnitInput
                             value={ newFont.size }
                             units={ [ 'rem', 'em', 'px' ] }
                             onChange={ (size) => setNewFont({ ...newFont, size }) }
                             allowCustom={ false }
                             />
-                        <Label htmlFor='input-font-weight'>Weight</Label>
+                        <Label htmlFor='input-font-weight'>{ t('weight') }</Label>
                         <CssKeywordInput
                             id='input-font-weight'
                             value={ newFont.weight }
                             options={ [ 'normal', 'bold', 'lighter', 'bolder' ] }
                             onChange={ (weight) => setNewFont({ ...newFont, weight: weight as 'normal' | 'bold' | 'lighter' | 'bolder' }) }
                             />
-                        <Label htmlFor='input-font-fallback'>Fallback</Label>
+                        <Label htmlFor='input-font-fallback'>{ t('fallback') }</Label>
                         <CssKeywordInput
                             id='input-font-fallback'
                             value={ newFont.fallback }
@@ -135,7 +137,7 @@ const FontEditor: React.FC<Props> = ({ config, setConfig }) => {
                             variant='outline'
                             className='col-span-full'
                             onClick={ handleAddFont }
-                            >Add</Button>
+                            >{ t('add') }</Button>
                     </PopoverContent>
                 </Popover>
             </div>

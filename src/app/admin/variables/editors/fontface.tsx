@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,6 +16,7 @@ type Props = {
 };
 
 const FontfaceEditor: React.FC<Props> = ({ config, setConfig }) => {
+    const t = useTranslations('Admin.Variables');
     const { selectFile } = useFileSelector();
     const [ newFont, setNewFont ] = React.useState({ family: '', url: '' });
     const [ fileSelectorOpen, setFileSelectorOpen ] = React.useState<boolean>(false);
@@ -40,31 +42,32 @@ const FontfaceEditor: React.FC<Props> = ({ config, setConfig }) => {
                 setFileSelectorOpen(false);
                 setPopoverOpen(true);
             });
-    }, []);
+    }, [ selectFile ]);
 
     return (
         <section className='space-y-4'>
             <div className='flex items-center justify-between'>
-                <h2 className='text-xl font-bold h-min'>Font Families</h2>
+                <h2 className='text-xl font-bold h-min'>{ t('fontFamiliesTitle') }</h2>
                 <Popover open={ popoverOpen || fileSelectorOpen } onOpenChange={ setPopoverOpen }>
                     <PopoverTrigger asChild>
                         <Button variant='outline' size='icon'><Plus /></Button>
                     </PopoverTrigger>
                     <PopoverContent align='end' className='grid grid-cols-[auto_1fr] gap-2 gap-x-4 p-4 z-48'>
-                        <Label htmlFor='input-fontface-family'>Family</Label>
+                        <Label htmlFor='input-fontface-family'>{ t('family') }</Label>
                         <Input
                             id='input-fontface-family'
-                            placeholder='e.g., Inter'
+                            placeholder={ t('familyPlaceholder') }
                             defaultValue={ newFont.family }
                             onChange={ ({ target: { value: family } }) => setNewFont({ ...newFont, family }) }
                         />
-                        <Label htmlFor='input-fontface-url'>URL</Label>
-                        <div className='flex gap-2'>
+                        <Label htmlFor='input-fontface-url'>{ t('url') }</Label>
+                        <div className='flex gap-2 w-full'>
                             <Input
                                 id='input-fontface-url'
-                                placeholder='/fonts/inter.woff2'
+                                placeholder={ t('urlPlaceholder') }
                                 defaultValue={ newFont.url }
                                 onChange={ ({ target: { value: url } }) => setNewFont({ ...newFont, url }) }
+                                className='flex-1'
                             />
                             <Button
                                 variant='outline'
@@ -76,7 +79,7 @@ const FontfaceEditor: React.FC<Props> = ({ config, setConfig }) => {
                             variant='outline'
                             className='col-span-full'
                             onClick={ handleAddFont }
-                        >Add</Button>
+                        >{ t('add') }</Button>
                     </PopoverContent>
                 </Popover>
             </div>

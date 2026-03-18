@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { NextPage } from 'next';
 import Markdown from 'react-markdown';
+import { useTranslations } from 'next-intl';
 import MonacoEditor from '@monaco-editor/react';
 
 import { Button } from '@/components/ui/button';
@@ -32,6 +33,7 @@ const countNewlines = (str: string): number => {
 };
 
 const Page: NextPage<PageProps<'/admin/plugins/marketplace/plugin/[name]'>> = ({ params }) => {
+    const t = useTranslations('Admin.Plugins');
     const { name } = React.use(params);
     const { showDialog } = useDialog();
     const { addPlugin } = usePlugins();
@@ -41,10 +43,10 @@ const Page: NextPage<PageProps<'/admin/plugins/marketplace/plugin/[name]'>> = ({
         void getPlugin(decodeURIComponent(name))
             .then(response =>
                 !response.success
-                ?   toast('Failed to load the plugin: ' + response.reason)
+                ?   toast(t('failedLoadPlugin', { reason: response.reason }))
                 :   setPlugin(response.value)
             ),
-        [ name ]
+        [ name, t ]
     );
 
     const installPlugin = React.useCallback((url: string) => {
@@ -54,23 +56,23 @@ const Page: NextPage<PageProps<'/admin/plugins/marketplace/plugin/[name]'>> = ({
                 const toastText = await addPlugin(blob);
                 toast(toastText);
             })
-            .catch(() => toast('Failed to install the plugin.'));
-    }, []);
+            .catch(() => toast(t('failedInstall')));
+    }, [ t ]);
 
     const onInstallRequest = React.useCallback(() => {
         if (!plugin) return;
 
         showDialog(
-            'Confirm',
-            `Are you sure you want to install "${ plugin.name }"?`,
+            t('confirm'),
+            t('confirmInstall', { name: plugin.name }),
             [
-                { text: 'No', variant: 'default' },
-                { text: 'Yes', variant: 'outline' }
+                { text: t('no'), variant: 'default' },
+                { text: t('yes'), variant: 'outline' }
             ]
         )
-            .then(value => value === 'Yes' && installPlugin(plugin.downloadUrl))
+            .then(value => value === t('yes') && installPlugin(plugin.downloadUrl))
             .catch(() => null);
-    }, [ plugin ]);
+    }, [ plugin, t ]);
         
 
     if (plugin === undefined)
@@ -87,14 +89,14 @@ const Page: NextPage<PageProps<'/admin/plugins/marketplace/plugin/[name]'>> = ({
                 <div className='flex flex-col justify-center'>
                     <h3 className='font-bold text-2xl'>{ plugin.name }</h3>
                     <p className='flex items-center gap-2'>
-                        Author: 
+                        { t('author') }
                         <Link className='underline' href={ `/admin/plugins/marketplace/author/${ encodeURIComponent(plugin.author) }` }>
                             { plugin.author }
                         </Link>
                     </p>
                     <p className='opacity-50 text-sm'>v{ plugin.version }</p>
                 </div>
-                <Button size='lg' onClick={ onInstallRequest }>Install</Button>
+                <Button size='lg' onClick={ onInstallRequest }>{ t('installBtn') }</Button>
             </header>
             <Separator className='my-4' />
             <div className='[&_h1,h2,h3,h4,h5,h6]:font-bold [&_h1,h2,h3,h4,h5,h6]:my-2 [&_h1]:text-3xl [&_h1]:mb-2 [&_h1,h2]:pb-2 [&_h1,h2]:border-b [&_h2]:text-2xl [&_h3]:text-xl [&_h4]:text-lg [&_h5]:text-md [&_h6]:text-sm'>

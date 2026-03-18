@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { PlusCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import {
     Dialog,
@@ -28,6 +29,7 @@ type Props = {
 };
 
 const AddUserDialog: React.FC<Props> = ({ onUserAdd }) => {
+    const t = useTranslations('Admin.Users');
     const [ dialogOpen, setDialogOpen ] = React.useState<boolean>(false);
     const [ user, setUser ] = React.useState<Omit<User, 'id'> & { password: string }>({
         username: 'newuser',
@@ -44,28 +46,26 @@ const AddUserDialog: React.FC<Props> = ({ onUserAdd }) => {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Add User</DialogTitle>
+                    <DialogTitle>{ t('addUser') }</DialogTitle>
                     <DialogDescription>
-                        Editors are only allowed to create and edit components.<br />
-                        Admins are allowed to also manage plugins, themes and editors.<br />
-                        Owners have complete access to the whole project.
+                        {t.rich('editorsDesc', { br: () => <br /> })}
                     </DialogDescription>
                 </DialogHeader>
                 <div className='grid grid-cols-[min-content_1fr] gap-2'>
-                    <Label htmlFor='username'>Username:</Label>
+                    <Label htmlFor='username'>{ t('username') }</Label>
                     <Input
                         name='username'
                         value={ user.username }
                         onChange={ ({ target: { value } }) => setUser({ ...user, username: value }) }
                     />
-                    <Label htmlFor='password'>Password:</Label>
+                    <Label htmlFor='password'>{ t('password') }</Label>
                     <Input
                         name='password'
                         type='password'
                         value={ user.password }
                         onChange={ ({ target: { value } }) => setUser({ ...user, password: value }) }
                     />
-                    <Label htmlFor='role'>Role:</Label>
+                    <Label htmlFor='role'>{ t('role') }</Label>
                     <Select value={ user.role } onValueChange={ value => setUser({ ...user, role: value as User[ 'role' ] }) }>
                         <SelectTrigger className='w-full'>
                             <SelectValue></SelectValue>
@@ -80,7 +80,7 @@ const AddUserDialog: React.FC<Props> = ({ onUserAdd }) => {
                 <Button
                     disabled={ !validName(user.username) || !validPassword(user.password) }
                     onClick={ () => onUserAdd(user) }
-                >Add</Button>
+                >{ t('add') }</Button>
             </DialogContent>
         </Dialog>
     );

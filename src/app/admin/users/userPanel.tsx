@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
 
 import {
@@ -23,6 +24,7 @@ type Props = {
 };
 
 const UserPanel: React.FC<Props> = ({ user, onChange, onDelete }) => {
+    const t = useTranslations('Admin.Users');
     const { status, data } = useSession();
     const [ userState, setUserState ] = React.useState<User & { password?: string } | undefined>();
 
@@ -36,7 +38,7 @@ const UserPanel: React.FC<Props> = ({ user, onChange, onDelete }) => {
     return (
         <div className='flex flex-col gap-2'>
             <Label className={ !canEdit ? 'opacity-50' : undefined } htmlFor='input-username'>
-                Username
+                { t('usernameLabel') }
             </Label>
             <Input
                 name='input-username'
@@ -54,7 +56,7 @@ const UserPanel: React.FC<Props> = ({ user, onChange, onDelete }) => {
                 } }
             />
             <Label className={ !canEdit ? 'opacity-50' : undefined } htmlFor='input-username'>
-                Password
+                { t('passwordLabel') }
             </Label>
             <Input
                 name='input-username'
@@ -71,7 +73,7 @@ const UserPanel: React.FC<Props> = ({ user, onChange, onDelete }) => {
                 onChange={ ({ target: { value: password } }) => setUserState({ ...userState!, password }) }
             />
             <Label className={ !canEdit ? 'opacity-50' : undefined } htmlFor='input-role'>
-                Role
+                { t('roleLabel') }
             </Label>
             <Select
                 value={ userState?.role }
@@ -82,7 +84,7 @@ const UserPanel: React.FC<Props> = ({ user, onChange, onDelete }) => {
                 }
             >
             <SelectTrigger value={ userState?.role } className='w-full mb-2 capitalize'>
-                <SelectValue placeholder='Role' />
+                <SelectValue placeholder={ t('roleLabel') } />
             </SelectTrigger>
             <SelectContent>
                 { ['editor', 'admin', 'owner'].map((role) => (
@@ -106,7 +108,7 @@ const UserPanel: React.FC<Props> = ({ user, onChange, onDelete }) => {
                     className='flex-1'
                     disabled={ !canEdit }
                     onClick={ () => onChange(userState!) }
-                >Update</Button>
+                >{ t('updateBtn') }</Button>
             </div>
         </div>
     );

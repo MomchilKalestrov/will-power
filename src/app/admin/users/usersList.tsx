@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
 
 import {
@@ -49,6 +50,7 @@ type Props = {
 };
 
 const UsersList: React.FC<Props> = ({ users, onUserSelect, onUserAdd }) => {
+    const t = useTranslations('Admin.Users');
     const { data } = useSession();
     const [ searchBy, setSearchBy ] = React.useState<string>('');
     const sorters = React.useMemo<Record<string, SortFunction>>(
@@ -74,11 +76,11 @@ const UsersList: React.FC<Props> = ({ users, onUserSelect, onUserAdd }) => {
                     value={ searchBy }
                     onChange={ ({ target: { value } }) => setSearchBy(value) }
                     className='flex-1'
-                    placeholder='Search by name...'
+                    placeholder={ t('searchByName') }
                 />
                 <Select onValueChange={ setSorter } value={ sorter }>
                     <SelectTrigger className='w-32'>
-                        <SelectValue placeholder='Sort by...' />
+                        <SelectValue placeholder={ t('sortBy') } />
                     </SelectTrigger>
                     <SelectContent>
                         { Object.keys(sorters).map((s) => (
@@ -92,9 +94,9 @@ const UsersList: React.FC<Props> = ({ users, onUserSelect, onUserAdd }) => {
             <Table>
                 <TableHeader className='bg-muted/50'>
                     <TableRow>
-                        <TableHead>ID</TableHead>
-                        <TableHead className='w-full'>Username</TableHead>
-                        <TableHead>Role</TableHead>
+                        <TableHead>{ t('tableId') }</TableHead>
+                        <TableHead className='w-full'>{ t('tableUsername') }</TableHead>
+                        <TableHead>{ t('tableRole') }</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -112,7 +114,7 @@ const UsersList: React.FC<Props> = ({ users, onUserSelect, onUserAdd }) => {
                             </TableCell>
                             <TableCell>
                                 { user.username }
-                                { user.username === data?.user?.name && ' (You)' }
+                                { user.username === data?.user?.name && t('you') }
                             </TableCell>
                             <TableCell>
                                 <Role role={ user.role } />

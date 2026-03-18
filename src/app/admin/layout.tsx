@@ -2,9 +2,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
-import { SessionProvider, useSession } from 'next-auth/react';
 import { NextComponentType, NextPageContext } from 'next';
+import { SessionProvider, useSession } from 'next-auth/react';
 
 import {
     Sidebar,
@@ -43,18 +44,20 @@ const hideNavInRoutes: string[] = [
 ];
 
 const FilesButton: React.FC = () => {
+    const t = useTranslations('Admin.Layout');
     const { selectFile } = useFileSelector();
 
-    const onClick = React.useCallback(() => selectFile('none').catch(() => null), []);
+    const onClick = React.useCallback(() => selectFile('none').catch(() => null), [selectFile]);
 
     return (
         <SidebarMenuButton onClick={ onClick  } isActive={ false }>
-            Files
+            { t('files') }
         </SidebarMenuButton>
     );
 };
 
 const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
+    const t = useTranslations('Admin.Layout');
     const [ pathname ] = usePathname().split('?');
     const { plugins } = usePlugins();
     const [ darkMode, setDarkMode ] = React.useState<boolean>(false);
@@ -62,27 +65,27 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
 
     const pages = React.useMemo(() => {
         let pages: Record<string, Record<string, string> | string> = {
-            'Home': '/admin/home',
-            'Components': {
-                'Headers': '/admin/components/header',
-                'Pages': '/admin/components/page',
-                'Footers': '/admin/components/footer',
-                'Components': '/admin/components/component'
+            [ t('nav.home') ]: '/admin/home',
+            [ t('nav.components') ]: {
+                [ t('nav.headers') ]: '/admin/components/header',
+                [ t('nav.pages') ]: '/admin/components/page',
+                [ t('nav.footers') ]: '/admin/components/footer',
+                [ t('nav.componentsSub') ]: '/admin/components/component'
             },
-            'Variables': '/admin/variables',
-            'Users': '/admin/users',
-            'Plugins': {
-                'Installed Plugins': '/admin/plugins',
-                'Marketplace': '/admin/plugins/marketplace'
+            [ t('nav.variables') ]: '/admin/variables',
+            [ t('nav.users') ]: '/admin/users',
+            [ t('nav.plugins') ]: {
+                [ t('nav.installedPlugins') ]: '/admin/plugins',
+                [ t('nav.marketplace') ]: '/admin/plugins/marketplace'
             },
-            'Themes': '/admin/themes'
+            [ t('nav.themes') ]: '/admin/themes'
         };
 
         if (!(data?.user.role && hasAuthority(data.user.role, 'admin', 0)))
-            delete pages.Plugins;
+            delete pages[ t('nav.plugins') ];
 
         return pages;
-    }, [ data ]);
+    }, [ data, t ]);
     
     const pluginPages = React.useMemo<[ string, string ][]>(() =>
         [ ...plugins.values() ]
@@ -150,7 +153,7 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
                                     <Collapsible defaultOpen={ true }>
                                         <CollapsibleTrigger asChild>
                                             <SidebarMenuButton className='flex justify-between'>
-                                                Plugins Pages
+                                                { t('pluginsPages') }
                                                 <ChevronDown />
                                             </SidebarMenuButton>
                                         </CollapsibleTrigger>
@@ -185,7 +188,7 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
                                 } }
                             />
                             <Label htmlFor='dark-mode-toggle'>
-                                { darkMode ? 'Dark Mode' : 'Light Mode' }
+                                { darkMode ? t('darkMode') : t('lightMode') }
                             </Label>
                         </div>
                 </SidebarContent>

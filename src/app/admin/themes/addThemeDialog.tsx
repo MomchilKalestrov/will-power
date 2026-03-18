@@ -2,6 +2,7 @@
 import React from 'react';
 import { toast } from 'sonner';
 import { CirclePlus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import {
     Dialog,
@@ -17,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { useThemes } from '@/contexts/themes';
 
 const AddThemeDialog: React.FC = () => {
+    const t = useTranslations('Admin.Themes');
     const { addTheme } = useThemes();
     const [ file, setFile ] = React.useState<File | undefined>();
     const [ dialogOpen, setDialogOpen ] = React.useState<boolean>(false);
@@ -42,11 +44,9 @@ const AddThemeDialog: React.FC = () => {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Upload</DialogTitle>
+                    <DialogTitle>{ t('upload') }</DialogTitle>
                     <DialogDescription>
-                        Select an <code>.zip</code> archive to upload as a theme.
-                        The archive must contain a <code>metadata.json</code>{ ' ' }
-                        and <code>index.css</code> file inside.
+                        { t.rich('uploadDesc', { code: chunks => <code>{ chunks }</code> }) }
                     </DialogDescription>
                 </DialogHeader>
                 <Input
@@ -61,7 +61,7 @@ const AddThemeDialog: React.FC = () => {
                     onClick={ onSend }
                     disabled={ !file }
                     variant='outline'
-                >Upload</Button>
+                >{ t('uploadBtn') }</Button>
             </DialogContent>
         </Dialog>
     );

@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ type Props = {
 };
 
 const ColorEditor: React.FC<Props> = ({ config, setConfig }) => {
+    const t = useTranslations('Admin.Variables');
     const [ newColor, setNewColor ] = React.useState({ name: '', color: '#000000' });
 
     const handleAddColor = () => {
@@ -54,14 +56,14 @@ const ColorEditor: React.FC<Props> = ({ config, setConfig }) => {
     return (
         <section className='space-y-4'>
             <div className='flex items-center justify-between'>
-                <h2 className='text-xl font-bold h-min'>Colors</h2>
+                <h2 className='text-xl font-bold h-min'>{ t('colorsTitle') }</h2>
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button variant='outline' size='icon'><Plus /></Button>
                     </PopoverTrigger>
                     <PopoverContent align='end' className='grid grid-cols-[1fr_auto] items-end gap-2 p-4 border rounded-md border-dashed'>
                         <Input
-                            placeholder='e.g., primary'
+                            placeholder={ t('egPrimary') }
                             value={ newColor.name }
                             onChange={({ target: { value: name } }) => setNewColor({ ...newColor, name })}
                         />
@@ -74,7 +76,7 @@ const ColorEditor: React.FC<Props> = ({ config, setConfig }) => {
                             variant='outline'
                             className='col-span-full'
                             onClick={ handleAddColor }
-                        >Add</Button>
+                        >{ t('add') }</Button>
                     </PopoverContent>
                 </Popover>
             </div>

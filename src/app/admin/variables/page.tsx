@@ -1,19 +1,17 @@
-import { Metadata, NextPage } from 'next';
+import { NextPage } from 'next';
+import { getTranslations } from 'next-intl/server';
 
 import { getConfig } from '@/lib/actions/config';
 
 import Editor from './editor';
 
-export const metadata: Metadata = {
-    title: 'Variables'
-};
-
 const Page: NextPage = async () => {
     const config = await getConfig();
+    const t = await getTranslations('Admin.Variables');
     
     return config.success
     ?   <Editor initialConfig={ config.value } />
-    :   <p>Failed to get the config:<br />{ config.reason }</p>;
+    :   <p>{ t('failedConfig') }<br />{ config.reason }</p>;
 };
 
 export default Page;

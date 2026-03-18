@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { NextPage } from 'next';
 import { Verified } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Spinner } from '@/components/ui/spinner';
 import { Separator } from '@/components/ui/separator';
@@ -13,6 +14,7 @@ import { getAuthor } from '@/lib/actions/marketplace';
 type author = (Awaited<ReturnType<typeof getAuthor>> & { success: true; })[ 'value' ];
 
 const Page: NextPage<PageProps<'/admin/plugins/marketplace/author/[name]'>> = ({ params }) => {
+    const t = useTranslations('Admin.Plugins');
     const { name } = React.use(params);
     const [ author, setAuthor ] = React.useState<author | undefined>();
 
@@ -20,10 +22,10 @@ const Page: NextPage<PageProps<'/admin/plugins/marketplace/author/[name]'>> = ({
         void getAuthor(decodeURIComponent(name))
             .then(response =>
                 !response.success
-                ?   toast('Failed to load the author: ' + response.reason)
+                ?   toast(t('failedLoadAuthor', { reason: response.reason }))
                 :   setAuthor(response.value)
             ),
-        [ name ]
+        [ name, t ]
     );
 
     if (author === undefined)
@@ -43,14 +45,14 @@ const Page: NextPage<PageProps<'/admin/plugins/marketplace/author/[name]'>> = ({
                         author.verified &&
                         <p className='opacity-50 text-sm flex gap-1'>
                             <Verified className='size-5' />
-                            Verified
+                            { t('verified') }
                         </p>
                     }
                     
                 </div>
             </header>
             <Separator className='my-4' />
-            <h4 className='font-bold text-2xl'>Plugins</h4>
+            <h4 className='font-bold text-2xl'>{ t('plugins') }</h4>
             { author.plugins.map(plugin => (
                 <Link
                     key={ plugin }
