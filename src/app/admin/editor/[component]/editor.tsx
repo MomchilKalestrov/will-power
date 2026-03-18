@@ -3,6 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { del } from 'idb-keyval';
+import { useTranslations } from 'next-intl';
 import { Plus, RotateCcw, Settings } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
@@ -48,6 +49,7 @@ const newNode = (type: string, acceptChildren: boolean): ComponentNode => ({
 });
 
 const Editor: React.FC<Props> = ({ component: initialComponent }) => {
+    const t = useTranslations('Admin.Editor');
     const [ component, setComponent ] = React.useState<Component>(initialComponent);
     const {
         tree,
@@ -67,7 +69,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
         
         const localRevision: Component = storage.parse<Component>(component.name);
         if (localRevision.lastEdited < component.lastEdited)
-            toast('A newer version is available on the server.');
+            toast(t('newerVersion'));
         return localRevision.rootNode;
     });
     const [ selectedNode, setSelectedNode ] = React.useState<ComponentNode | undefined>();
@@ -116,8 +118,8 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
             rootNode: tree
         })
 
-        toast(response.success ? 'Saved.' : ('Failed to save: ' + response.reason));
-    }, [ component, tree ]);
+        toast(response.success ? t('saved') : t('failedSave', { reason: response.reason }));
+    }, [ component, tree, t ]);
     
     React.useEffect(() => {
         window.addEventListener('message', onMessage);
@@ -240,7 +242,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                     <Button variant='outline' size='icon' onClick={ onReset }>
                         <RotateCcw />
                     </Button>
-                    <Button onClick={ onSave }>Save</Button>
+                    <Button onClick={ onSave }>{ t('saveButton') }</Button>
                 </section>
             </header>
             <main
@@ -276,7 +278,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                         ref={ iframeRef } 
                         src={ `/admin/viewer/${ component.name }` }
                         className='grow h-full border-0'
-                        title='Page Editor'
+                        title={ t('pageEditor') }
                     />
 
                     <Card

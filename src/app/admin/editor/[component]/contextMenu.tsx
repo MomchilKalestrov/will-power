@@ -1,7 +1,9 @@
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Clipboard, Copy, Save, Scissors, Trash2 } from 'lucide-react';
 import React from 'react';
+import { useTranslations } from 'next-intl';
+import { Clipboard, Copy, Save, Scissors, Trash2 } from 'lucide-react';
+
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 type Props = {
     onSave: () => void;
@@ -21,6 +23,7 @@ const ContextMenu: React.FC<Props> = ({
     viewerRef
 }) => {
     const cardRef = React.useRef<HTMLDivElement>(null);
+    const t = useTranslations('Admin.Editor.contextMenu');
 
     const onRightClick = React.useCallback((event: PointerEvent) => {
         if (!cardRef.current) return;
@@ -94,19 +97,19 @@ const ContextMenu: React.FC<Props> = ({
     return (
         <Card className='p-2 gap-0 fixed hidden z-100' ref={ cardRef }>
             <Button variant='ghost' onClick={ wrapper(onSave) }>
-                <Save />Save
+                <Save />{ t('save') }
+            </Button>
+            <Button variant='ghost' onClick={ wrapper(onCut) }>
+                <Scissors />{ t('cut') }
             </Button>
             <Button variant='ghost' onClick={ wrapper(onCopy) }>
-                <Scissors />Cut
-            </Button>
-            <Button variant='ghost' onClick={ wrapper(onCopy) }>
-                <Copy />Copy
+                <Copy />{ t('copy') }
             </Button>
             <Button variant='ghost' onClick={ wrapper(onPaste) }>
-                <Clipboard />Paste
+                <Clipboard />{ t('paste') }
             </Button>
             <Button variant='ghost' className='text-destructive hover:text-destructive hover:bg-destructive/25!' onClick={ wrapper(onDelete) }>
-                <Trash2 />Delete
+                <Trash2 />{ t('delete') }
             </Button>
         </Card>
     );

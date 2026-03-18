@@ -2,6 +2,7 @@
 import React from 'react';
 import { NextPage } from 'next';
 import { Bug } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { notFound, usePathname, useRouter } from 'next/navigation';
 
 import ErrorBoundary from '@/components/errorBoundary';
@@ -13,6 +14,7 @@ const Page: NextPage<PageProps<'/admin/plugin/[...params]'>> = ({ params: slugs 
     const { plugins } = usePlugins();
     const router = useRouter();
     const pathname = usePathname();
+    const t = useTranslations('Admin.Plugin');
 
     React.useEffect(() => {
         if (!pathname.includes('showSidebar'))
@@ -35,12 +37,11 @@ const Page: NextPage<PageProps<'/admin/plugin/[...params]'>> = ({ params: slugs 
             <div className='w-full h-full flex justify-center items-center flex-col opacity-30 text-xl text-center'>
                 <Bug className='size-27' />
                 <p>
-                    An unhandled error prevented the page to load:
+                    { t('unhandledError') }
                 </p>
                 <span className='font-mono my-2'>{ error.toString() }</span>
                 <p>
-                    This could be caused by an outdated version
-                    or an issue caused by a different plugin.
+                    { t('outdatedVersion') }
                 </p>
             </div>
         ) }>

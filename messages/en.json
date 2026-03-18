@@ -22,6 +22,24 @@
             "createButton": "Create",
             "metadataTitle": "{type}s",
             "headerTitle": "{type}s"
+        },
+        "Editor": {
+            "newerVersion": "A newer version is available on the server.",
+            "saved": "Saved.",
+            "failedSave": "Failed to save: {reason}",
+            "saveButton": "Save",
+            "pageEditor": "Page Editor",
+            "contextMenu": {
+                "save": "Save",
+                "cut": "Cut",
+                "copy": "Copy",
+                "paste": "Paste",
+                "delete": "Delete"
+            }
+        },
+        "Plugin": {
+            "unhandledError": "An unhandled error prevented the page to load:",
+            "outdatedVersion": "This could be caused by an outdated version or an issue caused by a different plugin."
         }
     }
 }
