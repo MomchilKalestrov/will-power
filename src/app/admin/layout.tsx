@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
@@ -35,6 +36,13 @@ import { DialogProvider } from '@/contexts/dialog';
 import { FileSelectorProvider, useFileSelector } from '@/contexts/file';
 
 import { cookies, hasAuthority } from '@/lib/utils';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+
+import en from '@/components/icons/en.png';
+import bg from '@/components/icons/bg.png';
+
+
 
 const hideNavInRoutes: string[] = [
     '/admin/auth/login',
@@ -43,11 +51,13 @@ const hideNavInRoutes: string[] = [
     '/admin/logout'
 ];
 
+const languages: Record<string, typeof en> = { en, bg };
+
 const FilesButton: React.FC = () => {
     const t = useTranslations('Admin.Layout');
     const { selectFile } = useFileSelector();
 
-    const onClick = React.useCallback(() => selectFile('none').catch(() => null), [selectFile]);
+    const onClick = React.useCallback(() => selectFile('none').catch(() => null), [ selectFile ]);
 
     return (
         <SidebarMenuButton onClick={ onClick  } isActive={ false }>
@@ -108,6 +118,11 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
             document.body.classList.remove('dark');
         setDarkMode(isDark);
     }, [ pathname ]);
+
+    const setLanguage = React.useCallback((language: string) => {
+        cookies.set('locale', language);
+        window.location.reload();
+    }, []);
     
     return (
         <SidebarProvider>
@@ -171,25 +186,54 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>
-                        <div className='flex gap-2 p-4'>
-                            <Switch
-                                checked={ darkMode }
-                                name='dark-mode-toggle'
-                                onClick={ () => {
-                                    const newMode = !darkMode;
-                                    setDarkMode(newMode);
-                                    if (newMode) {
-                                        cookies.set('darkMode', 'true');
-                                        document.body.classList.add('dark');
-                                    } else {
-                                        cookies.set('darkMode', 'false');
-                                        document.body.classList.remove('dark');
-                                    }
-                                } }
-                            />
-                            <Label htmlFor='dark-mode-toggle'>
-                                { darkMode ? t('darkMode') : t('lightMode') }
-                            </Label>
+                        <div className='flex p-4 justify-between items-center'>
+                            <div className='flex gap-2'>
+                                <Switch
+                                    checked={ darkMode }
+                                    name='dark-mode-toggle'
+                                    onClick={ () => {
+                                        const newMode = !darkMode;
+                                        setDarkMode(newMode);
+                                        if (newMode) {
+                                            cookies.set('darkMode', 'true');
+                                            document.body.classList.add('dark');
+                                        } else {
+                                            cookies.set('darkMode', 'false');
+                                            document.body.classList.remove('dark');
+                                        }
+                                    } }
+                                />
+                                <Label htmlFor='dark-mode-toggle'>
+                                    { darkMode ? t('darkMode') : t('lightMode') }
+                                </Label>
+                            </div>
+
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button size='icon' variant='outline'>
+                                        <Image
+                                            src={ languages[ cookies.get('locale') ?? 'en' ] }
+                                            width={ 22 }
+                                            height={ 22 }
+                                            alt='currentLanguage'
+                                            className='m-px rounded-[1px]'
+                                        />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className='w-[unset] p-2 flex gap-1 flex-col'>
+                                    { Object.entries(languages).map(([ language, source ]) => (
+                                        <Image
+                                            key={ language }
+                                            src={ source }
+                                            width={ 22 }
+                                            height={ 22 }
+                                            alt={ language }
+                                            className='m-px rounded-[1px]'
+                                            onClick={ () => setLanguage(language) }
+                                        />
+                                    )) }
+                                </PopoverContent>
+                            </Popover>
                         </div>
                 </SidebarContent>
                 <SidebarRail />
