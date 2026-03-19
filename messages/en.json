@@ -2,7 +2,7 @@
     "Admin": {
         "Login": {
             "title": "Login",
-            "welcomeTitle": "Login to WillPower",
+            "welcomeTitle": "Login to SeraphimCMS",
             "welcomeDesc": "Enter your username and password",
             "labelName": "Username",
             "labelPassword": "Password",
