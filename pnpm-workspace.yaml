@@ -1,4 +1,6 @@
 onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@swc/core'
   - argon2
   - sharp
   - unrs-resolver

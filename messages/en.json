@@ -162,7 +162,7 @@
     },
     "PropertiesPanel": {
         "properties": "{type} Properties",
-        "id": "Id",
+        "id": "ID",
         "styles": "Styles"
     },
     "SettingsPanel": {
