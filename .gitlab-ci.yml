@@ -2,6 +2,7 @@ stages:
   - auto-create-release
   - build-docker-image
   - publish-docker-image
+  - update-github-mirror
 
 auto-create-release:
   stage: auto-create-release
@@ -52,3 +53,14 @@ publish-docker-image:
         - name: seraphimcms-linux-installer
           url: https://${CI_SERVER_HOST}/${CI_PROJECT_PATH}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/raw/seraphimcms-${DATE_TAG}.tar
           link_type: other
+
+update-github-mirror:
+  stage: update-github-mirror
+  image: ubuntu:latest
+  only:
+    - master
+  before_script:
+    - apt-get update && apt-get install -y git
+  script:
+    - git remote add github https://MomchilKalestrov:${GITHUB_MIRROR_TOKEN}@github.com/MomchilKalestrov/will-power.git
+    - git push github HEAD:master --force
