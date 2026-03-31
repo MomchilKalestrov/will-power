@@ -1,19 +1,24 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FMomchilKalestrov%2Fwill-power)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgitlab.com%2FMomchil_Kalestrov%2Fseraphimcms.git&env=MONGODB_URI,BLOB_READ_WRITE_TOKEN,NEXTAUTH_URL,NEXTAUTH_SECRET,NEXT_PUBLIC_BLOB_URL)
 
-1. To install dependencies:
+***WARNING***: The repository has moved from GitHub to GitLab. The git repo will be moved to [here](https://gitlab.com/Momchil_Kalestrov/seraphimcms.git).
+For the near future, the GitHub repo will act as a mirror.
+
+## Building
+
+### Installing dependencies
 
 `npm i`
 
-2. To start dev server:
+### Starting dev server
 
 `npm run dev`
 
-3. To start production:
+### Start production server
 
 `npm run build`
 
 `npm run start`
 
-To run properly add the `MONGODB_URI`, `BLOB_READ_WRITE_TOKEN`, `NEXTAUTH_URL` and `NEXTAUTH_SECRET` environment variables.
+### Env vars
 
-![stats](https://gcloc.vercel.app/api/get?owner=MomchilKalestrov&repo=will-power&rootDir=src&width=300&height=116)
+To run properly add the `MONGODB_URI`, `BLOB_READ_WRITE_TOKEN`, `NEXTAUTH_URL` and `NEXTAUTH_SECRET` environment variables.

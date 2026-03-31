@@ -1,0 +1,56 @@
+stages:
+  - auto-create-release
+  - build-docker-image
+  - publish-docker-image
+
+auto-create-release:
+  stage: auto-create-release
+  image: ubuntu:latest
+  only:
+    - master
+  before_script:
+    - apt-get update && apt-get install -y git
+    - git config user.name "gitlab-ci"
+    - git config user.email "gitlab-ci@gitlab.com"
+  script:
+    - DATE_TAG=$(date +v%Y.%m.%d-%H%M)
+    - "echo Generated tag: $DATE_TAG"
+    - echo "DATE_TAG=$DATE_TAG" > release.env
+    - git tag $DATE_TAG
+    - git push https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git $DATE_TAG
+  artifacts:
+    reports:
+      dotenv: release.env
+
+build-docker-image:
+  stage: build-docker-image
+  image: ubuntu:latest
+  dependencies:
+    - auto-create-release
+  only:
+    - master
+  before_script:
+    - curl -fsSL https://get.docker.com | bash - 
+  script:
+    - docker build -t seraphimcms-${DATE_TAG} .
+    - docker save seraphimcms-${DATE_TAG} -o seraphimcms-${DATE_TAG}.tar
+  artifacts:
+    paths:
+      - publish/
+
+publish-docker-image:
+  stage: publish-docker-image
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  only:
+    - master
+  script:
+    - echo "Creating release for ${DATE_TAG}"
+  release:
+    tag_name: ${DATE_TAG}
+    name: 'Release ${DATE_TAG}'
+    description: 'Automated release for ${DATE_TAG}'
+    assets:
+      links:
+        - name: seraphimcms-linux-installer
+          url: https://${CI_SERVER_HOST}/${CI_PROJECT_PATH}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/raw/seraphimcms-${DATE_TAG}.tar
+          link_type: other
