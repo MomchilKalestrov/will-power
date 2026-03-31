@@ -30,6 +30,7 @@ build-docker-image:
   only:
     - master
   before_script:
+    - apt-get update && apt-get install -y curl
     - curl -fsSL https://get.docker.com | bash - 
   script:
     - docker build -t seraphimcms-${DATE_TAG} .
