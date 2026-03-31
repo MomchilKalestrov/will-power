@@ -24,14 +24,11 @@ auto-create-release:
 
 build-docker-image:
   stage: build-docker-image
-  image: ubuntu:latest
+  image: docker:latest
   dependencies:
     - auto-create-release
   only:
     - master
-  before_script:
-    - apt-get update && apt-get install -y curl
-    - curl -fsSL https://get.docker.com | bash - 
   script:
     - docker build -t seraphimcms-${DATE_TAG} .
     - docker save seraphimcms-${DATE_TAG} -o seraphimcms-${DATE_TAG}.tar
