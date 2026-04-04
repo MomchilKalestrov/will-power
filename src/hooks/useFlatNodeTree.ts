@@ -1,21 +1,12 @@
 'use client';
 import React from 'react';
 
-type FlatTreeNode = {
-    id: string;
-    children: string[];
-};
-type FlatComponentTree = Record<string, FlatTreeNode>;
-
-const treeToFlat = (tree: ComponentNode): FlatComponentTree => {
-    let flatTree: FlatComponentTree = {};
+const treeToMap = (tree: ComponentNode): Record<string, ComponentNode> => {
+    let flatTree: Record<string, ComponentNode> = {};
 
     const iterateNode = (node: ComponentNode) => {
-        flatTree[ node.id ] = { ...node, children: [] };
-        node.children?.forEach(n => {
-            iterateNode(n);
-            flatTree[ node.id ].children.push(n.id);
-        });
+        flatTree[ node.id ] = node;
+        node.children?.forEach(iterateNode);
     };
 
     iterateNode(tree);
@@ -23,101 +14,187 @@ const treeToFlat = (tree: ComponentNode): FlatComponentTree => {
     return flatTree;
 };
 
-const shallowClone = <T>(obj: T): T =>
-    JSON.parse(JSON.stringify(obj));
-
 const useFlatNodeTree = (initialTree: ComponentNode | (() => ComponentNode)) => {
-    const [ tree, setTree ] = React.useState(treeToFlat(typeof initialTree === 'function' ? initialTree() : initialTree));
+    // technically speaking, the best option is to have a flat
+    // Record<ID, node>, where the children are just other IDs, but it's too
+    // late for that now.
+    // 
+    // If we were to use `useState`, we'd have to clone
+    // both the map and tree, using something like
+    // `JSON.parse(JSON.stringify(tree))`, which would make the `treeMap` lose
+    // the reference to the nodes in `tree`, so instead we use a `useRef`,
+    // which exists outside the state and is mutable...
+
+    const [ initialTreeValue ] = React.useState<ComponentNode>(() => typeof initialTree === 'function' ? initialTree() : initialTree);
+    const treeRef = React.useRef(initialTreeValue);
+    const treeMapRef = React.useRef(treeToMap(initialTreeValue));
+    
+    // ...and we just recompile the component manually :DDDDD
+    const [ , updateState ] = React.useState<any>();
+    const recompile = React.useCallback(() => updateState({}), [ updateState ]);
+
+    const setTree = React.useCallback<React.Dispatch<React.SetStateAction<ComponentNode>>>((dispatch) => {
+        treeRef.current = typeof dispatch === 'function' ? dispatch(treeRef.current) : dispatch;
+        treeMapRef.current = treeToMap(treeRef.current);
+        recompile();
+    }, [ treeMapRef, treeRef, recompile ]);
+
+    const findNode = React.useCallback((id: string) => {
+        const treeMap = treeMapRef.current;
+        if (!(id in treeMap)) throw new Error('Node not found.');
+        return treeMap[ id ];
+    }, [ treeMapRef, treeRef ]);
+
+    const isIndirectParent = React.useCallback((childId: string, parentId: string) => {
+        if (childId === parentId) return true; // technically????
+
+        const treeMap = treeMapRef.current;
+
+        if (!(childId in treeMap)) throw new Error('Child not found');
+        if (!(parentId in treeMap)) throw new Error('Parent not found');
+    
+        const recurse = (node: ComponentNode): boolean => {
+            if (childId === node.id) return true;
+            
+            for (const child of (node.children ?? []))
+                if (recurse(child)) return true;
+
+            return false;
+        }
+    
+        return recurse(treeMap[ parentId ]);
+    }, [ treeMapRef ]);
+
+    const getIndirectChildren = React.useCallback((id: string) => {
+        const treeMap = treeMapRef.current;
+        
+        const ids: string[] = [];
+
+        const recurse = (node: ComponentNode) =>
+            node.children?.map(child => {
+                ids.push(child.id);
+                recurse(child);
+            });
+        recurse(treeMap[ id ]);
+
+        return ids;
+    }, [ treeMapRef.current ]);
 
     const getParentId = React.useCallback((childId: string) => {
-        if (!(childId in tree)) throw new Error('Child not found.')
+        const treeMap = treeMapRef.current;
+
+        if (!(childId in treeMap)) throw new Error('Child not found.');
         
-        const parentId = Object.keys(tree).find(id => tree[ id ].children.includes(childId));
+        const parentId = Object.keys(treeMap).find(pId => treeMap[ pId ].children?.find(child => child.id === childId));
         if (!parentId) throw new Error('Parent not found.');
         
         return parentId;
-    }, [ tree ]);
+    }, [ treeMapRef ]);
 
     const reparentNode = React.useCallback((childId: string, newParentId: string) => {
+        const treeMap = treeMapRef.current;
+        const tree = treeRef.current;
+
+        if (tree.id === childId) throw new Error('Root cannot be reparented.');
+
+        if (!(newParentId in treeMap)) throw new Error('New parent not found.');
         const oldParentId = getParentId(childId);
 
-        setTree(state => {
-            let newState = shallowClone(state);
+        const childIndex = treeMap[ oldParentId ].children!.findIndex(child => child.id === childId);
 
-            newState[ oldParentId ].children = newState[ oldParentId ].children.filter(id => id !== childId);
-            newState[ newParentId ].children.push(childId);
+        if (!treeMap[ newParentId ].acceptChildren) throw new Error('New parent doesn\'t accept children.');
 
-            return newState;
-        });
-    }, [ tree, getParentId ]);
+        if (isIndirectParent(newParentId, childId)) return;
 
-    const updateNode = React.useCallback((id: string, newNodeState: Partial<FlatTreeNode>) => {
-        setTree(state => {
-            let newState = shallowClone(state);
-            newState[ id ] = { ...newState[ id ], ...newNodeState }; 
-            return newState;
-        })
-    }, [ tree ]);
+        if (!Array.isArray(treeMap[ newParentId ].children))
+            treeMap[ newParentId ].children = [];
+        treeMap[ newParentId ].children.push(treeMap[ oldParentId ].children![ childIndex ]);
+        treeMap[ oldParentId ].children!.splice(childIndex, 1);
 
-    const addNode = React.useCallback((parentId: string, node: FlatTreeNode) => {
-        setTree(state => {
-            let newState = shallowClone(state);
-            
-            newState[ node.id ] = node;
-            newState[ parentId ].children = [ ...newState[ parentId ].children, node.id ];
+        recompile();
+    }, [ treeMapRef, treeRef, getParentId, isIndirectParent, recompile ]);
 
-            return newState;
-        });
-    }, [ tree ]);
+    const updateNode = React.useCallback((id: string, newNodeState: Partial<Omit<ComponentNode, 'id' | 'children'>>) => {
+        const treeMap = treeMapRef.current;
+
+        Object
+            .entries(newNodeState)
+            .forEach(([ key, value ]) => {
+                if (key === 'id' || key === 'children') return;
+                treeMap[ id ][ key ] = value;
+            });
+
+        recompile();
+    }, [ treeMapRef, recompile ]);
+
+    const addNode = React.useCallback((parentId: string, node: ComponentNode) => {
+        const treeMap = treeMapRef.current;
+        
+        if(!(parentId in treeMap)) throw new Error('Parent not found.');
+        if (!treeMap[ parentId ].acceptChildren) throw new Error('Parent doesn\'t accept children.');
+        
+        treeMap[ node.id ] = node;
+
+        if (!Array.isArray(treeMap[ parentId ].children))
+            treeMap[ parentId ].children = [];
+        treeMap[ parentId ].children.push(node);
+
+        recompile();
+    }, [ treeMapRef, recompile ]);
 
     const removeNode = React.useCallback((childId: string) => {
+        const treeMap = treeMapRef.current;
+        
         const parentId = getParentId(childId);
+        
+        treeMap[ parentId ].children = treeMap[ parentId ].children!.filter(child => child.id !== childId);
+        getIndirectChildren(childId).forEach(id => delete treeMap[ id ]);
+        delete treeMap[ childId ];
 
-        setTree(state => {
-            let newState = shallowClone(state);
+        recompile();
+    }, [ treeMapRef, getParentId, recompile ]);
 
-            newState[ parentId ].children = newState[ parentId ].children.filter(id => id !== childId);
-            delete newState[ childId ];
+    const moveNodeUp = React.useCallback((id: string) => {
+        const treeMap = treeMapRef.current;
+        
+        const parentId = getParentId(id);
 
-            return newState;
-        });
-    }, [ tree ]);
+        const nodeIndex = treeMap[ parentId ].children!.findIndex(child => child.id === id);
+        if (nodeIndex === 0) return;
 
-    const moveNodeUp = React.useCallback((childId: string) => {
-        const parentId = getParentId(childId);
+        const tmp = treeMap[ parentId ].children![ nodeIndex - 1 ];
+        treeMap[ parentId ].children![ nodeIndex - 1 ] = treeMap[ parentId ].children![ nodeIndex ];
+        treeMap[ parentId ].children![ nodeIndex ] = tmp;
 
-        setTree(state => {
-            let newState = shallowClone(state);
+        recompile();
+    }, [ treeMapRef, getParentId, recompile ]);
 
-            const childIndex = newState[ parentId ].children.findIndex(id => id === childId);
-            if (childIndex === 0) return newState;
+    const moveNodeDown = React.useCallback((id: string) => {
+        const treeMap = treeMapRef.current;
+        
+        const parentId = getParentId(id);
 
-            const tmpNode = newState[ parentId ].children[ childIndex - 1 ];
-            newState[ parentId ].children[ childIndex - 1 ] = newState[ parentId ].children[ childIndex ];
-            newState[ parentId ].children[ childIndex ] = tmpNode;
+        const nodeIndex = treeMap[ parentId ].children!.findIndex(child => child.id === id);
+        if (nodeIndex === treeMap[ parentId ].children!.length - 1) return;
 
-            return newState;
-        });
-    }, [ tree ]);
+        const tmp = treeMap[ parentId ].children![ nodeIndex + 1 ];
+        treeMap[ parentId ].children![ nodeIndex + 1 ] = treeMap[ parentId ].children![ nodeIndex ];
+        treeMap[ parentId ].children![ nodeIndex ] = tmp;
 
-    const moveNodeDown = React.useCallback((childId: string) => {
-        const parentId = getParentId(childId);
+        recompile();
+    }, [ treeMapRef, getParentId, recompile ]);
 
-        setTree(state => {
-            let newState = shallowClone(state);
-
-            const childIndex = newState[ parentId ].children.findIndex(id => id === childId);
-            if (childIndex === ) return newState;
-
-            const tmpNode = newState[ parentId ].children[ childIndex - 1 ];
-            newState[ parentId ].children[ childIndex - 1 ] = newState[ parentId ].children[ childIndex ];
-            newState[ parentId ].children[ childIndex ] = tmpNode;
-
-            return newState;
-        });
-    }, [ tree ]);
-
-    return { tree, updateNode, reparentNode, addNode, removeNode };
+    return {
+        tree: treeRef.current,
+        setTree,
+        findNode,
+        updateNode,
+        addNode,
+        removeNode,
+        reparentNode,
+        moveNodeDown,
+        moveNodeUp
+    };
 };
 
 export default useFlatNodeTree;

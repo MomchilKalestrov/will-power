@@ -15,7 +15,7 @@ import BlockPanel from '@/components/blocksPanel';
 import SettingsEditor from '@/components/settingsPanel';
 import PropertiesPanel from '@/components/propertiesPanel';
 
-import useNodeTree from '@/hooks/useNodeTree';
+import useNodeTree from '@/hooks/useFlatNodeTree';
 
 import { useComponents } from '@/contexts/components';
 
