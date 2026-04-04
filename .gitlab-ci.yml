@@ -26,6 +26,13 @@ auto-create-release:
 build-docker-image:
   stage: build-docker-image
   image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_CERT_PATH: "/certs/client"
   dependencies:
     - auto-create-release
   only:
@@ -35,7 +42,7 @@ build-docker-image:
     - docker save seraphimcms-${DATE_TAG} -o seraphimcms-${DATE_TAG}.tar
   artifacts:
     paths:
-      - publish/
+      - seraphimcms-${DATE_TAG}.tar
 
 publish-docker-image:
   stage: publish-docker-image
