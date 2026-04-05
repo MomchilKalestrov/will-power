@@ -55,6 +55,7 @@ publish-docker-image:
   only:
     - master
   script:
+    - echo "Creating release for ${DATE_TAG}"
   release:
     tag_name: ${DATE_TAG}
     name: 'Release ${DATE_TAG}'
