@@ -1,6 +1,28 @@
 // @ts-check
 const { spawnSync } = require('node:child_process');
 
+const CHARS_TO_REPLACE = [
+    [ '\\', '\\\\\\' ],
+    [ '\"', '\\\\"' ],
+    [ "\'", "\\\\'" ],
+    [ '\`', '\\\\`' ],
+    [ '\$', '\\\\$' ],
+    [ '\&', '\\\\&' ],
+    [ '\|', '\\\\|' ],
+    [ '\;', '\\\\;' ],
+    [ '\<', '\\\\<' ],
+    [ '\>', '\\\\>' ],
+    [ '\(', '\\\\(' ],
+    [ '\)', '\\\\)' ],
+    [ '\?', '\\\\?' ],
+    [ '\[', '\\\\[' ],
+    [ '\]', '\\\\]' ],
+    [ '\#', '\\\\#' ],
+    [ '\~', '\\\\~' ],
+    [ '\t', '\\\\t' ],
+    [ '\n', '\\\\n' ],
+];
+
 /**
  * 
  * @param { string } cmd 
@@ -11,9 +33,9 @@ const run = (cmd, params) =>
     spawnSync(cmd, params).stdout.toString().trim();
 
 const lastTag = run('git', [ 'describe', '--tags', '--abbrev=0' ]);
-
 const commits = run('git', [ 'log', `${ lastTag }..HEAD`, '--oneline' ])
     .split('\n')
+    .filter(Boolean)
     .map(line => line.split(' ').slice(1).join(' '))
     .map(commit => {
         const type = commit.split(': ')[ 0 ].split('(')[ 0 ];
@@ -36,4 +58,4 @@ const changelog = Object
         return acc;
     }, 'The changelog is as follows: \n\n');
 
-process.stdout.write(changelog.replaceAll('\n', '\\\\n'));
+process.stdout.write(CHARS_TO_REPLACE.reduce((str, [ char, escape ]) => str.replaceAll(char, escape), changelog));
