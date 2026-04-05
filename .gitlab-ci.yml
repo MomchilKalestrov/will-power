@@ -6,6 +6,14 @@ stages:
   - publish-docker-image
   - update-github-mirror
 
+workflow:
+  rules:
+    changes:
+      - src/**/*
+      - package.json
+      - tsconfig.json
+      - next.config.ts
+
 generate-tag:
   stage: generate-tag
   image: ubuntu:latest
