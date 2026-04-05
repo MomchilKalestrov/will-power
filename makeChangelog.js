@@ -1,28 +1,6 @@
 // @ts-check
 const { spawnSync } = require('node:child_process');
 
-const CHARS_TO_REPLACE = [
-    [ '\\', '\\\\\\' ],
-    [ '\"', '\\\\"' ],
-    [ "\'", "\\\\'" ],
-    [ '\`', '\\\\`' ],
-    [ '\$', '\\\\$' ],
-    [ '\&', '\\\\&' ],
-    [ '\|', '\\\\|' ],
-    [ '\;', '\\\\;' ],
-    [ '\<', '\\\\<' ],
-    [ '\>', '\\\\>' ],
-    [ '\(', '\\\\(' ],
-    [ '\)', '\\\\)' ],
-    [ '\?', '\\\\?' ],
-    [ '\[', '\\\\[' ],
-    [ '\]', '\\\\]' ],
-    [ '\#', '\\\\#' ],
-    [ '\~', '\\\\~' ],
-    [ '\t', '\\\\t' ],
-    [ '\n', '\\\\n' ],
-];
-
 /**
  * 
  * @param { string } cmd 
@@ -58,4 +36,4 @@ const changelog = Object
         return acc;
     }, 'The changelog is as follows: \n\n');
 
-process.stdout.write(CHARS_TO_REPLACE.reduce((str, [ char, escape ]) => str.replaceAll(char, escape), changelog));
+process.stdout.write(changelog);
