@@ -59,7 +59,7 @@ publish-docker-image:
   release:
     tag_name: ${DATE_TAG}
     name: 'Release ${DATE_TAG}'
-    description: '@changelog.md'
+    description: changelog.md
     assets:
       links:
         - name: seraphimcms-${DATE_TAG}.tar
