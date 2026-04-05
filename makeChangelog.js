@@ -36,4 +36,4 @@ const changelog = Object
         return acc;
     }, 'The changelog is as follows: \n\n');
 
-console.log(changelog.replaceAll('\n', '\\n'));
+process.stdout.write(changelog.replaceAll('\n', '\\n'));
