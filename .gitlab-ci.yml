@@ -8,7 +8,7 @@ stages:
 
 workflow:
   rules:
-    changes:
+    - changes:
       - src/**/*
       - package.json
       - tsconfig.json
