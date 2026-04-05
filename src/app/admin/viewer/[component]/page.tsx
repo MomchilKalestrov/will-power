@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 
 import RenderNode from '@/components/renderNode';
 
-import useNodeTree from '@/hooks/useNodeTree';
-
 import { storage } from '@/lib/utils';
 
 import { getComponentByName } from '@/lib/db/actions/component';
@@ -14,7 +12,7 @@ import { getComponentByName } from '@/lib/db/actions/component';
 const Page: NextPage<PageProps<'/admin/viewer/[component]'>> = ({ params }) => {
     const router = useRouter();
     const { component } = React.use(params);
-    const { tree, setTree } = useNodeTree();
+    const [ tree, setTree ] = React.useState<ComponentNode>();
 
     const onMessage = React.useCallback((event: MessageEvent) => {
         if (!component) return;
