@@ -16,7 +16,7 @@ workflow:
 
 generate-tag:
   stage: generate-tag
-  image: ubuntu:latest
+  image: busybox:latest
   only:
     - master
   script:
@@ -62,13 +62,12 @@ build-docker-image:
 
 create-release:
   stage: create-release
-  image: ubuntu:latest
+  image: alpine/git:latest
   dependencies:
     - build-docker-image
     - generate-tag
     - generate-changelog
   before_script:
-    - apt-get update && apt-get install -y git
     - git config user.name "gitlab-ci"
     - git config user.email "gitlab-ci@gitlab.com"
   script:
@@ -94,11 +93,9 @@ publish-docker-image:
 
 update-github-mirror:
   stage: update-github-mirror
-  image: ubuntu:latest
+  image: alpine/git:latest
   only:
     - master
-  before_script:
-    - apt-get update && apt-get install -y git
   script:
     - git remote add github https://MomchilKalestrov:${GITHUB_MIRROR_TOKEN}@github.com/MomchilKalestrov/will-power.git
     - git push github HEAD:master --force
