@@ -36,4 +36,13 @@ const changelog = Object
         return acc;
     }, 'The changelog is as follows: \n\n');
 
-process.stdout.write(changelog);
+
+const escapedChangelog = changelog
+    .replaceAll('\\', '\\\\')
+    .replaceAll('"', '\\"')
+    .replaceAll('\r', '\\r')
+    .replaceAll('\n', '\\n')
+    .replaceAll('`', '\\`')
+    .replaceAll('$', '\\$');
+
+process.stdout.write(escapedChangelog);
