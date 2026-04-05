@@ -10,7 +10,7 @@ auto-create-release:
   only:
     - master
   before_script:
-    - apt-get update && apt-get install -y git
+    - apt-get update && apt-get install -y git curl
     - curl -fsSL https://deb.nodesource.com/setup_24.x | bash -
     - apt-get install -y nodejs
     - git config user.name "gitlab-ci"
