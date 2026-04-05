@@ -1,6 +1,8 @@
 // @ts-check
 const { spawnSync } = require('node:child_process');
 
+const DATE_TAG = process.argv[ process.argv.length -1 ];
+
 /**
  * 
  * @param { string } cmd 
@@ -34,15 +36,6 @@ const changelog = Object
             acc += `- ${ message }\n`;
         acc += '\n';
         return acc;
-    }, 'The changelog is as follows: \n\n');
+    }, `This is an automated release for tag ${ DATE_TAG }.\n\nThe changelog is as follows: \n\n`);
 
-
-const escapedChangelog = changelog
-    .replaceAll('\\', '\\\\')
-    .replaceAll('"', '\\"')
-    .replaceAll('\r', '\\r')
-    .replaceAll('\n', '\\n')
-    .replaceAll('`', '\\`')
-    .replaceAll('$', '\\$');
-
-process.stdout.write(escapedChangelog);
+process.stdout.write(changelog);

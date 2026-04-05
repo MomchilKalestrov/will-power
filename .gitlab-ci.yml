@@ -17,13 +17,14 @@ prepare-release-data:
     - git config user.email "gitlab-ci@gitlab.com"
   script:
     - DATE_TAG=$(date +v%Y.%m.%d-%H%M)
-    - CHANGELOG=$(node makeChangelog.js)
+    - node makeChangelog.js $DATE_TAG > changelog.md
     - "echo Generated tag: $DATE_TAG"
-    - printf 'DATE_TAG=%s\n' "$DATE_TAG" > release.env
-    - printf 'CHANGELOG=%s' "$CHANGELOG" >> release.env
+    - echo "DATE_TAG=$DATE_TAG" > release.env
     - git tag $DATE_TAG
     - git push https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git $DATE_TAG
   artifacts:
+    files:
+      - changelog.md
     reports:
       dotenv: release.env
 
@@ -54,14 +55,10 @@ publish-docker-image:
   only:
     - master
   script:
-    - echo "Creating release for ${DATE_TAG}"
   release:
     tag_name: ${DATE_TAG}
     name: 'Release ${DATE_TAG}'
-    description: |
-      Automated release for ${DATE_TAG}
-      
-      ${CHANGELOG}
+    description: '@changelog.md'
     assets:
       links:
         - name: seraphimcms-${DATE_TAG}.tar
