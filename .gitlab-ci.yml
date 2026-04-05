@@ -57,7 +57,7 @@ publish-docker-image:
     description: 'Automated release for ${DATE_TAG}'
     assets:
       links:
-        - name: seraphimcms-linux-installer
+        - name: seraphimcms-${DATE_TAG}.tar
           url: https://${CI_SERVER_HOST}/${CI_PROJECT_PATH}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/raw/seraphimcms-${DATE_TAG}.tar
           link_type: other
 
