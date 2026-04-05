@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 
+/** @deprecated */
 const useNodeTree = (initialTree?: ComponentNode | (() => ComponentNode)) => {
     const [tree, setTree] = React.useState<ComponentNode | undefined>(initialTree);
     const treeRef = React.useRef(tree);

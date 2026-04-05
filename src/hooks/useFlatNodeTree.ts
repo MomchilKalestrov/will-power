@@ -24,7 +24,6 @@ const useFlatNodeTree = (initialTree: ComponentNode | (() => ComponentNode)) => 
     // `JSON.parse(JSON.stringify(tree))`, which would make the `treeMap` lose
     // the reference to the nodes in `tree`, so instead we use a `useRef`,
     // which exists outside the state and is mutable...
-
     const [ initialTreeValue ] = React.useState<ComponentNode>(() => typeof initialTree === 'function' ? initialTree() : initialTree);
     const treeRef = React.useRef(initialTreeValue);
     const treeMapRef = React.useRef(treeToMap(initialTreeValue));
@@ -60,7 +59,7 @@ const useFlatNodeTree = (initialTree: ComponentNode | (() => ComponentNode)) => 
                 if (recurse(child)) return true;
 
             return false;
-        }
+        };
     
         return recurse(treeMap[ parentId ]);
     }, [ treeMapRef ]);
@@ -96,15 +95,16 @@ const useFlatNodeTree = (initialTree: ComponentNode | (() => ComponentNode)) => 
         const tree = treeRef.current;
 
         if (tree.id === childId) throw new Error('Root cannot be reparented.');
-
+        if (!(childId in treeMap)) throw new Error('Child not found.');
         if (!(newParentId in treeMap)) throw new Error('New parent not found.');
+        
         const oldParentId = getParentId(childId);
 
         const childIndex = treeMap[ oldParentId ].children!.findIndex(child => child.id === childId);
 
         if (!treeMap[ newParentId ].acceptChildren) throw new Error('New parent doesn\'t accept children.');
 
-        if (isIndirectParent(newParentId, childId)) return;
+        if (isIndirectParent(newParentId, childId)) throw new Error('Circular parenting detected.');
 
         if (!Array.isArray(treeMap[ newParentId ].children))
             treeMap[ newParentId ].children = [];
@@ -116,6 +116,8 @@ const useFlatNodeTree = (initialTree: ComponentNode | (() => ComponentNode)) => 
 
     const updateNode = React.useCallback((id: string, newNodeState: Partial<Omit<ComponentNode, 'id' | 'children'>>) => {
         const treeMap = treeMapRef.current;
+
+        if (!(id in treeMap)) throw new Error('Node not found.');
 
         Object
             .entries(newNodeState)
@@ -144,6 +146,8 @@ const useFlatNodeTree = (initialTree: ComponentNode | (() => ComponentNode)) => 
 
     const removeNode = React.useCallback((childId: string) => {
         const treeMap = treeMapRef.current;
+
+        if (!(childId in treeMap)) throw new Error('Node not found.');
         
         const parentId = getParentId(childId);
         
@@ -156,6 +160,8 @@ const useFlatNodeTree = (initialTree: ComponentNode | (() => ComponentNode)) => 
 
     const moveNodeUp = React.useCallback((id: string) => {
         const treeMap = treeMapRef.current;
+
+        if (!(id in treeMap)) throw new Error('Node not found.');
         
         const parentId = getParentId(id);
 
@@ -171,6 +177,8 @@ const useFlatNodeTree = (initialTree: ComponentNode | (() => ComponentNode)) => 
 
     const moveNodeDown = React.useCallback((id: string) => {
         const treeMap = treeMapRef.current;
+
+        if (!(id in treeMap)) throw new Error('Node not found.');
         
         const parentId = getParentId(id);
 
