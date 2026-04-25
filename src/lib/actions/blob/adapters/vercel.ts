@@ -1,5 +1,26 @@
 'use server';
-import { put, list, del } from '@vercel/blob';
+import { get, put, list, del } from '@vercel/blob';
+
+const getBlob = async (pathname: string): Promise<Uint8Array | null> => {
+    const blob = await get(pathname, { access: 'public' });
+    if (!blob?.stream) return null;
+
+    const buf: Uint8Array = new Uint8Array(blob.blob.size);
+    let offset = 0;
+
+    const reader = blob.stream.getReader();
+    while (true) {
+        const { done, value } = await reader.read();
+        if (value) {
+            buf.set(value, offset);
+            offset += value.byteLength;
+        };
+
+        if (done) break;
+    };
+
+    return buf;
+}
 
 const getBlobList = async (): Promise<BlobInformation[]> => (await list()).blobs;
 
@@ -31,4 +52,4 @@ const deleteBlob = async (path: string): Promise<void> => {
         await del(toDelete.map(blob => blob.pathname));
 };
 
-export { getBlobList, addBlob, existsBlob, deleteBlob };
+export { getBlob, getBlobList, addBlob, existsBlob, deleteBlob };

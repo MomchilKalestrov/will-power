@@ -15,6 +15,30 @@ const getAdapter = async (): Promise<BlobStorageAdapter> => {
     throw new Error('No blob adapter available.');
 };
 
+const getBlob = async (pathname: string): serverActionResponse<Uint8Array> => {
+    try {
+        const adapter = await getAdapter();
+        const data = await adapter.getBlob(pathname);
+        
+        if (!data)
+            return {
+                success: false,
+                reason: 'Not found.'
+            };
+        
+            return {
+            success: true,
+            value: data
+        };
+    } catch (error) {
+        console.error('[blobs] getBlob error: ', error);
+        return {
+            success: false,
+            reason: `Server error ${ error instanceof Error ? error.message : '' }.`
+        };
+    };
+};
+
 const getBlobList = async (): serverActionResponse<BlobInformation[]> => {
     if (!await getCurrentUser())
         return {
@@ -145,4 +169,4 @@ const deleteBlob = async (path: string): serverActionResponse<boolean> => {
     };
 };
 
-export { getBlobList, addBlob, existsBlob, deleteBlob };
+export { getBlob, getBlobList, addBlob, existsBlob, deleteBlob };
