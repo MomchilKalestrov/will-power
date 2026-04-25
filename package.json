@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --experimental-https",
+    "dev": "NODE_OPTIONS='--no-node-snapshot' next dev --experimental-https",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_OPTIONS='--no-node-snapshot' next start",
     "lint": "eslint"
   },
   "dependencies": {
@@ -32,6 +32,7 @@
     "clsx": "^2.1.1",
     "html-to-image": "https://github.com/MomchilKalestrov/html-to-image/releases/download/1.0.0.0/html-to-image.tgz",
     "idb-keyval": "^6.2.2",
+    "isolated-vm": "^6.1.2",
     "lexical": "^0.39.0",
     "lucide-react": "^0.562.0",
     "monaco-editor": "^0.55.1",

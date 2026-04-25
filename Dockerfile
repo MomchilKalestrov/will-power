@@ -36,6 +36,7 @@ RUN apk add --no-cache ca-certificates
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS=--no-node-snapshot
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
