@@ -37,7 +37,6 @@ const POST = async (request: NextRequest) => {
         rpcCall = jsonRPCSchema.parse(json);
     } catch (e) {
         return respond({
-            jsonrpc: '2.0',
             error: {
                 code: -32600,
                 message: 'Invalid Request'
