@@ -1,4 +1,3 @@
-'use server';
 import { get, put, list, del } from '@vercel/blob';
 
 const getBlob = async (pathname: string): Promise<Uint8Array | null> => {
@@ -20,7 +19,7 @@ const getBlob = async (pathname: string): Promise<Uint8Array | null> => {
     };
 
     return buf;
-}
+};
 
 const getBlobList = async (): Promise<BlobInformation[]> => (await list()).blobs;
 

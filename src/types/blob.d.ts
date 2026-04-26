@@ -2,7 +2,12 @@ import { type Readable } from 'stream';
 import type { PutCommandOptions, ListBlobResultBlob } from '@vercel/blob';
 
 declare global {
-    type BlobInformation = ListBlobResultBlob;
+    type BlobInformation = {
+        pathname: string;
+        url: string;
+        size: number;
+        uploadedAt: Date;
+    };
 
     type BlobPutBody = string | Readable | Buffer | Blob | ArrayBuffer | ReadableStream | File;
 

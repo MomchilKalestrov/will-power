@@ -16,6 +16,12 @@ const getAdapter = async (): Promise<BlobStorageAdapter> => {
 };
 
 const getBlob = async (pathname: string): serverActionResponse<Uint8Array> => {
+    if (!await getCurrentUser())
+        return {
+            success: false,
+            reason: 'Unauthorized action.'
+        };
+
     try {
         const adapter = await getAdapter();
         const data = await adapter.getBlob(pathname);
