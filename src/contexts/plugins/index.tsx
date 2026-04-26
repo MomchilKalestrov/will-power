@@ -75,7 +75,7 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
                     ?   plugins.get(plugin.name)!
                     :   await import(
                             /* webpackIgnore: true */
-                            `plugins/${ plugin.name }/index.js?v=${ Date.now() }`
+                            `plugins/${ plugin.name }/browser.js?v=${ Date.now() }`
                         );
 
                     var parsedModule = pluginModuleSchema.parse(module);

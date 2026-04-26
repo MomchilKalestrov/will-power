@@ -35,12 +35,6 @@ export const addPlugin = async (data: FormData): serverActionResponse<plugin> =>
         };
     
     const archive = new AdmZip(Buffer.from(await plugin.arrayBuffer()));
-    const indexText = archive.readAsText('index.js');
-    if (!indexText)
-        return {
-            success: false,
-            reason: 'Missing `index.js`.'
-        };
 
     const metaText = archive.readAsText('metadata.json');
     const parseResult = pluginMetadataSchema.safeParse(JSON.parse(metaText));
