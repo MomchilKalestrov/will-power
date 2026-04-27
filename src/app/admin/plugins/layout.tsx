@@ -5,8 +5,6 @@ import { Metadata, NextComponentType, NextPageContext } from 'next';
 
 import { hasAuthority } from '@/lib/utils';
 
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-
 import Header from './header';
 
 //@ts-ignore
@@ -18,7 +16,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin/plugins'>> = async ({ children }) => {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
 
     if (!session?.user.role || !hasAuthority(session?.user.role, 'admin', 0))
         return redirect('/admin/home');
