@@ -13,6 +13,7 @@ workflow:
       - package.json
       - tsconfig.json
       - next.config.ts
+      - Dockerfile
 
 generate-tag:
   stage: generate-tag
