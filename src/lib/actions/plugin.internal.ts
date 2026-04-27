@@ -2,11 +2,11 @@ import 'server-only';
 import AdmZip from 'adm-zip';
 
 import { hasAuthority } from '@/lib/utils';
-//import { runInSandbox } from '@/lib/sandbox';
+import { runInSandbox } from '@/lib/sandbox';
 import { pluginMetadataSchema } from '@/lib/zodSchemas';
 
 import { setConfig, getConfig } from '@/lib/actions/config.internal';
-import { /* getBlob, */ addBlob, deleteBlob } from '@/lib/actions/blob/internal';
+import { getBlob, addBlob, deleteBlob } from '@/lib/actions/blob/internal';
 
 const isAuthenticated = (user: User): boolean =>
     hasAuthority(user.role, 'admin', 0);
@@ -128,29 +128,29 @@ export const togglePlugin = async (user: User, name: string): serverActionRespon
     };
 };
 
-// export const runPluginSSA = async (name: string, func: string, args: any): serverActionResponse<any> => {
-//     if (!await isAuthenticated())
-//         return {
-//             success: false,
-//             reason: 'Unauthorized action.'
-//         };
+export const runPluginSSA = async (user: User, name: string, func: string, args: any): serverActionResponse<any> => {
+    if (!isAuthenticated(user))
+        return {
+            success: false,
+            reason: 'Unauthorized action.'
+        };
 
-//     const fileResponse = await getBlob(`plugins/${ name }/server.js`);
-//     if (!fileResponse.success) return fileResponse;
-//     const file = fileResponse.value;
+    const fileResponse = await getBlob(user, `plugins/${ name }/server.js`);
+    if (!fileResponse.success) return fileResponse;
+    const file = fileResponse.value;
 
-//     try {
-//         const result = await runInSandbox(file.toString(), func, args);
+    try {
+        const result = await runInSandbox(user, file.toString(), func, args);
 
-//         return {
-//             success: true,
-//             value: result
-//         }
-//     } catch (error) {
-//         console.log('[plugin] runPluginSSA error: ', error);
-//         return {
-//             success: false,
-//             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
-//         };
-//     };
-// };
+        return {
+            success: true,
+            value: result
+        }
+    } catch (error) {
+        console.log('[plugin] runPluginSSA error: ', error);
+        return {
+            success: false,
+            reason: `Server error ${ error instanceof Error ? error.message : '' }.`
+        };
+    };
+};

@@ -15,8 +15,11 @@ function authenticateSSA<T extends (user: User | undefined, ...args: any[]) => s
 function authenticateSSA<T extends (user: User | undefined, ...args: any[]) => serverActionResponse<any>>(
     func: T,
     weak = false
-): (...args: OmitFirst<Parameters<T>>) => ReturnType<T> {
-    return (async (...args: OmitFirst<Parameters<T>>) => {
+): {
+    (...args: OmitFirst<Parameters<T>>): ReturnType<T>;
+    auth: 'weak' | 'strong';
+} {
+    const wrapper: any = async (...args: OmitFirst<Parameters<T>>) => {
         const user = await getCurrentUser() ?? undefined;
 
         if (!user && !weak) return {
@@ -25,7 +28,11 @@ function authenticateSSA<T extends (user: User | undefined, ...args: any[]) => s
         };
 
         return await func(user, ...args);
-    }) as (...args: OmitFirst<Parameters<T>>) => ReturnType<T>;
+    };
+
+    wrapper.auth = weak ? 'weak' : 'strong';
+
+    return wrapper as ReturnType<typeof authenticateSSA>;
 }
 
 export default authenticateSSA;
