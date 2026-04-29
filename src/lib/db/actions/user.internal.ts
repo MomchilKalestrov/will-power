@@ -10,31 +10,6 @@ import connect from '@/lib/db';
 
 import User from '@/models/user';
 
-export const getCurrentUser = async (): Promise<User | null> => {    
-    try {
-        await connect();
-
-        const session = await getServerSession();
-        if (session?.user.name)
-            return await User.findOne({ username: session?.user.name });
-
-        // const header = await headers();
-        // const authorization = header.get('Authorization');
-        // if (!authorization?.startsWith('Bearer ')) return null;
-
-        // const token = await decode({
-        //     token: authorization.split(' ').pop()!,
-        //     secret: process.env.NEXTAUTH_SECRET!
-        // })
-        // if (token?.name) return await User.findOne({ username: token.name });
-
-        return null;
-    } catch (error) {
-        console.error('[db] getCurrentUser error:', error);
-        return null;
-    };
-};
-
 export const getAllUsers = async (_: User): serverActionResponse<User[]> => {
     try {
         await connect();

@@ -1,7 +1,6 @@
 'use server';
 import authenticateSSA from '@/lib/authenticateSSA';
 import {
-    getCurrentUser,
     getAllUsers,
     getUser,
     updateUser,
@@ -16,7 +15,6 @@ const _deleteUser = authenticateSSA(deleteUser);
 const _createUser = authenticateSSA(createUser);
 
 export {
-    getCurrentUser,
     _getAllUsers as getAllUsers,
     _getUser as getUser,
     _updateUser as updateUser,
