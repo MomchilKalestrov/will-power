@@ -35,6 +35,9 @@ WORKDIR /app
 
 RUN apk add --no-cache ca-certificates
 
+ARG VERSION=Unknown
+ENV VERSION=$VERSION
+ENV IN_DOCKER=true
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_OPTIONS=--no-node-snapshot

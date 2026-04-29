@@ -55,7 +55,7 @@ build-docker-image:
   only:
     - master
   script:
-    - docker build -t seraphimcms-${DATE_TAG} .
+    - docker build --build-arg VERSION=${DATE_TAG} -t seraphimcms-${DATE_TAG} .
     - docker save seraphimcms-${DATE_TAG} -o seraphimcms-${DATE_TAG}.tar
   artifacts:
     paths:
