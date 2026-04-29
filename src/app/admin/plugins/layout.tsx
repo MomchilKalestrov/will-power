@@ -9,6 +9,7 @@ import Header from './header';
 
 //@ts-ignore
 import '../globals.css';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export const generateMetadata = async (): Promise<Metadata> => {
     const t = await getTranslations('Admin.Plugins');
@@ -16,7 +17,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin/plugins'>> = async ({ children }) => {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
 
     if (!session?.user.role || !hasAuthority(session?.user.role, 'admin', 0))
         return redirect('/admin/home');
