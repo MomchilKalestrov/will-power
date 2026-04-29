@@ -1,5 +1,7 @@
 import { get, put, list, del } from '@vercel/blob';
 
+export const type = 'Vercel Blob Storage';
+
 const getBlob = async (pathname: string): Promise<Uint8Array | null> => {
     const blob = await get(pathname, { access: 'public' });
     if (!blob?.stream) return null;

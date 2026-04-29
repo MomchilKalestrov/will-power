@@ -11,8 +11,21 @@ const getAdapter = async (): Promise<BlobStorageAdapter> => {
     if (process.env.BLOB_READ_WRITE_TOKEN?.startsWith('vercel_blob_rw'))
         return global.cachedAdapter = await import('@/lib/actions/blob/adapters/vercel');
 
-    throw new Error('No blob adapter available.');
+    console.warn(
+        'WARN! \n' +
+        'WARN! USING FS BLOB ADAPTER.\n' +
+        'WARN! IT IS STILL EXPERIMENTAL.\n' +
+        'WARN! IT IS UNTESTED/ BUGGY.\n' +
+        'WARN! IT MAY CONTAIN SECURITY VULTERABILITIES.\n' +
+        'WARN! USING IT IN IT\'s CURRENT STATE IS HIGHLY DISCOURAGED.\n' +
+        'WARN! '
+    );
+    
+    return global.cachedAdapter = await import('@/lib/actions/blob/adapters/fs');
 };
+
+export const getAdapterType = async (): Promise<string> =>
+    (await getAdapter()).type ?? 'Unknown';
 
 export const getBlob = async (_: User, pathname: string): serverActionResponse<Uint8Array> => {
     try {

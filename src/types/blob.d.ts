@@ -14,6 +14,7 @@ declare global {
     type BlobPutOptions = PutCommandOptions;
 
     interface BlobStorageAdapter {
+        type: string;
         getBlob: (path: string) => Promise<Uint8Array | null>;
         getBlobList: () => Promise<BlobInformation[]>;
         addBlob: (path: string, body: BlobPutBody, options: BlobPutCommandOptions) => Promise<BlobInformation>;
