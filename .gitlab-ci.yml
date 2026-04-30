@@ -68,9 +68,13 @@ publish:
 
 update-github-mirror:
   stage: update-github-mirror
-  image: alpine/git:latest
+  image:
+    name: alpine:latest
+    entrypoint: [ "" ]
   only:
     - master
+  before_script:
+    - apk add --no-cache git
   script:
     - git remote add github https://MomchilKalestrov:${GITHUB_MIRROR_TOKEN}@github.com/MomchilKalestrov/will-power.git
     - git push github HEAD:master --force
