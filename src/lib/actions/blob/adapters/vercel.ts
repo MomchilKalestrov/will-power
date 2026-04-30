@@ -1,4 +1,4 @@
-import { get, put, list, del } from '@vercel/blob';
+import { get, put, list, del, type ListBlobResult } from '@vercel/blob';
 
 export const type = 'Vercel Blob Storage';
 
@@ -23,7 +23,18 @@ const getBlob = async (pathname: string): Promise<Uint8Array | null> => {
     return buf;
 };
 
-const getBlobList = async (): Promise<BlobInformation[]> => (await list()).blobs;
+const getBlobList = async (): Promise<BlobInformation[]> => {
+    const blobs: BlobInformation[] = [];
+    let cursor: string | undefined = undefined;
+
+    do {
+        const res: ListBlobResult = await list({ cursor });
+        blobs.push(...res.blobs);
+        ({ cursor } = res);
+    } while (cursor);
+    
+    return blobs;
+};
 
 const addBlob = async (path: string, body: BlobPutBody, options: BlobPutOptions): Promise<BlobInformation> => {
     const size = body.toString().length;

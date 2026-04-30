@@ -5,7 +5,7 @@ declare global {
     var cachedAdapter: BlobStorageAdapter | undefined;
 };
 
-const getAdapter = async (): Promise<BlobStorageAdapter> => {
+export const getAdapter = async (): Promise<BlobStorageAdapter> => {
     if (global.cachedAdapter) return global.cachedAdapter;
 
     if (process.env.BLOB_READ_WRITE_TOKEN?.startsWith('vercel_blob_rw'))
@@ -23,9 +23,6 @@ const getAdapter = async (): Promise<BlobStorageAdapter> => {
     
     return global.cachedAdapter = await import('@/lib/actions/blob/adapters/fs');
 };
-
-export const getAdapterType = async (): Promise<string> =>
-    (await getAdapter()).type ?? 'Unknown';
 
 export const getBlob = async (_: User, pathname: string): serverActionResponse<Uint8Array> => {
     try {
