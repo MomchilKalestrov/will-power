@@ -138,8 +138,22 @@
                 "plugins": "Plugins",
                 "installedPlugins": "Installed Plugins",
                 "marketplace": "Marketplace",
-                "themes": "Themes"
+                "themes": "Themes",
+                "stats": "Stats"
             }
+        },
+        "Stats": {
+            "headerTitle": "Stats",
+            "version": "Version",
+            "checkNewVersion": "Check for new version",
+            "adapterType": "Blob storage type",
+            "failedUpdateCheck": "Failed fetching the newest version.",
+            "malformedDateTag": "Malformed version value detected. Ignoring.",
+            "newVersionAvailable": "New version available.",
+            "marketplace": "Plugin marketplace",
+            "defaultMarketplace": "Default",
+            "unknown": "Unknown",
+            "blobSize": "Occupied Blob storage"
         }
     },
     "Inputs": {

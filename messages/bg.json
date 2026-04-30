@@ -137,9 +137,23 @@
                 "users": "Профили",
                 "plugins": "Плъгини",
                 "installedPlugins": "Инсталирани плъгини",
-                "marketplace": "Магазин",
-                "themes": "Теми"
+                "marketplace": "Търсачка",
+                "themes": "Теми",
+                "stats": "Статистика"
             }
+        },
+        "Stats": {
+            "headerTitle": "Статистика",
+            "version": "Версия",
+            "checkNewVersion": "Провери за нова версия",
+            "adapterType": "Тип Blob памет",
+            "failedUpdateCheck": "Проверката за нова версия бе неуспешна.",
+            "malformedDateTag": "Засечено е грешно форматирана версия.",
+            "newVersionAvailable": "Има нова версия.",
+            "marketplace": "Търсачка за плъгини",
+            "defaultMarketplace": "По подразбиране",
+            "unknown": "Липсва информация",
+            "blobSize": "Заета Blob памет"
         }
     },
     "Inputs": {
