@@ -19,12 +19,13 @@ const commits = run('git', [ 'log', `${ lastTag }..HEAD`, '--oneline' ])
     .map(line => line.split(' ').slice(1).join(' '))
     .map(commit => {
         const type = commit.split(': ')[ 0 ].split('(')[ 0 ];
+        const namespace = commit.includes('): ') ? commit.split('(')[ 1 ].split(')')[ 0 ] : undefined;
         const message = commit.split(': ').slice(1).join(': ');
-        return { type, message };
+        return { type, namespace, message };
     })
-    .reduce((acc, { type, message }) => {
+    .reduce((acc, { type, namespace, message }) => {
         if (!acc[ type ]) acc[ type ] = [];
-        acc[ type ].push(message);
+        acc[ type ].push(`${ message } ${ namespace ? `(in ${ namespace })` : '' }`);
         return acc;
     }, /** @type { Record<String, string[]> } */({}));
 
