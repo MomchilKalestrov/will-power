@@ -36,13 +36,14 @@ import { DialogProvider } from '@/contexts/dialog';
 import { FileSelectorProvider, useFileSelector } from '@/contexts/file';
 
 import { cookies, hasAuthority } from '@/lib/utils';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+
 import { Button } from '@/components/ui/button';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+
+import Logger from '@/components/logger';
 
 import en from '@/components/icons/en.png';
 import bg from '@/components/icons/bg.png';
-
-
 
 const hideNavInRoutes: string[] = [
     '/admin/auth/login',
@@ -88,7 +89,8 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
                 [ t('nav.installedPlugins') ]: '/admin/plugins',
                 [ t('nav.marketplace') ]: '/admin/plugins/marketplace'
             },
-            [ t('nav.themes') ]: '/admin/themes'
+            [ t('nav.themes') ]: '/admin/themes',
+            [ t('nav.stats') ]: '/admin/stats'
         };
 
         if (!(data?.user.role && hasAuthority(data.user.role, 'admin', 0)))
@@ -262,7 +264,10 @@ const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin'>>
                         {
                             hideNavInRoutes.some(v => pathname.startsWith(v)) || urlParams.get('showSidebar') === 'false'
                             ?   children
-                            :   <Navbar>{ children }</Navbar>
+                            :   <Navbar>
+                                    { children }
+                                    <Logger />
+                                </Navbar>
                         }
                     </ThemesProvider>
                 </FileSelectorProvider>
