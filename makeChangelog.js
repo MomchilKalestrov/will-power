@@ -4,7 +4,6 @@ const { spawnSync } = require('node:child_process');
 const DATE_TAG = process.argv[ process.argv.length -1 ];
 
 /**
- * 
  * @param { string } cmd 
  * @param { string[] } params
  * @returns { string }
@@ -18,16 +17,17 @@ const commits = run('git', [ 'log', `${ lastTag }..HEAD`, '--oneline' ])
     .filter(Boolean)
     .map(line => line.split(' ').slice(1).join(' '))
     .map(commit => {
-        const type = commit.split(': ')[ 0 ].split('(')[ 0 ];
-        const namespace = commit.includes('): ') ? commit.split('(')[ 1 ].split(')')[ 0 ] : undefined;
-        const message = commit.split(': ').slice(1).join(': ');
-        return { type, namespace, message };
+        const matches = commit.match(/(\w+)(?:(?:\((.+)\))|): (.+)/s);
+        if (!matches) return { type: 'Error', message: 'Commit with incorrect syntax: ' + commit };
+        const [ _, type, scope, message ] = matches;
+
+        return { type, scope, message };
     })
-    .reduce((acc, { type, namespace, message }) => {
+    .reduce((acc, { type, scope, message }) => {
         if (!acc[ type ]) acc[ type ] = [];
-        acc[ type ].push(`${ message } ${ namespace ? `(in ${ namespace })` : '' }`);
+        acc[ type ].push(`${ message } ${ scope ? `(in ${ scope })` : '' }`);
         return acc;
-    }, /** @type { Record<String, string[]> } */({}));
+    }, /** @type { Record<string, string[]> } */({}));
 
 const changelog = Object
     .entries(commits)
