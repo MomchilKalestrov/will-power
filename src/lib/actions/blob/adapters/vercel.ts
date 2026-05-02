@@ -6,18 +6,21 @@ const getBlob = async (pathname: string): Promise<Uint8Array | null> => {
     const blob = await get(pathname, { access: 'public' });
     if (!blob?.stream) return null;
 
-    const buf: Uint8Array = new Uint8Array(blob.blob.size);
-    let offset = 0;
+    const chunks: Uint8Array[] = [];
 
     const reader = blob.stream.getReader();
     while (true) {
         const { done, value } = await reader.read();
-        if (value) {
-            buf.set(value, offset);
-            offset += value.byteLength;
-        };
-
+        if (value) chunks.push(value);
         if (done) break;
+    }
+
+    const totalLength = chunks.reduce((sum, c) => sum + c.byteLength, 0);
+    const buf = new Uint8Array(totalLength);
+    let offset = 0;
+    for (const chunk of chunks) {
+        buf.set(chunk, offset);
+        offset += chunk.byteLength;
     };
 
     return buf;
