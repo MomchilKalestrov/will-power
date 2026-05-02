@@ -9,6 +9,14 @@
             "submitButton": "Login",
             "errorWrong": "Wrong name or password"
         },
+        "Authorize": {
+            "title": "Confirm",
+            "text": "You are about to grant access to a third-party service. Are you sure you want to do this?",
+            "textWithService": "You are about to grant access to {service}. Are you sure you want to do this?",
+            "proceed": "Proceed",
+            "username": "Username",
+            "role": "Role"
+        },
         "Components": {
             "noComponents": "No components found",
             "failedDelete": "Failed to delete the {type}: {reason}",

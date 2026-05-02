@@ -30,19 +30,13 @@ const Page: NextPage = () => {
     const session = useSession();
 
     const proceed = React.useCallback(async () => {
-        // special exception for when loggin in for VSCode
-        if (params.get('redirect_uri')) {
-            let url = params.get('redirect_uri')!;
-            if (!url.endsWith('/'))
-                url += '/';
-            
-            const redirectUrl = new URL(url);
-            redirectUrl.searchParams.append('token', await getToken())
-
-            return router.replace(redirectUrl.toString());
+        if (params.get('redirect_uri')) {            
+            const redirectUrl = new URL(window.location.href);
+            redirectUrl.pathname = '/admin/auth/authorize';
+            return router.push(redirectUrl.toString());
         };
 
-        router.replace(params.get('callbackUrl') ?? redirectPage);
+        router.push(params.get('callbackUrl') ?? '/admin/components/page');
     }, []);
     
     React.useEffect(() => void (session.status === 'authenticated' && proceed()), [ session ]);

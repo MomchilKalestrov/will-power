@@ -49,7 +49,8 @@ const hideNavInRoutes: string[] = [
     '/admin/auth/login',
     '/admin/viewer',
     '/admin/editor',
-    '/admin/logout'
+    '/admin/logout',
+    '/admin/auth/authorize'
 ];
 
 const languages: Record<string, typeof en> = { en, bg };

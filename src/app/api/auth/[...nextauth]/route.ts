@@ -40,12 +40,17 @@ const authOptions: AuthOptions = {
     pages: {
         signIn: '/admin/auth/login'
     },
+    session: {
+        strategy: 'jwt',
+        maxAge: 30 * 24 * 60 * 60
+    },
     callbacks: {
         jwt: ({ token, user }) => {
             if (user) {
                 token.id = user.id ?? token.sub;
                 token.role = user.role;
                 token.name = user.name ?? undefined;
+                token.accessTokenExpires = Date.now() + 60 * 60 * 1000;
             };
             return token;
         },

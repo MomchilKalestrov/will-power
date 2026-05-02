@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import '../globals.css';
 
 export const metadata: Metadata = {
-    title: 'Login'
+    title: 'Auth'
 };
 
 const Layout = ({ children }: { children: React.ReactNode }) => children;
