@@ -55,7 +55,7 @@ const usePlugins = () => {
 const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const t = useTranslations('Contexts');
     const { config, updateConfig } = useConfig();
-    const [ plugins, setPlugins ] = React.useState<Map<string, pluginInstance>>();
+    const [ plugins, setPlugins ] = React.useState<Map<string, pluginInstance>>(new Map());
     const [ pluginsToInstall, setPluginsToInstall ] = React.useState<Set<string>>(new Set());
 
     React.useEffect(() => {
@@ -149,8 +149,6 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         return t('toggledPlugin', { name, status: newPlugins[ index ].enabled ? 'on' : 'off' });
     }, [ config, updateConfig, t ]);
     
-    if (!plugins) return (<></>);
-
     return (
         <PluginsCTX.Provider value={ { addPlugin, removePlugin, togglePlugin, plugins } }>
             { children }

@@ -1,49 +1,22 @@
-'use client';
 import React from 'react';
-import { useTranslations } from 'next-intl';
 
-import { getConfig, setConfig as setBackendConfig } from '@/lib/actions/config';
+import { getConfig } from '@/lib/actions/config';
 
-const ConfigCTX = React.createContext<{
-    config: config,
-    updateConfig: (newConfig: Partial<config>, updateBackend?: boolean) => Promise<void>
-} | undefined>(undefined);
+import { ClientConfigProvider, useClientConfig } from './provider';
+import { getTranslations } from 'next-intl/server';
 
-const useConfig = () => {
-    const value = React.useContext(ConfigCTX);
-    if (!value) throw new Error('useConfig must be used within a ConfigProvider');
-    return value;
-};
+const ConfigProvider: React.FC<React.PropsWithChildren> = async ({ children }) => {
+    const configResponse = await getConfig();
+    const t = await getTranslations('Contexts');
 
-const ConfigProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-    const t = useTranslations('Contexts');
-    const [ config, setConfig ] = React.useState<config | null | undefined>();
-    
-    React.useEffect(() => {
-        getConfig().then(response => {
-            if (!response.success)
-                return console.error('Error loading config: ' + response.reason);
-            setConfig(response.value);
-        });
-    }, []);
-
-    const updateConfig = React.useCallback(async (newConfig: Partial<config>, updateBackend: boolean = true) => {
-        if (updateBackend)
-            await setBackendConfig(newConfig);
-        setConfig({ ...config!, ...newConfig });
-    }, [ config ]);
-
-    if (config === null)
+    if (!configResponse.success)
         return (<p>{ t('fatalError') }</p>);
 
-    if (!config)
-        return (<></>);
-
     return (
-        <ConfigCTX.Provider value={ { config, updateConfig } }>
+        <ClientConfigProvider initialConfig={ configResponse.value }>
             { children }
-        </ConfigCTX.Provider>
+        </ClientConfigProvider>
     );
 };
 
-export { ConfigProvider, useConfig };
+export { ConfigProvider, useClientConfig as useConfig };
