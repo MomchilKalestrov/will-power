@@ -95,7 +95,7 @@ export const getAllComponents = async (_: User, type: componentType = 'page'): s
     };
 };
 
-export const saveComponent = async (_: User, component: Partial<Component>): serverActionResponse<boolean> => {
+export const saveComponent = async (_: User, component: Component): serverActionResponse<boolean> => {
     try {
         const model = componentSchema.parse(component);
         const { name, ...data } = model;
@@ -173,10 +173,12 @@ export const createComponent = async (user: User, name: string, type: componentT
     };
 };
 
-export const deleteComponent = async (_: User, name: string): serverActionResponse<boolean> => {
+export const deleteComponent = async (_: User, name: string, type: componentType = 'page'): serverActionResponse<boolean> => {
     try {
+        componentTypesSchema.parse(type);
+
         await connect();
-        const component = await Component.findOneAndDelete({ name });
+        const component = await Component.findOneAndDelete({ name, type }).lean();
         if (!component)
             return {
                 success: false,

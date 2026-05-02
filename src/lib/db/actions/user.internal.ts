@@ -1,7 +1,6 @@
 import 'server-only';
 import type z from 'zod';
 import argon2 from 'argon2';
-import { getServerSession } from 'next-auth';
 
 import { hasAuthority } from '@/lib/utils';
 import { updateUserSchema, userSchema } from '@/lib/zodSchemas';
@@ -169,7 +168,7 @@ export const createUser = async (currentUser: User, userState: z.infer<typeof us
             value: result.id.toString()
         };
     } catch (error) {
-        console.error('[db] deleteUser error:', error);
+        console.error('[db] createUser error:', error);
         return {
             success: false,
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
