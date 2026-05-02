@@ -1,4 +1,5 @@
 export default {
+    issuer:                           process.env.NEXTAUTH_URL,
     authorization_endpoint:           process.env.NEXTAUTH_URL + '/api/oauth/authorize',
     token_endpoint:                   process.env.NEXTAUTH_URL + '/api/oauth/token',
     response_types_supported:         [ 'code' ],

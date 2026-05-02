@@ -18,7 +18,7 @@ export const cssToFont = (css: string): font => {
     return { style, weight, size, family, fallback } as font;
 };
 
-const cssFromConfig = (config: config): string =>
+export const cssFromConfig = (config: config): string =>
     ':root {\n' +
         config.variables.reduce<string>((acc: string, curr: config[ 'variables' ][ number ]) =>
             curr.type === 'font'
@@ -38,7 +38,7 @@ const cssFromConfig = (config: config): string =>
 
 type parser<T = any> = (value: string) => T;
 
-class storage {
+export class storage {
     static has = (key: string): boolean => localStorage.getItem(key) !== null;
 
     static get = (key: string): string | null => localStorage.getItem(key);
@@ -70,7 +70,7 @@ class storage {
         localStorage.removeItem(key);
 };
 
-class cookies {
+export class cookies {
     static get = (key: string): string | null => {
         const name = key + '=';
         const decodedCookie = decodeURIComponent(document.cookie);
@@ -95,22 +95,22 @@ class cookies {
     };
 };
 
-const awaitable = <T = unknown>(value: unknown): value is Promise<T> => {
+export const awaitable = <T = unknown>(value: unknown): value is Promise<T> => {
   return value !== null &&
     value !== undefined &&
     (typeof value === 'object' || typeof value === 'function') &&
     typeof (value as { then?: unknown }).then === 'function';
 };
 
-const hasAuthority = (current: User[ 'role' ], minimum: User[ 'role' ], roleOffset: number = 1): boolean => {
+export const hasAuthority = (current: User[ 'role' ], minimum: User[ 'role' ], roleOffset: number = 1): boolean => {
     const roleArray: User[ 'role' ][] = [ 'editor', 'admin', 'owner' ];
     return roleArray.indexOf(current) >= roleArray.indexOf(minimum) + roleOffset;
 };
 
-const validName = (name: string): boolean =>
+export const validName = (name: string): boolean =>
     /^[A-Za-z_]+$/.test(name);
 
-const validPassword = (password: string): boolean => {
+export const validPassword = (password: string): boolean => {
     if (password.length < 8) return false;
 
     const letterMatches = password.match(/[A-Za-z]/g) || [];
@@ -122,7 +122,7 @@ const validPassword = (password: string): boolean => {
     return true;
 };
 
-const isPanelPropertyVisible = (
+export const isPanelPropertyVisible = (
     node: ComponentNode,
     metadata: NodeMetadata,
     condition: editorVisibilityCondition | undefined,
@@ -145,4 +145,10 @@ const isPanelPropertyVisible = (
     return result;
 };
 
-export { cssFromConfig, storage, cookies, awaitable, hasAuthority, validPassword, validName, isPanelPropertyVisible };
+export const omit = <T extends object, K extends keyof T>(obj: T, ...keys: K[]): Omit<T, K> =>
+    Object.fromEntries(
+        Object.entries(obj).filter(([ k ]) => !keys.includes(k as any))
+    ) as Omit<T, K>;
+
+export const resolveToPositionalArgs = <T extends object, K extends keyof T>(obj: T, ...order: K[]): T[ K ][] =>
+    order.map(key => obj[ key ]);

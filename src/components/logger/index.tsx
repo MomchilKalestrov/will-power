@@ -104,8 +104,6 @@ const Logger: React.FC = () => {
         };
     }, []);
 
-    console.log(messages)
-
     return (
         <Dialog>
             <DialogTrigger asChild>

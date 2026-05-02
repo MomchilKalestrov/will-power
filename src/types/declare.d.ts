@@ -1,8 +1,26 @@
+import type z from 'zod';
+import { type CallToolResultSchema } from '@modelcontextprotocol/sdk/types';
+
 import { type fileTypes } from '@/contexts/file/fileFormats';
 
 declare global {
     type timestamp = number;
     type componentType = 'header' | 'page' | 'footer' | 'component';
+    
+    type CallToolResult = z.infer<typeof CallToolResultSchema>;
+
+    type mcpToolTuple = [
+        string,
+        {
+            title: string;
+            description: string;
+            inputSchema: z.ZodObject;
+        },
+        (
+            args: Record<string, unknown>,
+            extra: RequestHandlerExtra<ServerRequest, ServerNotification>
+        ) => Promise<CallToolResult>
+    ];
 
     type serverActionResponse<T = undefined> = Promise<{
         success: false;
