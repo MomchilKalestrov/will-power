@@ -3,16 +3,17 @@ import z from 'zod';
 import AdmZip from 'adm-zip';
 
 import { hasAuthority } from '@/lib/utils';
+import { addAuthInfo } from '@/lib/authenticateSSA';
 import { themeMetadataSchema } from '@/lib/zodSchemas';
 
 import { addBlob, deleteBlob } from '@/lib/actions/blob/internal';
 import { setConfig, getConfig } from '@/lib/actions/config.internal';
 
-const isAuthenticated = (user: User): boolean =>
+const isAuthorized = (user: User): boolean =>
     hasAuthority(user.role, 'admin', 0);
 
-export const addTheme = async (user: User, data: FormData): serverActionResponse<z.infer<typeof themeMetadataSchema>> => {
-    if (!isAuthenticated(user))
+export const addTheme = addAuthInfo(async (user: User, data: FormData): serverActionResponse<z.infer<typeof themeMetadataSchema>> => {
+    if (!isAuthorized(user))
         return {
             success: false,
             reason: 'Unauthorized action.'
@@ -69,10 +70,10 @@ export const addTheme = async (user: User, data: FormData): serverActionResponse
         success: true,
         value: metadata
     };
-};
+}, 'strong');
 
-export const removeTheme = async (user: User, name: string): serverActionResponse<boolean> => {
-    if (!isAuthenticated(user))
+export const removeTheme = addAuthInfo(async (user: User, name: string): serverActionResponse<boolean> => {
+    if (!isAuthorized(user))
         return {
             success: false,
             reason: 'Unauthorized action.'
@@ -89,10 +90,10 @@ export const removeTheme = async (user: User, name: string): serverActionRespons
         return config;
 
     return await setConfig(user, { themes: config.value.themes.filter(theme => theme !== name) });
-};
+}, 'strong');
 
-export const selectTheme = async (user: User, name: string): serverActionResponse<boolean> => {
-    if (!isAuthenticated(user))
+export const selectTheme = addAuthInfo(async (user: User, name: string): serverActionResponse<boolean> => {
+    if (!isAuthorized(user))
         return {
             success: false,
             reason: 'Unauthorized action.'
@@ -108,4 +109,4 @@ export const selectTheme = async (user: User, name: string): serverActionRespons
         };
 
     return await setConfig(user, { theme: name });
-};
+}, 'strong');

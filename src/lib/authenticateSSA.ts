@@ -1,6 +1,6 @@
-import { getServerSession } from "next-auth";
+import { getServerSession } from 'next-auth';
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 type OmitFirst<T extends unknown[]> = T extends [ unknown, ...infer Rest ] ? Rest : never;
 
@@ -44,6 +44,26 @@ function authenticateSSA<T extends (user: User | undefined, ...args: any[]) => s
     wrapper.auth = weak ? 'weak' : 'strong';
 
     return wrapper as ReturnType<typeof authenticateSSA>;
-}
+};
+
+export function addAuthInfo<T extends (user: User, ...args: any[]) => serverActionResponse<any>>(
+    func: T,
+    auth: 'strong'
+): T & { auth: 'strong'; };
+
+export function addAuthInfo<T extends (user: User | undefined, ...args: any[]) => serverActionResponse<any>>(
+    func: T,
+    auth: 'weak'
+): T & { auth: 'weak'; };
+
+export function addAuthInfo<T extends (user: User | undefined, ...args: any[]) => serverActionResponse<any>>(
+    func: T,
+    type: 'weak' | 'strong'
+): T & { auth: typeof type; } {
+    return Object.assign(
+        func,
+        { auth: type }
+    );
+};
 
 export default authenticateSSA;

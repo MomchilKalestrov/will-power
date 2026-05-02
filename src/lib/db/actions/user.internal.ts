@@ -3,13 +3,14 @@ import type z from 'zod';
 import argon2 from 'argon2';
 
 import { hasAuthority } from '@/lib/utils';
+import { addAuthInfo } from '@/lib/authenticateSSA';
 import { updateUserSchema, userSchema } from '@/lib/zodSchemas';
 
 import connect from '@/lib/db';
 
 import User from '@/models/user';
 
-export const getAllUsers = async (_: User): serverActionResponse<User[]> => {
+export const getAllUsers = addAuthInfo(async (_: User): serverActionResponse<User[]> => {
     try {
         await connect();
         const users = await User.aggregate([
@@ -35,9 +36,9 @@ export const getAllUsers = async (_: User): serverActionResponse<User[]> => {
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const getUser = async (_: User, username: string): serverActionResponse<User | null> => {
+export const getUser = addAuthInfo(async (_: User, username: string): serverActionResponse<User | null> => {
     if (typeof username !== 'string')
         return {
             success: false,
@@ -68,9 +69,9 @@ export const getUser = async (_: User, username: string): serverActionResponse<U
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const updateUser = async (currentUser: User, userState: z.infer<typeof updateUserSchema>): serverActionResponse<boolean> => {
+export const updateUser = addAuthInfo(async (currentUser: User, userState: z.infer<typeof updateUserSchema>): serverActionResponse<boolean> => {
     try {
         const { id, ...data } = updateUserSchema.parse(userState);
 
@@ -112,9 +113,9 @@ export const updateUser = async (currentUser: User, userState: z.infer<typeof up
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const deleteUser = async (currentUser: User, id: string): serverActionResponse<boolean> => {
+export const deleteUser = addAuthInfo(async (currentUser: User, id: string): serverActionResponse<boolean> => {
     if (typeof id !== 'string')
         return {
             success: false,
@@ -147,9 +148,9 @@ export const deleteUser = async (currentUser: User, id: string): serverActionRes
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const createUser = async (currentUser: User, userState: z.infer<typeof userSchema>): serverActionResponse<string> => {
+export const createUser = addAuthInfo(async (currentUser: User, userState: z.infer<typeof userSchema>): serverActionResponse<string> => {
     try {
         if (!hasAuthority(currentUser.role, 'owner', 0))
             return {
@@ -174,4 +175,4 @@ export const createUser = async (currentUser: User, userState: z.infer<typeof us
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');

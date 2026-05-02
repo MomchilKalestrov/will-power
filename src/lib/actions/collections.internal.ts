@@ -3,8 +3,10 @@ import z from 'zod';
 import mongoose from 'mongoose';
 
 import { hasAuthority } from '@/lib/utils';
+import { addAuthInfo } from '@/lib/authenticateSSA';
 
 import connect from '@/lib/db';
+
 
 const canCompleteAction = async (
     user: User | undefined,
@@ -21,7 +23,7 @@ const isAuthorized = (user: User) =>
 
 const privilidgesSchema = z.array(z.enum([ 'read', 'add', 'update', 'delete' ]));
 
-export const createCollection = async (
+export const createCollection = addAuthInfo(async (
     user: User,
     name: string,
     privilidges: ('read' | 'add' | 'update' | 'delete')[]
@@ -52,9 +54,9 @@ export const createCollection = async (
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const deleteCollection = async (user: User, name: string): serverActionResponse<boolean> => {
+export const deleteCollection = addAuthInfo(async (user: User, name: string): serverActionResponse<boolean> => {
     try {
         if (!user || !hasAuthority(user.role, 'admin', 0))
             return {
@@ -76,9 +78,9 @@ export const deleteCollection = async (user: User, name: string): serverActionRe
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const readDocuments = async (
+export const readDocuments = addAuthInfo(async (
     user: User | undefined,
     collectionName: string,
     from: number | undefined,
@@ -117,9 +119,9 @@ export const readDocuments = async (
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'weak');
 
-export const createDocument = async (
+export const createDocument = addAuthInfo(async (
     user: User | undefined,
     collectionName: string,
     document: any
@@ -153,9 +155,9 @@ export const createDocument = async (
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'weak');
 
-export const updateDocument = async (
+export const updateDocument = addAuthInfo(async (
     user: User | undefined,
     collectionName: string,
     document: any,
@@ -193,9 +195,9 @@ export const updateDocument = async (
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'weak');
 
-export const deleteDocument = async (
+export const deleteDocument = addAuthInfo(async (
     user: User | undefined,
     collectionName: string,
     condition: any
@@ -229,4 +231,4 @@ export const deleteDocument = async (
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'weak');

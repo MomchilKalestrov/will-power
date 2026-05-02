@@ -1,3 +1,4 @@
+import { addAuthInfo } from '@/lib/authenticateSSA';
 import 'server-only';
 
 declare global {
@@ -24,7 +25,7 @@ export const getAdapter = async (): Promise<BlobStorageAdapter> => {
     return global.cachedAdapter = await import('@/lib/actions/blob/adapters/fs');
 };
 
-export const getBlob = async (_: User, pathname: string): serverActionResponse<Uint8Array> => {
+export const getBlob = addAuthInfo(async (_: User, pathname: string): serverActionResponse<Uint8Array> => {
     try {
         const adapter = await getAdapter();
         const data = await adapter.getBlob(pathname);
@@ -46,22 +47,15 @@ export const getBlob = async (_: User, pathname: string): serverActionResponse<U
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const getBlobList = async (_: User): serverActionResponse<BlobInformation[]> => {
-    if (global.cachedBlobList)
+export const getBlobList = addAuthInfo(async (_: User): serverActionResponse<BlobInformation[]> => {
+    try {
+        const adapter = await getAdapter();
+        global.cachedBlobList ??= await adapter.getBlobList();
         return {
             success: true,
             value: global.cachedBlobList
-        };
-    
-    try {
-        const adapter = await getAdapter();
-        const blobs = await adapter.getBlobList();
-        global.cachedBlobList = blobs;
-        return {
-            success: true,
-            value: blobs
         };
     } catch (error) {
         console.error('[blobs] getBlobList error: ', error);
@@ -70,9 +64,9 @@ export const getBlobList = async (_: User): serverActionResponse<BlobInformation
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const addBlob = async (_: User, path: string, body: BlobPutBody, options: BlobPutOptions): serverActionResponse<BlobInformation> => {
+export const addBlob = addAuthInfo(async (_: User, path: string, body: BlobPutBody, options: BlobPutOptions): serverActionResponse<BlobInformation> => {
     try {
         const size = body.toString().length;
         const uploadedAt = new Date();
@@ -100,9 +94,9 @@ export const addBlob = async (_: User, path: string, body: BlobPutBody, options:
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const existsBlob = async (_: User, path: string): serverActionResponse<boolean> => {
+export const existsBlob = addAuthInfo(async (_: User, path: string): serverActionResponse<boolean> => {
     try {
         const adapter = await getAdapter();
         const blobs = await adapter.getBlobList();
@@ -124,9 +118,9 @@ export const existsBlob = async (_: User, path: string): serverActionResponse<bo
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const deleteBlob = async (_: User, path: string): serverActionResponse<boolean> => {
+export const deleteBlob = addAuthInfo(async (_: User, path: string): serverActionResponse<boolean> => {
     try {
         const adapter = await getAdapter();
         const blobs = await adapter.getBlobList();
@@ -152,4 +146,4 @@ export const deleteBlob = async (_: User, path: string): serverActionResponse<bo
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');

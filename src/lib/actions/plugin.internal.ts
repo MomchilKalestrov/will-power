@@ -3,16 +3,17 @@ import AdmZip from 'adm-zip';
 
 import { hasAuthority } from '@/lib/utils';
 import { runInSandbox } from '@/lib/sandbox';
+import { addAuthInfo } from '@/lib/authenticateSSA';
 import { pluginMetadataSchema } from '@/lib/zodSchemas';
 
 import { setConfig, getConfig } from '@/lib/actions/config.internal';
 import { getBlob, addBlob, deleteBlob } from '@/lib/actions/blob/internal';
 
-const isAuthenticated = (user: User): boolean =>
+const isAuthorized = (user: User): boolean =>
     hasAuthority(user.role, 'admin', 0);
 
-export const addPlugin = async (user: User, data: FormData): serverActionResponse<plugin> => {
-    if (!isAuthenticated(user))
+export const addPlugin = addAuthInfo(async (user: User, data: FormData): serverActionResponse<plugin> => {
+    if (!isAuthorized(user))
         return {
             success: false,
             reason: 'Unauthorized action.'
@@ -74,10 +75,10 @@ export const addPlugin = async (user: User, data: FormData): serverActionRespons
         success: true,
         value: { ...metadata, enabled: true }
     };
-};
+}, 'strong');
 
-export const removePlugin = async (user: User, name: string): serverActionResponse<boolean> => {
-    if (!isAuthenticated(user))
+export const removePlugin = addAuthInfo(async (user: User, name: string): serverActionResponse<boolean> => {
+    if (!isAuthorized(user))
         return {
             success: false,
             reason: 'Unauthorized action.'
@@ -103,10 +104,10 @@ export const removePlugin = async (user: User, name: string): serverActionRespon
         success: true,
         value: true
     };
-};
+}, 'strong');
 
-export const togglePlugin = async (user: User, name: string): serverActionResponse<boolean> => {
-    if (!isAuthenticated(user))
+export const togglePlugin = addAuthInfo(async (user: User, name: string): serverActionResponse<boolean> => {
+    if (!isAuthorized(user))
         return {
             success: false,
             reason: 'Unauthorized action.'
@@ -126,10 +127,10 @@ export const togglePlugin = async (user: User, name: string): serverActionRespon
         success: true,
         value: true
     };
-};
+}, 'strong');
 
-export const runPluginSSA = async (user: User, name: string, func: string, args: any): serverActionResponse<any> => {
-    if (!isAuthenticated(user))
+export const runPluginSSA = addAuthInfo(async (user: User, name: string, func: string, args: any): serverActionResponse<any> => {
+    if (!isAuthorized(user))
         return {
             success: false,
             reason: 'Unauthorized action.'
@@ -153,4 +154,4 @@ export const runPluginSSA = async (user: User, name: string, func: string, args:
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');

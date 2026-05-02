@@ -1,5 +1,6 @@
 import 'server-only';
 import { hasAuthority } from '@/lib/utils';
+import { addAuthInfo } from '@/lib/authenticateSSA';
 import { updateConfigSchema } from '@/lib/zodSchemas';
 
 import connect from '@/lib/db';
@@ -49,7 +50,7 @@ const getConfig = async (): serverActionResponse<config> => {
     };
 };
 
-const setConfig = async (user: User, config: Partial<config>): serverActionResponse<boolean> => {
+const setConfig = addAuthInfo(async (user: User, config: Partial<config>): serverActionResponse<boolean> => {
     try {
         const data = updateConfigSchema.parse(config) as Partial<config>;
         
@@ -78,6 +79,6 @@ const setConfig = async (user: User, config: Partial<config>): serverActionRespo
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
 export { getConfig, setConfig };

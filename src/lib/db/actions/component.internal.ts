@@ -6,6 +6,7 @@ import {
 } from '@/lib/zodSchemas';
 
 import connect from '@/lib/db';
+import { addAuthInfo } from '@/lib/authenticateSSA';
 
 import Component from '@/models/component';
 
@@ -68,7 +69,7 @@ export const getComponentByName = async (name: string, type?: componentType): se
     };
 };
 
-export const getAllComponents = async (_: User, type: componentType = 'page'): serverActionResponse<string[]> => {
+export const getAllComponents = addAuthInfo(async (_: User, type: componentType = 'page'): serverActionResponse<string[]> => {
     try {
         componentTypesSchema.parse(type);
 
@@ -93,9 +94,9 @@ export const getAllComponents = async (_: User, type: componentType = 'page'): s
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const saveComponent = async (_: User, component: Component): serverActionResponse<boolean> => {
+export const saveComponent = addAuthInfo(async (_: User, component: Component): serverActionResponse<boolean> => {
     try {
         const model = componentSchema.parse(component);
         const { name, ...data } = model;
@@ -121,9 +122,9 @@ export const saveComponent = async (_: User, component: Component): serverAction
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const createComponent = async (user: User, name: string, type: componentType = 'page'): serverActionResponse<boolean> => {
+export const createComponent = addAuthInfo(async (user: User, name: string, type: componentType = 'page'): serverActionResponse<boolean> => {
     if (
         !componentTypesSchema.safeParse(type) ||
         !componentNameSchema.safeParse(name)
@@ -171,9 +172,9 @@ export const createComponent = async (user: User, name: string, type: componentT
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
-export const deleteComponent = async (_: User, name: string, type: componentType = 'page'): serverActionResponse<boolean> => {
+export const deleteComponent = addAuthInfo(async (_: User, name: string, type: componentType = 'page'): serverActionResponse<boolean> => {
     try {
         componentTypesSchema.parse(type);
 
@@ -199,7 +200,7 @@ export const deleteComponent = async (_: User, name: string, type: componentType
             reason: `Server error ${ error instanceof Error ? error.message : '' }.`
         };
     };
-};
+}, 'strong');
 
 export const getMatchingComponents = async (name: string, type: 'header' | 'footer'): serverActionResponse<Component[]> => {
     try {
