@@ -4,8 +4,6 @@ import info from '../oauthInfo';
 
 export const GET = () =>
     NextResponse.json({
-        issuer: process.env.NEXTAUTH_URL,
-        
         ...info,
 
         subject_types_supported:               [ 'public' ],
