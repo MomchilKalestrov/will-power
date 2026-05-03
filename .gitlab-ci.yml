@@ -1,7 +1,6 @@
 stages:
   - build
   - publish
-  - update-github-mirror
 
 workflow:
   rules:
@@ -65,16 +64,3 @@ publish:
         - name: seraphimcms-${DATE_TAG}.tar
           url: https://${CI_SERVER_HOST}/${CI_PROJECT_PATH}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/raw/seraphimcms-${DATE_TAG}.tar
           link_type: other
-
-update-github-mirror:
-  stage: update-github-mirror
-  image:
-    name: alpine:latest
-    entrypoint: [ "" ]
-  only:
-    - master
-  before_script:
-    - apk add --no-cache git
-  script:
-    - git remote add github https://MomchilKalestrov:${GITHUB_MIRROR_TOKEN}@github.com/MomchilKalestrov/will-power.git
-    - git push github HEAD:master --force
