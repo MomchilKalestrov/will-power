@@ -45,7 +45,6 @@ const ComponentsProvider: React.FC<React.PropsWithChildren> = ({ children }) => 
     const pluginComponents = React.useMemo<Map<string, componentData>>(() =>
         new Map(
             [ ...plugins.values() ]
-                .filter(({ enabled }) => enabled)
                 .map(({ components }) => components)
                 .flat()
                 .filter(Boolean)

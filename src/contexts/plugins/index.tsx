@@ -69,7 +69,9 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         (async () => {
             const newState = new Map<string, pluginInstance>();
 
-            for (const plugin of config.plugins)
+            for (const plugin of config.plugins) {
+                if (!plugin.enabled) continue;
+
                 try {
                     const module = plugins?.has(plugin.name)
                     ?   plugins.get(plugin.name)!
@@ -77,9 +79,9 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
                             /* webpackIgnore: true */
                             `plugins/${ plugin.name }/browser.js?v=${ Date.now() }`
                         );
-
+    
                     var parsedModule = pluginModuleSchema.parse(module);
-
+    
                     if (pluginsToInstall.has(plugin.name)) {
                         await parsedModule.onInstall?.();
                         setPluginsToInstall(state => {
@@ -88,16 +90,16 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
                             return newState;
                         });
                     };
-
+    
                     if (!plugins?.has(plugin.name))
                         parsedModule.onLoad?.();
                     
                     newState.set(plugin.name, { ...plugin, ...parsedModule });
-
                 } catch (error) {
                     console.error('Malformed plugin: ' + plugin.name, error);
                     newState.set(plugin.name, plugin);
                 };
+            };
             
             setPlugins(newState);
         })();
