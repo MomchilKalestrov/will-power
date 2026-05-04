@@ -8,8 +8,4 @@ export const GET = () =>
 
         subject_types_supported:               [ 'public' ],
         id_token_signing_alg_values_supported: [ 'HS256' ],
-    }, {
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        }
-    });
+    }, { headers: { 'Access-Control-Allow-Origin': '*' } });
