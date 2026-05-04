@@ -126,8 +126,8 @@ export const saveComponent = addAuthInfo(async (_: User, component: Component): 
 
 export const createComponent = addAuthInfo(async (user: User, name: string, type: componentType = 'page'): serverActionResponse<boolean> => {
     if (
-        !componentTypesSchema.safeParse(type) ||
-        !componentNameSchema.safeParse(name)
+        !componentTypesSchema.safeParse(type).success ||
+        !componentNameSchema.safeParse(name).success
     )
         return {
             success: false,
@@ -135,17 +135,14 @@ export const createComponent = addAuthInfo(async (user: User, name: string, type
         };
 
     try {
-        if (!global.componentNames[ type ])
-            await getAllComponents(user, type);
+        const allComponents = await getAllComponents(user, type);
+        if (!allComponents.success) return allComponents;
 
-        if (
-            (type === 'page' && name === 'admin') ||
-            (global.componentNames[ type ] && global.componentNames[ type ]!.has(name))
-        )
+        if (allComponents.value.includes(name))
             return {
-                success: false,
-                reason: 'Invalid name.'
-            };
+                    success: false,
+                    reason: 'Invalid name.'
+                };
 
         await connect();
         const exists = await Component.findOne({ name, type }).lean();

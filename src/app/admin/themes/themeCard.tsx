@@ -34,7 +34,7 @@ const ThemeCard: React.FC<{ theme: string }> = ({ theme }) => {
                 />
                 <div
                     className='absolute inset-0 bg-center bg-no-repeat bg-cover'
-                    style={ { backgroundImage: `url("${ process.env.NEXT_PUBLIC_BLOB_URL }/themes/${ theme }/thumbnail.png")` } }
+                    style={ { backgroundImage: `url("${ process.env.NEXT_PUBLIC_BLOB_URL ?? '/public' }/themes/${ theme }/thumbnail.png")` } }
                 />
             </CardHeader>
             <CardContent className='p-4 flex justify-between items-center gap-2'>

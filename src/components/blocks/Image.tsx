@@ -27,14 +27,14 @@ const Component: React.FC<React.PropsWithChildren<Props>> = ({
             <img
                 { ...props }
                 alt={ (props as any).id ?? url  }
-                src={ process.env.NEXT_PUBLIC_BLOB_URL + '/' + url }
+                src={ (process.env.NEXT_PUBLIC_BLOB_URL ?? '/public') + '/' + url }
             />
             { children }
         </div>
     :   <img
             { ...props }
             alt={ (props as any).id ?? url  }
-            src={ process.env.NEXT_PUBLIC_BLOB_URL + '/' + url }
+            src={ (process.env.NEXT_PUBLIC_BLOB_URL ?? '/public') + '/' + url }
         />
 );
 

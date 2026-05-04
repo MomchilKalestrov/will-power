@@ -16,14 +16,13 @@ import * as collectionActions from '@/lib/actions/collections';
 
 import * as componentActions from '@/lib/db/actions/component';
 
-
 type pluginInstance = plugin & z.infer<typeof pluginModuleSchema>;
 
 class WP {
     components = componentActions;
     collections = collectionActions;
     config = configActions;
-    storageURL = new URL(process.env.NEXT_PUBLIC_BLOB_URL!);
+    storageURL = new URL(process.env.NEXT_PUBLIC_BLOB_URL ?? '/public');
     alert = (message: string) =>
         window.location.pathname.startsWith('/admin')
         ?   toast(message)

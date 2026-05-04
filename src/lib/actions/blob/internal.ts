@@ -1,5 +1,5 @@
-import { addAuthInfo } from '@/lib/authenticateSSA';
 import 'server-only';
+import { addAuthInfo } from '@/lib/authenticateSSA';
 
 declare global {
     var cachedBlobList: BlobInformation[] | undefined;
@@ -25,7 +25,7 @@ export const getAdapter = async (): Promise<BlobStorageAdapter> => {
     return global.cachedAdapter = await import('@/lib/actions/blob/adapters/fs');
 };
 
-export const getBlob = addAuthInfo(async (_: User, pathname: string): serverActionResponse<Uint8Array> => {
+export const getBlob = addAuthInfo(async (_: User, pathname: string): serverActionResponse<Uint8Array<ArrayBuffer>> => {
     try {
         const adapter = await getAdapter();
         const data = await adapter.getBlob(pathname);

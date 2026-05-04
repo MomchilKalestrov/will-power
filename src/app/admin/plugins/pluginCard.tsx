@@ -33,7 +33,7 @@ const PluginCard: React.FC<{ plugin: plugin }> = ({ plugin }) => {
                 />
                 <div
                     className='absolute inset-0 bg-center bg-no-repeat bg-cover'
-                    style={ { backgroundImage: `url("${ process.env.NEXT_PUBLIC_BLOB_URL }/plugins/${ plugin.name }/thumbnail.png")` } }
+                    style={ { backgroundImage: `url("${ process.env.NEXT_PUBLIC_BLOB_URL ?? '/public' }/plugins/${ plugin.name }/thumbnail.png")` } }
                 />
             </CardHeader>
             <CardContent className='p-4 flex justify-between items-center gap-2'>

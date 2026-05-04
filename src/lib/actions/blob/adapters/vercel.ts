@@ -2,7 +2,7 @@ import { get, put, list, del, type ListBlobResult } from '@vercel/blob';
 
 export const type = 'Vercel Blob Storage';
 
-const getBlob = async (pathname: string): Promise<Uint8Array | null> => {
+const getBlob = async (pathname: string): Promise<Uint8Array<ArrayBuffer> | null> => {
     const blob = await get(pathname, { access: 'public' });
     if (!blob?.stream) return null;
 
@@ -16,7 +16,7 @@ const getBlob = async (pathname: string): Promise<Uint8Array | null> => {
     }
 
     const totalLength = chunks.reduce((sum, c) => sum + c.byteLength, 0);
-    const buf = new Uint8Array(totalLength);
+    const buf: Uint8Array<ArrayBuffer> = new Uint8Array(totalLength);
     let offset = 0;
     for (const chunk of chunks) {
         buf.set(chunk, offset);

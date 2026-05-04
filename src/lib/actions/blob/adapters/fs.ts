@@ -9,7 +9,7 @@ const resolvePath = (pathname: string): string => {
     pathname = pathname.replaceAll('..', '.').replaceAll('~', '.');
     while (pathname.startsWith('/'))
         pathname = pathname.substring(1);
-    return path.resolve('public', pathname);
+    return path.resolve(cwd, 'public', pathname);
 };
 
 const getAllFiles = (pathname: string) => {
@@ -26,27 +26,15 @@ const getAllFiles = (pathname: string) => {
     return files;
 };
 
-const getBlob = async (pathname: string): Promise<Uint8Array | null> => {
+const getBlob = async (pathname: string): Promise<Uint8Array<ArrayBuffer> | null> => {
     const resolvedPath = resolvePath(pathname);
     if (!resolvedPath.startsWith(cwd) || resolvedPath.includes('~')) return null;
 
     try {
-        const reader = fs.createReadStream(resolvedPath);
-        const buf: Uint8Array = new Uint8Array(fs.statSync(pathname).size);
-        let offset = 0;
-    
-        while (true) {
-            const { done, value } = await reader.read();
-            if (value) {
-                buf.set(value, offset);
-                offset += value.byteLength;
-            };
-    
-            if (done) break;
-        };
-    
-        return buf;
+        const file = fs.readFileSync(resolvedPath);
+        return new Uint8Array<ArrayBuffer>(file.buffer);
     } catch {
+        // can only throw if a file isn't found
         return null;
     };
 };
