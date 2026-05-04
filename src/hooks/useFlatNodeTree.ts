@@ -29,8 +29,8 @@ const useFlatNodeTree = (initialTree: ComponentNode | (() => ComponentNode)) => 
     const treeMapRef = React.useRef(treeToMap(initialTreeValue));
     
     // ...and we just recompile the component manually :DDDDD
-    const [ , updateState ] = React.useState<any>();
-    const recompile = React.useCallback(() => updateState({}), [ updateState ]);
+    const [ version, setVersion ] = React.useState<number>(0);
+    const recompile = React.useCallback(() => setVersion(v => v + 1), [ setVersion ]);
 
     const setTree = React.useCallback<React.Dispatch<React.SetStateAction<ComponentNode>>>((dispatch) => {
         treeRef.current = typeof dispatch === 'function' ? dispatch(treeRef.current) : dispatch;
@@ -194,6 +194,7 @@ const useFlatNodeTree = (initialTree: ComponentNode | (() => ComponentNode)) => 
 
     return {
         tree: treeRef.current,
+        version,
         setTree,
         findNode,
         updateNode,

@@ -53,6 +53,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
     const [ component, setComponent ] = React.useState<Component>(initialComponent);
     const {
         tree,
+        version,
         setTree,
         findNode,
         updateNode,
@@ -79,18 +80,16 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
     React.useEffect(() => {
-        if (!iframeRef.current || !tree) return;
-
         storage.set(component.name, {
             ...component,
             rootNode: tree,
             lastEdited: Date.now()
         });
+        
+        if (!iframeRef.current) return;
 
-        iframeRef.current.contentWindow?.postMessage({
-            type: 'update-tree'
-        }, '*');
-    }, [ tree, component ]);
+        iframeRef.current.contentWindow?.postMessage({ type: 'update-tree' }, '*');
+    }, [ tree, component, version ]);
 
     const onMessage = React.useCallback(async (event: MessageEvent) => {
         switch (event.data.type) {
@@ -131,7 +130,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
         const updatedNode = findNode(selectedNode.id);
         if (updatedNode)
             setSelectedNode(updatedNode);
-    }, [ tree, findNode, selectedNode ]);
+    }, [ version, tree, findNode, selectedNode ]);
 
     const onCopy = React.useCallback(() => {
         window.focus();
