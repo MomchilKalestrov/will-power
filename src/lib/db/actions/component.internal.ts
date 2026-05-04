@@ -3,7 +3,7 @@ import {
     componentSchema,
     componentNameSchema,
     componentTypesSchema
-} from '@/lib/zodSchemas';
+} from '@/lib/zod/componentSchemas';
 
 import connect from '@/lib/db';
 import { addAuthInfo } from '@/lib/authenticateSSA';

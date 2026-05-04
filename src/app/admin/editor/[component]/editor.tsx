@@ -20,11 +20,11 @@ import useNodeTree from '@/hooks/useFlatNodeTree';
 import { useComponents } from '@/contexts/components';
 
 import { storage } from '@/lib/utils';
-import { componentNodeSchema } from '@/lib/zodSchemas';
 import { saveComponent } from '@/lib/db/actions/component';
+import { componentNodeSchema } from '@/lib/zod/componentSchemas';
 
-import ComponentHistoryMenu from './componentHistoryMenu';
 import ContextMenu from './contextMenu';
+import ComponentHistoryMenu from './componentHistoryMenu';
 
 type Props = {
     component: Component;

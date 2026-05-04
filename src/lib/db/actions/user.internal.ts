@@ -4,7 +4,7 @@ import argon2 from 'argon2';
 
 import { hasAuthority } from '@/lib/utils';
 import { addAuthInfo } from '@/lib/authenticateSSA';
-import { updateUserSchema, userSchema } from '@/lib/zodSchemas';
+import { updateUserSchema, userSchema } from '@/lib/zod/userSchemas';
 
 import connect from '@/lib/db';
 

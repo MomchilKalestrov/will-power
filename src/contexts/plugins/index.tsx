@@ -8,7 +8,7 @@ import ReactJsxRuntime from 'react/jsx-runtime';
 
 import { useConfig } from '@/contexts/config';
 
-import { pluginModuleSchema } from '@/lib/zodSchemas';
+import { pluginModuleSchema } from '@/lib/zod/pluginSchemas';
 
 import * as pluginActions from '@/lib/actions/plugin';
 import * as configActions from '@/lib/actions/config';

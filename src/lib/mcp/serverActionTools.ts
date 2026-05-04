@@ -1,13 +1,9 @@
 import z from 'zod';
 
-import {
-    userSchema,
-    componentSchema,
-    updateUserSchema,
-    updateConfigSchema,
-    componentTypesSchema
-} from '@/lib/zodSchemas';
 import { omit, resolveToPositionalArgs } from '@/lib/utils';
+import { updateConfigSchema } from '@/lib/zod/configSchemas';
+import { userSchema, updateUserSchema } from '@/lib/zod/userSchemas';
+import { componentSchema, componentTypesSchema } from '@/lib/zod/componentSchemas';
 
 import * as blobs from '@/lib/actions/blob/internal';
 import * as config from '@/lib/actions/config.internal';

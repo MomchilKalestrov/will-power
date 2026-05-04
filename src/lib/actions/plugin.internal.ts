@@ -4,7 +4,7 @@ import AdmZip from 'adm-zip';
 import { hasAuthority } from '@/lib/utils';
 import { runInSandbox } from '@/lib/sandbox';
 import { addAuthInfo } from '@/lib/authenticateSSA';
-import { pluginMetadataSchema } from '@/lib/zodSchemas';
+import { pluginMetadataSchema } from '@/lib/zod/pluginSchemas';
 
 import { setConfig, getConfig } from '@/lib/actions/config.internal';
 import { getBlob, addBlob, deleteBlob } from '@/lib/actions/blob/internal';

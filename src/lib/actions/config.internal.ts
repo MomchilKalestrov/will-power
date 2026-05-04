@@ -1,7 +1,7 @@
 import 'server-only';
 import { hasAuthority } from '@/lib/utils';
 import { addAuthInfo } from '@/lib/authenticateSSA';
-import { updateConfigSchema } from '@/lib/zodSchemas';
+import { updateConfigSchema } from '@/lib/zod/configSchemas';
 
 import connect from '@/lib/db';
 
