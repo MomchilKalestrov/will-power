@@ -46,7 +46,7 @@ export const componentSchema = z.union([
         name: componentNameSchema.refine(v => {
             // when using FC blob adapter, we need the `/public` route reserved,
             // since assets will be available on `/public/[...path]`
-            if (!process.env.BLOB_READ_WRITE_TOKEN && v === 'public')
+            if (!process.env.NEXT_PUBLIC_BLOB_URL && v === 'public')
                 return false;
             if (v === 'admin')
                 return false;
