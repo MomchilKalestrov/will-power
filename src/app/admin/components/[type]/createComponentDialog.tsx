@@ -18,15 +18,18 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 import { createComponent } from '@/lib/db/actions/component';
+import { componentNameSchema } from '@/lib/zod/componentSchemas';
 
 type Props = {
     components: string[];
     type: componentType;
+    prefix: string;
 };
 
 const CreateComponentDialog: React.FC<Props> = ({
     components,
-    type
+    type,
+    prefix
 }) => {
     const router = useRouter();
     const t = useTranslations('Admin.Components');
@@ -34,19 +37,15 @@ const CreateComponentDialog: React.FC<Props> = ({
     const [ mounted, setMounted ] = React.useState<boolean>(false);
 
     const onPageCreated = React.useCallback(async () => {
-        const response = await createComponent(name, type);
+        const response = await createComponent(prefix !== '' ? (prefix + '/' + name) : name, type);
         if(!response.success)
             return toast(t('failedCreate', { type, reason: response.reason }));
         router.push('/admin/editor/' + name);
-    }, [ name, type, t ]);
+    }, [ name, prefix, type, t ]);
 
     React.useEffect(() => void setMounted(true), []);
 
-    const validInput =
-        name === encodeURIComponent(name) &&
-        name.length !== 0 &&
-        !components.includes(name) &&
-        !(name === 'admin' && type === 'page');
+    const validInput = componentNameSchema.safeParse(name).success && !components.includes(name);
 
     if (!mounted) return (<></>);
 

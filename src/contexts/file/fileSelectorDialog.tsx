@@ -10,19 +10,12 @@ import {
     DialogContent,
     DialogDescription
 } from '@/components/ui/dialog';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator
-} from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
-import AddFileDialog from './addFileDialog';
+import PathBreadcumbs from '@/components/pathBreadcrumbs';
 
+import AddFileDialog from './addFileDialog';
 import type { fileTypes, fileCount } from './fileFormats';
 
 type Props = {
@@ -70,24 +63,7 @@ const FileSelectorDialog: React.FC<React.PropsWithChildren<Props>> = React.memo(
                             </DialogDescription>
                         </DialogTitle>
                     </div>
-                    <Breadcrumb>
-                        <BreadcrumbList>
-                            { cwd.map((path, index, { length }) => (
-                                <React.Fragment key={ 'path-' + index }>
-                                    <BreadcrumbItem>
-                                        <BreadcrumbLink onClick={ () => onPathClick(index) }>
-                                            {
-                                                length - 1 === index
-                                                ?   <BreadcrumbPage>{ path }</BreadcrumbPage>
-                                                :   path
-                                            }
-                                        </BreadcrumbLink>
-                                    </BreadcrumbItem>
-                                    { index < length - 1 && <BreadcrumbSeparator /> }
-                                </React.Fragment>
-                            )) }
-                        </BreadcrumbList>
-                    </Breadcrumb>
+                    <PathBreadcumbs paths={ cwd } onClick={ (_, index) => onPathClick(index) } />
                     <Button
                         size='icon'
                         variant='outline'

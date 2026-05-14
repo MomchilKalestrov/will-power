@@ -17,13 +17,14 @@ const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin/co
     children,
     params
 }) => {
-    const type = (await params).type;
+    const { type } = await params;
     const t = await getTranslations('Admin.Components');
 
     return (
         <>
             <header className='h-16 px-4 border-b bg-background flex justify-between items-center gap-4'>
                 <h2 className='font-bold text-xl capitalize'>{ t('headerTitle', { type }) }</h2>
+                <div id='components-portal-cwd' />
                 <div id='components-portal' />
             </header>
             { children }

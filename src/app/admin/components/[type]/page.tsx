@@ -1,4 +1,3 @@
-
 import type { NextPage } from 'next';
 import { notFound } from 'next/navigation';
 import { ServerCrash } from 'lucide-react';

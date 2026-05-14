@@ -1,6 +1,17 @@
 import z from 'zod';
 
-export const componentNameSchema = z.string().min(1).refine(name => name === encodeURIComponent(name));
+export const componentNameSchema = z.string().min(1).refine(name => {
+    if (name.startsWith('/') || name.endsWith('/')) return false;
+    const [ first, ...segments ] = name.split('/');
+    if (
+        first === 'admin' ||
+        first === 'public' ||
+        first !== encodeURIComponent(first) ||
+        !segments.every(segment => segment === encodeURIComponent(segment))
+    )
+        return false;
+    return true;
+});
 
 export const componentNodeSchema: z.ZodType<any> = z.lazy(() =>
     z.object({

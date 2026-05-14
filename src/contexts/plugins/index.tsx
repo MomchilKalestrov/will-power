@@ -22,7 +22,9 @@ class WP {
     components = componentActions;
     collections = collectionActions;
     config = configActions;
-    storageURL = new URL(process.env.NEXT_PUBLIC_BLOB_URL ?? '/public');
+    // process.env.NEXTAUTH_URL is inaccessible, but when SeraphimCMS is being installed,
+    // process.env.NEXTAUTH_URL would be the same as window.location.origin 
+    storageURL = new URL(process.env.NEXT_PUBLIC_BLOB_URL ?? (window.location.origin + '/public'));
     alert = (message: string) =>
         window.location.pathname.startsWith('/admin')
         ?   toast(message)

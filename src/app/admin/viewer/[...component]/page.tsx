@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { NextPage } from 'next';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 import RenderNode from '@/components/renderNode';
 
@@ -9,9 +9,10 @@ import { storage } from '@/lib/utils';
 
 import { getComponentByName } from '@/lib/db/actions/component';
 
-const Page: NextPage<PageProps<'/admin/viewer/[component]'>> = ({ params }) => {
+const Page: NextPage = () => {
     const router = useRouter();
-    const { component } = React.use(params);
+
+    const component = useParams<{ component: string[] }>().component.join('/');
     const [ tree, setTree ] = React.useState<ComponentNode>();
 
     const onMessage = React.useCallback((event: MessageEvent) => {

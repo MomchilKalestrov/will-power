@@ -5,10 +5,10 @@ import RenderNode from '@/components/renderNode';
 
 import { getComponentByName, getMatchingComponents } from '@/lib/db/actions/component';
 
-export const generateMetadata = async ({ params }: PageProps<'/[page]'>): Promise<Metadata> => {
-    const { page } = await params;
+export const generateMetadata = async ({ params }: PageProps<'/[...page]'>): Promise<Metadata> => {
+    const pageName = (await params).page.join('/');
     
-    const component = await getComponentByName(page, 'page');
+    const component = await getComponentByName(pageName, 'page');
     if (!component.success)
         return {};
 
@@ -16,8 +16,8 @@ export const generateMetadata = async ({ params }: PageProps<'/[page]'>): Promis
     return { title, description };
 };
 
-const Page: NextPage<PageProps<'/[page]'>> = async ({ params }) => {
-    const { page: pageName } = await params;
+const Page: NextPage<PageProps<'/[...page]'>> = async ({ params }) => {
+    const pageName = (await params).page.join('/');
     const page = await getComponentByName(pageName, 'page');
     if (!page.success) return notFound();
 

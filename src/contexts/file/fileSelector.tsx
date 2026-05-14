@@ -10,11 +10,12 @@ import { DialogFooter } from '@/components/ui/dialog';
 
 import { getBlobList, addBlob, deleteBlob } from '@/lib/actions/blob';
 
+import { pathListToTree, type fileNode } from '@/lib/utils';
+
 import DirectoryViewer from './directoryViewer';
 import SelectedFilePanel from './selectedFilePanel';
-
-import { formats, type fileTypes, type fileCount } from './fileFormats';
 import FileSelectorDialog from './fileSelectorDialog';
+import { formats, type fileTypes, type fileCount } from './fileFormats';
 
 const filterFiles = (files: BlobInformation[], fileType: fileTypes): BlobInformation[] =>
     fileType === 'all'
@@ -25,45 +26,6 @@ const filterFiles = (files: BlobInformation[], fileType: fileTypes): BlobInforma
                 pathname.startsWith('assets/')
             )
         );
-
-type fileNode = {
-    isFile: boolean;
-    children?: Record<string, fileNode>;
-};
-
-const toTree = (paths: string[]): fileNode => {
-    const root: Record<string, fileNode> = {};
-
-    for (const rawPath of paths) {
-        const path = rawPath.trim().replace(/\/+/g, '/');
-        const isExplicitDir = path.endsWith('/');
-        const parts = path.split('/').filter(Boolean);
-
-        let current = root;
-
-        for (let i = 0; i < parts.length; i++) {
-            const part = parts[ i ];
-            const isLast = i === parts.length - 1;
-
-            if (!current[ part ]) {
-                const isFile = isLast && !isExplicitDir;
-                current[ part ] = { isFile, children: isFile ? undefined : {} };
-            }
-
-            if (!isLast && current[ part ].isFile) {
-                current[ part ].isFile = false;
-                current[ part ].children = {};
-            }
-
-            if (!isLast)
-                current = current[ part ].children!;
-        }
-    }
-    return {
-        isFile: false,
-        children: root
-    };
-};
 
 type Props = {
     onSelected: (blob: BlobInformation[] | null) => void;
@@ -83,7 +45,7 @@ const FileSelector: React.FC<Props> = ({
     const [ files, setFiles ] = React.useState<Record<string, BlobInformation> | null | undefined>();
     const tree = React.useMemo(() =>
         files !== undefined && files !== null
-        ?   toTree(Object.keys(files))
+        ?   pathListToTree(Object.keys(files))
         :   undefined,
         [ files ]
     );

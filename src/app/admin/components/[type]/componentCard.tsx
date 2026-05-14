@@ -96,7 +96,7 @@ const ComponentCard: React.FC<Props> = ({
                 className={ cn('w-full rounded-xl', hasFilter && 'dark:invert') }
             />
             <CardFooter className='p-4 flex gap-2 justify-between items-center'>
-                <p className='font-medium text-lg grow text-left'>{ name }</p>
+                <p className='font-medium text-lg grow text-left'>{ name.split('/').pop() }</p>
                 <Button variant='outline'>
                     <Link href={ '/admin/editor/' + name }>{ t('editButton') }</Link>
                 </Button>
