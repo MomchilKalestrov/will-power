@@ -71,6 +71,20 @@ const Page: NextPage = async () => {
                                 }
                             </TableCell>
                         </TableRow>
+                        <TableRow>
+                            <TableCell>
+                                <strong>{ t('environment') }: </strong>
+                            </TableCell>
+                            <TableCell className='flex items-center'>
+                                {
+                                    process.env.IN_DOCKER
+                                    ?   'Docker'
+                                    :   process.env.VERCEL
+                                        ?   'Vercel'
+                                        :   t('unknown')
+                                }
+                            </TableCell>
+                        </TableRow>
                     </TableBody>
                 </Table>
             </main>

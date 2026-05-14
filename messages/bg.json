@@ -161,7 +161,8 @@
             "marketplace": "Търсачка за плъгини",
             "defaultMarketplace": "По подразбиране",
             "unknown": "Липсва информация",
-            "blobSize": "Заета Blob памет"
+            "blobSize": "Заета Blob памет",
+            "environment": "Хостинг среда"
         }
     },
     "Inputs": {

@@ -161,7 +161,8 @@
             "marketplace": "Plugin marketplace",
             "defaultMarketplace": "Default",
             "unknown": "Unknown",
-            "blobSize": "Occupied Blob storage"
+            "blobSize": "Occupied Blob storage",
+            "environment": "Host environment"
         }
     },
     "Inputs": {
