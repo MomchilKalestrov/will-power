@@ -79,7 +79,10 @@ const AddUserDialog: React.FC<Props> = ({ onUserAdd }) => {
                 </div>
                 <Button
                     disabled={ !validName(user.username) || !validPassword(user.password) }
-                    onClick={ () => onUserAdd(user) }
+                    onClick={ () => {
+                        onUserAdd(user);
+                        setDialogOpen(false);
+                    } }
                 >{ t('add') }</Button>
             </DialogContent>
         </Dialog>
