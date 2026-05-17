@@ -1,5 +1,6 @@
 'use server';
 import React from 'react';
+import Script from 'next/script';
 import { Toaster } from 'sonner';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
@@ -20,7 +21,7 @@ const RootLayout: React.FC<React.PropsWithChildren> = async ({ children }) => {
             <head>
                 <link rel='stylesheet' href='/api/css/theme' crossOrigin='anonymous' />
                 <link rel='stylesheet' href='/api/css/custom' />
-                <script
+                <Script
                     type='importmap'
                     dangerouslySetInnerHTML={ {
                         __html: JSON.stringify({
