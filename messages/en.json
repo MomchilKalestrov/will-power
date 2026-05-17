@@ -86,7 +86,7 @@
             "title": "Users",
             "addUser": "Add User",
             "add": "Add",
-            "editorsDesc": "Editors are only allowed to create and edit components.<br />Admins are allowed to also manage plugins, themes and editors.<br />Owners have complete access to the whole project.",
+            "editorsDesc": "Editors are only allowed to create and edit components.<br></br>Admins are allowed to also manage plugins, themes and editors.<br></br>Owners have complete access to the whole project.",
             "username": "Username:",
             "password": "Password:",
             "role": "Role:",
