@@ -1,5 +1,4 @@
 const PieChart = ({ values }) => {
-    const canvasRef = React.useRef(null);
     const id = React.useId();
     const width = 200;
     const height = 200;
@@ -21,36 +20,24 @@ const PieChart = ({ values }) => {
         return colors[ index % colors.length ];
     }, []);
 
-    React.useEffect(() => {
-        if (!canvasRef.current || Object.keys(values).length < 1) return;
-
-        const context = canvasRef.current.getContext('2d');
-
-        const drawSegment = (offset, angle, color) => {
-            const startAngle = offset;
-            const endAngle = offset + angle;
-            const center = Math.min(width, height) / 2;
-            const radius = center;
-            const arcX = Math.sin(startAngle * 2 * Math.PI) * radius;
-            const arcY = Math.cos(startAngle * 2 * Math.PI) * radius;
-
-            context.fillStyle = color;
-            context.beginPath();
-            context.moveTo(center, center);
-            context.lineTo(arcX, arcY);
-            context.arc(center, center, radius, startAngle * 2 * Math.PI, endAngle * 2 * Math.PI);
-            context.lineTo(center, center);
-            context.fill();
-        };
-
+    const gradientStops = React.useMemo(() => {
+        if (!values || Object.keys(values).length < 1) return '';
+        
         const n = Object.values(values).reduce((acc, curr) => acc + curr, 0);
         let progress = 0;
+        const stops = [];
+        
         Object.values(values).forEach((value, index) => {
-            const angle = value / n;
-            drawSegment(progress, angle, getColor(index));
-            progress += angle;
+            const percentage = (value / n) * 100;
+            const startPercentage = progress;
+            const endPercentage = progress + percentage;
+            
+            stops.push(`${getColor(index)} ${startPercentage}% ${endPercentage}%`);
+            progress = endPercentage;
         });
-    }, [ canvasRef, values ]);
+        
+        return stops.join(', ');
+    }, [values, getColor]);
 
 
     return React.createElement(
@@ -61,12 +48,15 @@ const PieChart = ({ values }) => {
         },
         [
             React.createElement(
-                'canvas',
+                'div',
                 {
-                    ref: canvasRef,
-                    key: `${ id }-canvas`,
-                    width,
-                    height
+                    key: `${ id }-pie`,
+                    style: {
+                        width,
+                        height,
+                        borderRadius: '50%',
+                        background: `conic-gradient(${gradientStops})`
+                    }
                 }
             ),
             React.createElement(
