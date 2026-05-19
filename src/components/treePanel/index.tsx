@@ -152,7 +152,7 @@ const TreePanel: React.FC<Props & {
                 ><Trash2 />{ t('delete') }</Button>
             </div>
         </div>
-    )
+    );
 };
 
 export default TreePanel;

@@ -20,7 +20,6 @@ const Page: NextPage = async () => {
     const blobAdapter = await getAdapter();
     const blobListResponse = await getBlobList();
 
-
     return (
         <>
             <header className='h-16 px-4 border-b bg-background flex justify-between items-center gap-4'>
