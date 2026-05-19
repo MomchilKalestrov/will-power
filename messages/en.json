@@ -29,8 +29,7 @@
             "invalidName": "Name is invalid",
             "closeButton": "Close",
             "createButton": "Create",
-            "metadataTitle": "{type}s",
-            "headerTitle": "{type}s"
+            "headerTitle": "{type, select, header {Headers} page {Pages} footer {Footers} component {Components} other {{type}s}}"
         },
         "Editor": {
             "newerVersion": "A newer version is available on the server.",

@@ -29,8 +29,7 @@
             "invalidName": "Името е невалидно",
             "closeButton": "Затвори",
             "createButton": "Създай",
-            "metadataTitle": "{type}",
-            "headerTitle": "{type}"
+            "headerTitle": "{type, select, header {Хедъри} page {Страници} footer {Футъри} component {Компоненти} other {{type}}}"
         },
         "Editor": {
             "newerVersion": "На сървъра е налична по-нова версия.",

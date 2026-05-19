@@ -44,6 +44,8 @@ import Logger from '@/components/logger';
 
 import en from '@/components/icons/en.png';
 import bg from '@/components/icons/bg.png';
+import jp from '@/components/icons/jp.png';
+import ru from '@/components/icons/ru.png';
 
 const hideNavInRoutes: string[] = [
     '/admin/auth/login',
@@ -53,7 +55,7 @@ const hideNavInRoutes: string[] = [
     '/admin/auth/authorize'
 ];
 
-const languages: Record<string, typeof en> = { en, bg };
+const languages: Record<string, typeof en> = { en, bg, jp, ru };
 
 const FilesButton: React.FC = () => {
     const t = useTranslations('Admin.Layout');
