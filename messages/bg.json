@@ -18,6 +18,7 @@
             "role": "Роля"
         },
         "Components": {
+            "failedFetch": "Грешка: {reason}",
             "noComponents": "Няма намерени компоненти",
             "failedDelete": "Неуспешно изтриване на {type}: {reason}",
             "editButton": "Редактиране",

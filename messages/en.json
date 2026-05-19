@@ -18,6 +18,7 @@
             "role": "Role"
         },
         "Components": {
+            "failedFetch": "Error: {reason}",
             "noComponents": "No components found",
             "failedDelete": "Failed to delete the {type}: {reason}",
             "editButton": "Edit",
