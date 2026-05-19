@@ -7,9 +7,7 @@ export const generateMetadata = async ({ params }: PageProps<'/admin/components/
     const { type } = await params;
     const t = await getTranslations('Admin.Components');
     return {
-        title: t('metadataTitle', {
-            type: type.charAt(0).toUpperCase() + type.substring(1)
-        })
+        title: t('headerTitle', { type })
     };
 };
 
