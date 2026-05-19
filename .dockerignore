@@ -31,4 +31,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-certificates
+/certificates/
+/.vscode/
+/.github/
+/.gitlab-ci-local/
+/.VSCodeCounter/
+/sample_plugins/
+.gitlab-ci.yml
