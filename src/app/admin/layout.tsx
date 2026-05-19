@@ -77,7 +77,7 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
 
     const pages = React.useMemo(() => {
         let pages: Record<string, Record<string, string> | string> = {
-            [ t('nav.home') ]: '/admin/home',
+            //[ t('nav.home') ]: '/admin/home',
             [ t('nav.components') ]: {
                 [ t('nav.headers') ]: '/admin/components/header',
                 [ t('nav.pages') ]: '/admin/components/page',
