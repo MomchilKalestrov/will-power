@@ -4,9 +4,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
 import { NextComponentType, NextPageContext } from 'next';
 import { SessionProvider, useSession } from 'next-auth/react';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 import {
     Sidebar,
@@ -70,11 +70,16 @@ const FilesButton: React.FC = () => {
     );
 };
 
+const isDarkMode = (pathname: string): boolean =>
+    typeof window === 'undefined'
+    ?   false
+    :   !pathname.includes('/admin/viewer/') && cookies.get('darkMode') === 'true';
+
 const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
     const t = useTranslations('Admin.Layout');
     const [ pathname ] = usePathname().split('?');
     const { plugins } = usePlugins();
-    const [ darkMode, setDarkMode ] = React.useState<boolean>(false);
+    const [ darkMode, setDarkMode ] = React.useState<boolean>(isDarkMode(pathname));
     const { data } = useSession();
 
     const pages = React.useMemo(() => {
@@ -113,16 +118,6 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
                 `/admin/plugin/${ encodeURI(name) }`
             ] as [ string, string ])
     , [ plugins ]);
-
-    React.useEffect(() => {
-        if (typeof window === 'undefined') return;
-        const isDark = cookies.get('darkMode') === 'true';
-        if (!pathname.includes('/admin/viewer/') && isDark)
-            document.body.classList.add('dark');
-        else
-            document.body.classList.remove('dark');
-        setDarkMode(isDark);
-    }, [ pathname ]);
 
     const setLanguage = React.useCallback((language: string) => {
         cookies.set('locale', language);
@@ -253,11 +248,13 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
 const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin'>> = ({
     children
 }) => {
-    const [ pathname, stringParams ] = usePathname().split('?');    
-    const urlParams = React.useMemo(() =>
-        new URLSearchParams(stringParams),
-        [ stringParams ]
-    );
+    const [ pathname ] = usePathname().split('?');    
+    const params = useSearchParams();
+
+    React.useEffect(() => {
+        if (isDarkMode(pathname))
+            document.body.classList.add('dark');
+    }, [ pathname ]);
 
     return (
         <SessionProvider>
@@ -265,7 +262,7 @@ const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin'>>
                 <FileSelectorProvider>
                     <ThemesProvider>
                         {
-                            hideNavInRoutes.some(v => pathname.startsWith(v)) || urlParams.get('showSidebar') === 'false'
+                            hideNavInRoutes.some(v => pathname.startsWith(v)) || params.get('showSidebar') === 'false'
                             ?   children
                             :   <Navbar>
                                     { children }
