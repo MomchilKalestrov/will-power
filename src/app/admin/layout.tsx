@@ -239,7 +239,9 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
                 <SidebarRail />
             </Sidebar>
             <SidebarInset>
-                { children }
+                <React.ViewTransition name='main'>
+                    { children }
+                </React.ViewTransition>
             </SidebarInset>
         </SidebarProvider>
     );
