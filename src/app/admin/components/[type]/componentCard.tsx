@@ -44,7 +44,7 @@ const ComponentCard: React.FC<Props> = ({
     const createPreview = React.useCallback(() => {
         screenshot(name)
             .then((value: string) => {
-                storage.set('screenshot-timestamp', Date.now());
+                storage.set(`screenshot-timestamp-${ name }`, Date.now());
                 set(`preview-${ name }`, value);
                 setPreview(value);
             });
@@ -55,9 +55,9 @@ const ComponentCard: React.FC<Props> = ({
             .then((value: string | undefined) => {
                 if (!value) return createPreview();
                 
-                const timestamp: string | null = storage.get('screenshot-timestamp'); 
+                const timestamp: string | null = storage.get(`screenshot-timestamp-${ name }`); 
                 if (!timestamp)
-                    storage.set('screenshot-timestamp', Date.now());
+                    storage.set(`screenshot-timestamp-${ name }`, Date.now());
                 else if (Date.now() - Number(timestamp) > 1000 * 60 * 60 * 24 * 7)
                     return createPreview();
                 
