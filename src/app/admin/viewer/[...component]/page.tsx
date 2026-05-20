@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { NextPage } from 'next';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
 import RenderNode from '@/components/renderNode';
 
@@ -11,7 +11,7 @@ import { getComponentByName } from '@/lib/db/actions/component';
 
 const Page: NextPage = () => {
     const router = useRouter();
-
+    const params = useSearchParams();
     const component = useParams<{ component: string[] }>().component.join('/');
     const [ tree, setTree ] = React.useState<ComponentNode>();
 
@@ -25,20 +25,17 @@ const Page: NextPage = () => {
     }, [ component ]);
 
     const onTreeLoaded = React.useCallback(() =>
-        window.top?.postMessage({
+        void window.top?.postMessage({
             type: 'status',
-            payload: 'ready'
+            payload: params.get('token')
         }),
-        []
+        [ params ]
     );
 
     React.useEffect(() => {
-        if (
-            window.top === window.self &&
-            new URLSearchParams(document.location.search).get('force') !== 'true'
-        )
+        if (params.get('force') !== 'true')
             router.replace(`/admin/editor/${ component }`);
-    }, []);
+    }, [ params ]);
     
     React.useEffect(() => {
         const localRevision: ComponentNode | undefined = storage.tryParse<Component | any>(component, {}).rootNode;
