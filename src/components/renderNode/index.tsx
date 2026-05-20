@@ -29,16 +29,11 @@ const RenderNode: React.FC<Props> = ({
     onTreeLoaded: onTreeLoadedCallback
 }) => {
     const { getComponent } = useComponents();
-    const [ _, setLoadedCount ] = React.useState<number>(0);
+    const [ loadedCount, setLoadedCount ] = React.useState<number>(0);
     const [ Component, setComponent ] = React.useState<React.ComponentType<any> | null | undefined>();
 
     const onTreeLoaded = React.useCallback(() => {
-        let flag: boolean = false;
-        setLoadedCount(state => {
-            flag = state + 1 === children.length;
-            return state + 1;
-        });
-        flag && onTreeLoadedCallback?.();
+        setLoadedCount(state => state + 1);
     }, []);
 
     React.useEffect(() =>
@@ -48,9 +43,9 @@ const RenderNode: React.FC<Props> = ({
     , [ type ]);
 
     React.useEffect(() => {
-        if (children.length === 0)
+        if (loadedCount === children.length && Component !== undefined)
             onTreeLoadedCallback?.();
-    }, []);
+    }, [ loadedCount, Component ]);
 
     if (Component === null) {
         console.warn("Unknown node type: " + type);
