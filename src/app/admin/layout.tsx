@@ -35,7 +35,7 @@ import { ThemesProvider } from '@/contexts/themes';
 import { DialogProvider } from '@/contexts/dialog';
 import { FileSelectorProvider, useFileSelector } from '@/contexts/file';
 
-import { cookies, hasAuthority } from '@/lib/utils';
+import { cookies, hasAuthority, storage } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
@@ -250,6 +250,7 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
 const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin'>> = ({
     children
 }) => {
+    const showLogsFloater = React.useMemo(() => storage.get('logFloater') === 'true', []);
     const [ pathname ] = usePathname().split('?');    
     const params = useSearchParams();
 
@@ -268,7 +269,7 @@ const Layout: NextComponentType<NextPageContext, unknown, LayoutProps<'/admin'>>
                             ?   children
                             :   <Navbar>
                                     { children }
-                                    <Logger />
+                                    { showLogsFloater && <Logger /> }                                    
                                 </Navbar>
                         }
                     </ThemesProvider>
