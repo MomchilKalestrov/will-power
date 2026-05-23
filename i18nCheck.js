@@ -1,10 +1,11 @@
 //@ts-check
-import { entries } from 'idb-keyval';
-import fs from 'node:fs';
-import path from 'node:path';
+const fs = require('node:fs');
+const path = require('node:path');
 
 const HOOK_REGEX = /(?:use|get)Translations\(['`"](.*?)['`"]\)/;
 const T_REGEX = /\bt(?:\.rich)?\(['`"](.*?)['`"]/g;
+const verbose = process.argv.includes('--verbose');
+const paths = process.argv.find(arg => arg.startsWith('--paths='))?.split('=')[ 1 ].split(',') ?? [ '.' ]
 
 /** @param { string } directoryName */
 const getAllFiles = (directoryName) => {
@@ -23,11 +24,7 @@ const getAllFiles = (directoryName) => {
     return files;
 };
 
-const allFiles = [
-    ...getAllFiles('src/app'),
-    ...getAllFiles('src/contexts'),
-    ...getAllFiles('src/components')
-];
+const allFiles = paths.map(getAllFiles).flat();
 
 /**
  * @param { string } str
@@ -107,13 +104,10 @@ const files = allFiles.reduce((acc, p) => {
 /** @type { Record<string, Record<string, string[]>> } */
 let errors = {};
 
-// messages
-// - files
-//   - entries
-
 Object.entries(messages).forEach(([ locale, value ]) => {
     Object.entries(files).forEach(([ file,  keys ]) => {
         keys.forEach(key => {
+            verbose && console.log(`Checking ${ key } in file ${ file } against ${ locale }`);
             if (!value.has(key)) {
                 errors[ locale ] ??= {};
                 errors[ locale ][ file ] ??= [];
