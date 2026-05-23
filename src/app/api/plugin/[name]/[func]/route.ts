@@ -26,7 +26,7 @@ export const OPTIONS = async () =>
         headers: permissiveHeaders
     });
 
-export const POST = async (request: NextRequest, { params }: RouteProps) => {
+const handler = async (request: NextRequest, { params }: RouteProps) => {
     const { name, func } = await params;
     const session = await auth();
     const user = session
@@ -41,7 +41,7 @@ export const POST = async (request: NextRequest, { params }: RouteProps) => {
     const file = fileResponse.value;
 
     try {
-        const result = await runInSandbox(user, file.toString(), func, {
+        const result = await runInSandbox(user, new TextDecoder().decode(file), func, {
             body: await request.text(),
             headers: request.headers
         });
@@ -62,3 +62,5 @@ export const POST = async (request: NextRequest, { params }: RouteProps) => {
         return new NextResponse(null, { status: 500 });
     };
 };
+
+export { handler as GET, handler as POST };

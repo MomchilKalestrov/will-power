@@ -100,7 +100,7 @@ export const runInSandbox = async (user: User | undefined, script: string, func:
         console.log('Getting target function instance.');
         functionInstance = await exports.get(func, { reference: true });
         const result = await functionInstance.apply(undefined, parsedArgs, {
-            result: { promise: true }
+            result: { promise: true, copy: true }
         });
 
         free();
