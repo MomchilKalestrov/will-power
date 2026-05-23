@@ -8,7 +8,7 @@ const handler = async () => {
         return new NextResponse(null, { status: 500 });
     
     return NextResponse.redirect(
-        (process.env.NEXT_PUBLIC_BLOB_URL ?? (process.env.NEXTAUTH_URL + '/public')) +
+        (process.env.NEXT_PUBLIC_BLOB_URL ?? (process.env.AUTH_URL + '/public')) +
         '/themes/' +
         config.value.theme +
         '/index.css'

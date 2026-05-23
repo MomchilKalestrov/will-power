@@ -6,7 +6,8 @@
     "dev": "NODE_OPTIONS='--no-node-snapshot' next dev --experimental-https",
     "build": "next build",
     "start": "NODE_OPTIONS='--no-node-snapshot' next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "i18nCheck": "node i18nCheck.js -v --paths=src/app,src/contexts,src/components"
   },
   "dependencies": {
     "@lexical/html": "^0.39.0",
@@ -40,7 +41,7 @@
     "monaco-editor": "^0.55.1",
     "mongoose": "^9.6.2",
     "next": "^16.2.6",
-    "next-auth": "^4.24.14",
+    "next-auth": "5.0.0-beta.31",
     "next-intl": "^4.12.0",
     "postcss": "^8.5.15",
     "react": "^19.2.6",

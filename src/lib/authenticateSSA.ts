@@ -1,6 +1,4 @@
-import { getServerSession } from 'next-auth';
-
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { auth } from '@/lib/auth';
 
 type OmitFirst<T extends unknown[]> = T extends [ unknown, ...infer Rest ] ? Rest : never;
 
@@ -22,7 +20,7 @@ function authenticateSSA<T extends (user: User | undefined, ...args: any[]) => s
     auth: 'weak' | 'strong';
 } {
     const wrapper: any = async (...args: OmitFirst<Parameters<T>>) => {
-        const session = await getServerSession(authOptions);
+        const session = await auth();
 
         if (!session && !weak) return {
             success: false,

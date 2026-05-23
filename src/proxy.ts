@@ -1,5 +1,6 @@
-import { getToken } from 'next-auth/jwt';
 import { NextResponse, type NextRequest } from 'next/server';
+
+import { auth } from '@/lib/auth';
 
 const next = (request: NextRequest): NextResponse => {
     const headers = new Headers(request.headers);
@@ -10,7 +11,7 @@ const next = (request: NextRequest): NextResponse => {
 };
 
 const authenticate = async (request: NextRequest): Promise<NextResponse> => {
-    const token = await getToken({ req: request });
+    const token = await auth();
     if (token) return next(request);
 
     const params = request.nextUrl.searchParams;

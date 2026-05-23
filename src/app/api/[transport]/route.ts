@@ -19,7 +19,8 @@ const verifyToken = async (_: Request, bearer?: string): Promise<AuthInfo | unde
 
     const token = await decode({
         token: bearer,
-        secret: process.env.NEXTAUTH_SECRET
+        secret: process.env.AUTH_SECRET,
+        salt: process.env.AUTH_SALT
     });
 
     if (!token) return;

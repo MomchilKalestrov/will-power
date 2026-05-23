@@ -45,7 +45,7 @@ const getBlobList = async (): Promise<BlobInformation[]> =>
             const stats = fs.statSync(pathname);
             return {
                 pathname,
-                url: `${ process.env.NEXTAUTH_URL }/${ pathname }`,
+                url: `${ process.env.AUTH_URL }/${ pathname }`,
                 size: stats.size,
                 uploadedAt: stats.birthtime
             };
@@ -64,7 +64,7 @@ const addBlob = async (pathname: string, body: BlobPutBody): Promise<BlobInforma
 
     return {
         pathname: resolvedPath.substring(resolvePath('.').length),
-        url: `${ process.env.NEXTAUTH_URL }/${ pathname }`,
+        url: `${ process.env.AUTH_URL }/${ pathname }`,
         size,
         uploadedAt
     };

@@ -4,7 +4,7 @@ import {
 } from 'mcp-handler';
 
 const handler = protectedResourceHandler({
-    authServerUrls: [ process.env.NEXTAUTH_URL ]
+    authServerUrls: [ process.env.AUTH_URL ]
 });
 
 const corsHandler = metadataCorsOptionsRequestHandler();

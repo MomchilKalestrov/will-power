@@ -140,7 +140,8 @@ const mintAccessToken = ({ id, username, role }: User) =>
             iat:  Math.floor(Date.now() / 1000),
             exp:  Math.floor(Date.now() / 1000) + 3600,
         },
-        secret: process.env.NEXTAUTH_SECRET!,
+        secret: process.env.AUTH_SECRET!,
+        salt: process.env.AUTH_SALT!,
         maxAge: 3600,
     });
 

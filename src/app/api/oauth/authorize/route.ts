@@ -2,8 +2,7 @@ import { randomBytes } from 'crypto';
 import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getToken } from 'next-auth/jwt';
-
+import { auth } from '@/lib/auth';
 import { authCodeStore } from '@/lib/oauth/store';
 
 export const GET = async (req: NextRequest) => {
@@ -52,10 +51,7 @@ export const GET = async (req: NextRequest) => {
             { status: 400, headers: { 'Access-Control-Allow-Origin': '*' } }
         );
         
-    const token = await getToken({
-        req,
-        secret: process.env.NEXTAUTH_SECRET!,
-    });
+    const token = await auth();
 
     if (!token) {
         const loginUrl = new URL('/admin/auth/login', req.url);
@@ -70,9 +66,9 @@ export const GET = async (req: NextRequest) => {
         redirectUri:   redirect_uri,
         codeChallenge: code_challenge,
         
-        id:       token.id!,
-        username: token.name!,
-        role:     token.role!,
+        id:       token.user.id!,
+        username: token.user.name!,
+        role:     token.user.role!,
         
         expiresAt: Date.now() + 5 * 60 * 1000,
     });
