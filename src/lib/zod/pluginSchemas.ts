@@ -29,3 +29,9 @@ export const pluginModuleSchema = z.object({
     onInstall: z.function().optional(),
     onDelete: z.function().optional()
 });
+
+export const pluginAPIResponseSchema = z.object({
+    status: z.number().min(100).max(599),
+    headers: z.record(z.string(), z.string()),
+    body: z.any()
+});

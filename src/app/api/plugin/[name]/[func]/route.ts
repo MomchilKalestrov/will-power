@@ -1,9 +1,10 @@
 'use server';
-import z from 'zod';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { getBlob } from '@/lib/actions/blob';
 import { runInSandbox } from '@/lib/sandbox';
+import { pluginAPIResponseSchema } from '@/lib/zod/pluginSchemas';
+import { auth } from '@/lib/auth';
 
 type RouteProps = {
     params: Promise<{
@@ -11,12 +12,6 @@ type RouteProps = {
         func: string;
     }>;
 };
-
-const resultSchema = z.object({
-    status: z.number().min(100).max(599),
-    headers: z.record(z.string(), z.string()),
-    body: z.any()
-});
 
 const permissiveHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -33,7 +28,11 @@ export const OPTIONS = async () =>
 
 export const POST = async (request: NextRequest, { params }: RouteProps) => {
     const { name, func } = await params;
-    
+    const session = await auth();
+    const user = session
+    ?   { ...session.user, username: session.user.name }
+    :   undefined;
+
     const fileResponse = await getBlob(`plugins/${ name }/api.js`);
     if (!fileResponse.success) {
         const status = fileResponse.reason.includes('Server error') ? 500 : 400;
@@ -42,11 +41,11 @@ export const POST = async (request: NextRequest, { params }: RouteProps) => {
     const file = fileResponse.value;
 
     try {
-        const result = await runInSandbox({ username: 'Admin', 'role': 'owner', id: '' }, file.toString(), func, {
+        const result = await runInSandbox(user, file.toString(), func, {
             body: await request.text(),
             headers: request.headers
         });
-        const { body, status, headers } = resultSchema.parse(result);
+        const { body, status, headers } = pluginAPIResponseSchema.parse(result);
         
         return new NextResponse(
             typeof body === 'object' ? JSON.stringify(body) : body,
@@ -60,6 +59,6 @@ export const POST = async (request: NextRequest, { params }: RouteProps) => {
         );
     } catch (error) {
         console.error('[api] /plugin/[name]/[func]/route.ts error: ', error);
-        return new NextResponse(null, { status: 500 })
+        return new NextResponse(null, { status: 500 });
     };
 };
