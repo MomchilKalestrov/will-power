@@ -20,7 +20,7 @@ const verifyToken = async (_: Request, bearer?: string): Promise<AuthInfo | unde
     const token = await decode({
         token: bearer,
         secret: process.env.AUTH_SECRET,
-        salt: process.env.AUTH_SALT
+        salt: "__Secure-authjs.session-token"
     });
 
     if (!token) return;

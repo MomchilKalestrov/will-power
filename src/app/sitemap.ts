@@ -11,7 +11,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         const pages = await Component.find({ type: 'page' }).select('name lastEdited').lean();
         
         return pages.map(({ name, lastEdited }) => ({
-            url: `${ process.env.AUTH_URL }/${ name }`,
+            url: `${ process.env.URL }/${ name }`,
             lastModified: new Date(lastEdited)
         }));
     } catch (error) {

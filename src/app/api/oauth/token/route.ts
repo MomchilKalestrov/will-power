@@ -141,7 +141,7 @@ const mintAccessToken = ({ id, username, role }: User) =>
             exp:  Math.floor(Date.now() / 1000) + 3600,
         },
         secret: process.env.AUTH_SECRET!,
-        salt: process.env.AUTH_SALT!,
+        salt: "__Secure-authjs.session-token",
         maxAge: 3600,
     });
 

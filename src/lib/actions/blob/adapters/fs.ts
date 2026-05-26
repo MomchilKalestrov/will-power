@@ -64,7 +64,7 @@ const addBlob = async (pathname: string, body: BlobPutBody): Promise<BlobInforma
 
     return {
         pathname: resolvedPath.substring(resolvePath('.').length),
-        url: `${ process.env.AUTH_URL }/${ pathname }`,
+        url: `${ process.env.URL }/${ pathname }`,
         size,
         uploadedAt
     };

@@ -26,7 +26,7 @@ const RootLayout: React.FC<React.PropsWithChildren> = async ({ children }) => {
                     dangerouslySetInnerHTML={ {
                         __html: JSON.stringify({
                             imports: {
-                                'plugins/': `${ process.env.NEXT_PUBLIC_BLOB_URL ?? (process.env.AUTH_URL ?? '/public') }/plugins/`
+                                'plugins/': `${ process.env.NEXT_PUBLIC_BLOB_URL ?? (process.env.URL ?? '/public') }/plugins/`
                             }
                         })
                     } }
