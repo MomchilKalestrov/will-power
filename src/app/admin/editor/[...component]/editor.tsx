@@ -275,7 +275,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                     
                     <iframe 
                         ref={ iframeRef } 
-                        src={ `/admin/viewer/${ component.name }` }
+                        src={ `/admin/viewer/${ component.name }?force=true` }
                         className='grow h-full border-0'
                         title={ t('pageEditor') }
                     />
