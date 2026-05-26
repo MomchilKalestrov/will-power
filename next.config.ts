@@ -30,7 +30,7 @@ const nextConfig: NextConfig = {
     images: {
         remotePatterns: [ {
             protocol: 'https',
-            hostname: '**.vercel-storage.com/**'
+            hostname: new URL(process.env.NEXT_PUBLIC_BLOB_URL!).hostname + '/**'
         } ]
     },
     devIndicators: false,
