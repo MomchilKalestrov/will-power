@@ -57,13 +57,13 @@ export const runInSandbox = async (user: User | undefined, script: string, func:
         apiRef.setSync(namespace, namespaceRef.derefInto());
     };
 
-    jail.setSync('WP', apiRef.derefInto());
+    jail.setSync('SCMS', apiRef.derefInto());
 
     await context.eval(
-        'for (const ns of Object.keys(WP)) {\n' +
-        '    for (const fn of Object.keys(WP[ns])) {\n' +
-        '        const ref = WP[ns][fn];\n' +
-        '        WP[ns][fn] = (...args) => ref.applySyncPromise(undefined, args);\n' +
+        'for (const ns of Object.keys(SCMS)) {\n' +
+        '    for (const fn of Object.keys(SCMS[ns])) {\n' +
+        '        const ref = SCMS[ns][fn];\n' +
+        '        SCMS[ns][fn] = (...args) => ref.applySyncPromise(undefined, args);\n' +
         '    }\n' +
         '}'
     );

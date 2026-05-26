@@ -18,12 +18,12 @@ import * as componentActions from '@/lib/db/actions/component';
 
 type pluginInstance = plugin & z.infer<typeof pluginModuleSchema>;
 
-class WP {
+class SCMS {
     components = componentActions;
     collections = collectionActions;
     config = configActions;
-    // process.env.AUTH_URL is inaccessible, but when SeraphimCMS is being installed,
-    // process.env.AUTH_URL would be the same as window.location.origin 
+    // process.env.URL is inaccessible, but when SeraphimCMS is being installed,
+    // process.env.URL would be the same as window.location.origin 
     storageURL = new URL(process.env.NEXT_PUBLIC_BLOB_URL ?? (window.location.origin + '/public'));
     alert = (message: string) =>
         window.location.pathname.startsWith('/admin')
@@ -33,7 +33,8 @@ class WP {
 
 declare global {
     interface Window {
-        WP: WP;
+        SCMS: SCMS;
+        WP: SCMS; // compatibility reasons
         React: typeof React;
         ReactDom: typeof ReactDom;
         ReactJsxRuntime: typeof ReactJsxRuntime;
@@ -60,7 +61,9 @@ const PluginsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const [ pluginsToInstall, setPluginsToInstall ] = React.useState<Set<string>>(new Set());
 
     React.useEffect(() => {
-        window.WP = Object.freeze(new WP());
+        const api = Object.freeze(new SCMS());
+        window.WP = api;
+        window.SCMS = api;
         window.React = React;
         window.ReactDOM = ReactDom;
         window.ReactJsxRuntime = ReactJsxRuntime;
