@@ -2,17 +2,9 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 import { auth } from '@/lib/auth';
 
-const next = (request: NextRequest): NextResponse => {
-    const headers = new Headers(request.headers);
-    headers.set('x-current-path', request.nextUrl.pathname);
-    return NextResponse.next({
-        request: { headers },
-    });
-};
-
 const authenticate = async (request: NextRequest): Promise<NextResponse> => {
     const token = await auth();
-    if (token) return next(request);
+    if (token) return NextResponse.next();
 
     const params = request.nextUrl.searchParams;
     params.set('callbackUrl', request.url);
@@ -23,12 +15,10 @@ const authenticate = async (request: NextRequest): Promise<NextResponse> => {
     ));
 };
 
-export const proxy = (request: NextRequest): NextResponse | Promise<NextResponse> => {
-    const { pathname } = request.nextUrl;
-    if (/^\/admin(?!\/auth)/.test(pathname))
-        return authenticate(request);
-    return next(request);
-};
+export const proxy = (request: NextRequest): NextResponse | Promise<NextResponse> =>
+    /^\/admin(?!\/auth)/.test(request.nextUrl.pathname)
+    ?   authenticate(request)
+    :   NextResponse.next();
 
 export const config = {
     matcher: [
