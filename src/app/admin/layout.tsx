@@ -6,7 +6,7 @@ import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { NextComponentType, NextPageContext } from 'next';
 import { SessionProvider, useSession } from 'next-auth/react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import {
     Sidebar,
@@ -79,6 +79,7 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
     const t = useTranslations('Admin.Layout');
     const [ pathname ] = usePathname().split('?');
     const { plugins } = usePlugins();
+    const router = useRouter();
     const [ darkMode, setDarkMode ] = React.useState<boolean>(isDarkMode(pathname));
     const { data } = useSession();
 
@@ -121,8 +122,8 @@ const Navbar: React.FC<React.PropsWithChildren> = ({ children }) => {
 
     const setLanguage = React.useCallback((language: string) => {
         cookies.set('locale', language);
-        window.location.reload();
-    }, []);
+        router.refresh();
+    }, [ router ]);
     
     return (
         <SidebarProvider>
