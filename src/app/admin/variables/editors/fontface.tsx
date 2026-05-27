@@ -22,14 +22,19 @@ const FontfaceEditor: React.FC<Props> = ({ config, setConfig }) => {
     const [ fileSelectorOpen, setFileSelectorOpen ] = React.useState<boolean>(false);
     const [ popoverOpen, setPopoverOpen ] = React.useState<boolean>(false);
 
-    const handleAddFont = () => {
+    const handleAddFont = React.useCallback(() => {
         if (!newFont.family || !newFont.url) return;
         setConfig(prev => ({ ...prev, fonts: [ ...prev.fonts, newFont ] }));
         setNewFont({ family: '', url: '' });
-    };
+    }, [ setConfig, newFont ]);
 
-    const handleRemoveFont = (index: number) =>
-        setConfig(prev => ({ ...prev, fonts: prev.fonts.filter((_, i) => i !== index) }));
+    const handleRemoveFont = React.useCallback((index: number) =>
+        setConfig(prev => ({
+            ...prev,
+            fonts: prev.fonts.filter((_, i) => i !== index)
+        })),
+        []
+    );
 
     const onSelectFile = React.useCallback(() => {
         selectFile('single', 'font')

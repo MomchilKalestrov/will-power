@@ -7,7 +7,7 @@ import type { fileTypes, fileCount } from './fileFormats';
 type selectFileFunctionType = (fileCount: fileCount, fileType?: fileTypes) => Promise<BlobInformation[]>;
 
 const FileSelectorCTX = React.createContext<{
-    selectFile: selectFileFunctionType
+    selectFile: selectFileFunctionType;
 } | undefined>(undefined);
 
 const useFileSelector = () => {

@@ -61,7 +61,7 @@ const FilesButton: React.FC = () => {
     const t = useTranslations('Admin.Layout');
     const { selectFile } = useFileSelector();
 
-    const onClick = React.useCallback(() => selectFile('none').catch(() => null), [ selectFile ]);
+    const onClick = React.useCallback(() => selectFile('none', 'all').catch(() => null), [ selectFile ]);
 
     return (
         <SidebarMenuButton onClick={ onClick  } isActive={ false }>

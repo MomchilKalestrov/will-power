@@ -79,14 +79,14 @@ const FileSelector: React.FC<Props> = ({
                     return setFiles(null);
                 setFiles(
                     filterFiles(response.value, fileType)
-                    .reduce<Record<string, BlobInformation>>((acc, curr) => {
-                        acc[ curr.pathname ] = curr;
-                        return acc;
-                    }, {})
+                        .reduce<Record<string, BlobInformation>>((acc, curr) => {
+                            acc[ curr.pathname ] = curr;
+                            return acc;
+                        }, {})
                 );
             })
             .catch(() => setFiles(null));
-    }, []);
+    }, [ fileType ]);
 
     const onDelete = React.useCallback(() =>
         deleteBlob(lastSelectedFile!)
