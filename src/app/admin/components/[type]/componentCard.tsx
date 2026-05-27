@@ -73,7 +73,7 @@ const ComponentCard: React.FC<Props> = ({
 
         button.disabled = true;
 
-        deleteComponent(name)
+        deleteComponent(name, type)
             .then(response => {
                 button.disabled = false;
                 if (!response.success)
