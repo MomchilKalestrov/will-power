@@ -1,7 +1,7 @@
 'use client';
 import { NextPage } from 'next';
 
-import { usePlugins } from '@/contexts/plugins';
+import { useConfig } from '@/contexts/config';
 
 import PluginCard from './pluginCard';
 
@@ -14,7 +14,7 @@ import PluginCard from './pluginCard';
 // hey're expensive as shit, though.
 
 const Page: NextPage = () => {
-    const { plugins } = usePlugins();
+    const { config: { plugins } } = useConfig();
 
     return (
         <div className='p-8 overflow-y-scroll h-[calc(100dvh-var(--spacing)*16)] flex flex-wrap justify-center items-start content-start gap-2'>
