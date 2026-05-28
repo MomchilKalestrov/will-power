@@ -76,6 +76,7 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
     const [ selectedNode, setSelectedNode ] = React.useState<ComponentNode | undefined>();
     const [ nodeMetadata, setNodeMetadata ] = React.useState<NodeMetadata | undefined>();
     const [ settingsOpen, setSettingsOpen ] = React.useState<boolean>(false);
+    const [ previewSize,  setPreviewSize  ] = React.useState<'desktop' | 'tablet' | 'mobile'>('desktop');
     const { getComponent } = useComponents();
     const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
@@ -231,11 +232,21 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                         } }><Settings /></Button>
                     }
                 </section>
-                <section>
+                <section className='flex gap-2'>
                     <ComponentHistoryMenu
                         type={ component.type }
                         currentComponentName={ component.name }
                     />
+                    <div>
+
+                        { ([ 'desktop', 'tablet', 'mobile' ] as const).map(viewport => (
+                            <Button
+                                key={ viewport }
+                                onClick={ () => setPreviewSize(viewport) }
+                                variant={ viewport === previewSize ? 'outline' : 'ghost' }
+                            >{ t('viewport', { viewport }) }</Button> // todo: add localization
+                        )) }
+                    </div>
                 </section>
                 <section className='flex gap-2'>
                     <Button variant='outline' size='icon' onClick={ onReset }>
@@ -272,13 +283,21 @@ const Editor: React.FC<Props> = ({ component: initialComponent }) => {
                                     } />
                         }
                     </Card>
-                    
-                    <iframe 
-                        ref={ iframeRef } 
-                        src={ `/admin/viewer/${ component.name }?force=true` }
-                        className='grow h-full border-0'
-                        title={ t('pageEditor') }
-                    />
+
+                    <div className='grow h-full border-0 flex justify-center items-center overflow-scroll bg-background/75'>
+                        <iframe
+                            ref={ iframeRef } 
+                            src={ `/admin/viewer/${ component.name }?force=true` }
+                            title={ t('pageEditor') }
+                            style={
+                                previewSize === 'mobile'
+                                ?   { width: 375, height: 667 }
+                                :   previewSize === 'tablet'
+                                    ?   { width: 1024, height: 768 }
+                                    :   { width: '100%', height: '100%' }
+                            }
+                        />
+                    </div>
 
                     <Card
                         className='bg-background min-w-48 max-w-[33%] overflow-hidden resize-x h-full rounded-none border-l border-r-0 border-t-0 border-b-0 p-4 shadow-none overflow-y-scroll'    

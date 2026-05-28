@@ -43,7 +43,8 @@
                 "copy": "Копировать",
                 "paste": "Вставить",
                 "delete": "Убрать"
-            }
+            },
+            "viewport": "{viewport, select, desktop {Десктоп} tablet {Планшет} mobile {Мобильный} other {{viewport}}}"
         },
         "Plugin": {
             "unhandledError": "Необработанная ошибка помешала загрузке страницы:",

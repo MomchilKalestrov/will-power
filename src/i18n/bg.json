@@ -43,7 +43,8 @@
                 "copy": "Копирай",
                 "paste": "Постави",
                 "delete": "Изтрий"
-            }
+            },
+            "viewport": "{viewport, select desktop {Десктоп} tablet {Таблет} mobile {Телефон} other {{viewport}}}"
         },
         "Plugin": {
             "unhandledError": "Необработена грешка попречи на зареждането на страницата:",

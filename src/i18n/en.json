@@ -43,7 +43,8 @@
                 "copy": "Copy",
                 "paste": "Paste",
                 "delete": "Delete"
-            }
+            },
+            "viewport": "{viewport, select, desktop {Desktop} tablet {Tablet} mobile {Mobile} other {{viewport}}}"
         },
         "Plugin": {
             "unhandledError": "An unhandled error prevented the page to load:",
