@@ -6,6 +6,10 @@ const metadata: NodeMetadata = {
         type: {
             type: 'enum',
             default: 'div'
+        },
+        showIn: {
+            type: 'enum',
+            default: 'all'
         }
     },
     attributes: {},
@@ -248,6 +252,20 @@ const metadata: NodeMetadata = {
         },
         alignContent: {
             values: [ 'normal', 'stretch', 'center', 'start', 'end' ]
+        },
+        showIn: {
+            values: [
+                'all',
+
+                'desktop',
+                'tablet',
+                'mobile',
+
+                'desktop-tablet',
+                'desktop-mobile',
+
+                'mobile-tablet'
+            ]
         }
     },
     acceptChildren: true
@@ -255,15 +273,43 @@ const metadata: NodeMetadata = {
 
 type Props = {
     type?: 'div' | 'section' | 'main' | 'aside' | 'nav' | 'header' | 'footer';
+    showIn?: string;
 };
 
 const Component: React.FC<React.PropsWithChildren<Props>> = ({
     children,
     type: Element = 'div',
     ...props
-}) => (
-    <Element className={ defaults.Container } { ...props }>{ children }</Element>
-);
+}) => {
+    const showIn = React.useMemo(() =>
+        'showIn' in props && typeof props.showIn === 'string'
+        ?   props.showIn.split('-')
+        :   [ 'all' ],
+        [ (props as any)?.showIn ] // sorry :'(
+    );
+    const [ viewport, setViewport ] = React.useState<string>('desktop');
+
+    React.useEffect(() => {
+        const resizeHandler = () => {
+            const width = window.innerWidth;
+            const t = width < 768 ? 'mobile' : width < 1024 ? 'tablet' : 'desktop';
+            setViewport(t);
+        };
+
+        window.addEventListener('resize', resizeHandler);
+        return () => window.removeEventListener('resize', resizeHandler);
+    }, []);
+
+    const element = (<Element className={ defaults.Container } { ...props }>{ children }</Element>);
+
+    if (showIn.includes('all'))
+        return element;
+
+    if (showIn.includes(viewport))
+        return element;
+
+    return (<></>); // practically null
+}
 
 export { metadata, Component };
 export { Box as Icon } from 'lucide-react';
