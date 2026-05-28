@@ -84,7 +84,7 @@ export const removePlugin = addAuthInfo(async (user: User, name: string): server
             reason: 'Unauthorized action.'
         };
 
-    if (!(await deleteBlob(user, `/plugins/${ name }/*`)).success)
+    if (!(await deleteBlob(user, `/plugins/${ name }/`)).success)
         return {
             success: false,
             reason: 'Failed to delete the plugin\'s directory.'

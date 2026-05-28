@@ -282,7 +282,7 @@ const toolsInfo: Record<string, {
             schema: z.object({
                 path: z.string(),
                 body: z.string(),
-                options: z.object({}).passthrough()
+                options: z.object({}).loose()
             }),
             positions: [ 'path', 'body', 'options' ]
         }

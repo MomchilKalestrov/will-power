@@ -70,7 +70,7 @@ export const deleteCollection = addAuthInfo(async (user: User, name: string): se
 
         return success
         ?   { success, value: success }
-        :   { success, reason: 'Failed to delete the collection' };
+        :   { success, reason: 'Failed to delete the collection.' };
     } catch (error) {
         console.log('[plugins] deleteCollection error: ', error);
         return {
